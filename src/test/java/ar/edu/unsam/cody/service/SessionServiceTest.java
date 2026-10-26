@@ -2,10 +2,9 @@ package ar.edu.unsam.cody.service;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
+import static org.mockito.Mockito.mock;
+import static org.mockito.Mockito.when;
 
-import ar.edu.unsam.cody.dto.GraphRequest;
-import ar.edu.unsam.cody.dto.GraphRequest.EdgeRequest;
-import ar.edu.unsam.cody.dto.GraphRequest.NodeRequest;
 import ar.edu.unsam.cody.dto.PredictionRequest;
 import ar.edu.unsam.cody.dto.PredictionResponse;
 import ar.edu.unsam.cody.dto.SessionResponse;
@@ -14,28 +13,43 @@ import ar.edu.unsam.cody.dto.StepDto;
 import ar.edu.unsam.cody.engine.graph.Bfs;
 import ar.edu.unsam.cody.exception.BusinessRuleException;
 import ar.edu.unsam.cody.exception.ResourceNotFoundException;
+import ar.edu.unsam.cody.repository.ScenarioRepository;
 import java.util.List;
+import java.util.Optional;
 import java.util.UUID;
+import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
 class SessionServiceTest {
 
-    private final SessionService service = new SessionService(new AlgorithmRegistry(List.of(new Bfs())));
+    private static final long TRIANGLE = 1L;
+    private static final long ARRAY = 2L;
 
-    /** A - B, A - C: before dequeuing B the queue is [B, C], so there is exactly one question. */
-    private static StartSessionRequest bfsRequest() {
-        GraphRequest graph = new GraphRequest(
-                List.of(new NodeRequest("A", "A"), new NodeRequest("B", "B"), new NodeRequest("C", "C")),
-                List.of(new EdgeRequest("A", "B", 1), new EdgeRequest("A", "C", 1)),
-                "A", false);
-        return new StartSessionRequest("BFS", graph);
+    private ActiveSessionStore activeSessions;
+    private SessionService service;
+
+    @BeforeEach
+    void setUp() {
+        ScenarioRepository repository = mock(ScenarioRepository.class);
+        when(repository.findById(TRIANGLE)).thenReturn(Optional.of(TestScenarios.triangleEntity(TRIANGLE)));
+        when(repository.findById(ARRAY)).thenReturn(Optional.of(TestScenarios.arrayEntity(ARRAY)));
+        when(repository.findById(99L)).thenReturn(Optional.empty());
+
+        activeSessions = new ActiveSessionStore();
+        ScenarioService scenarios = new ScenarioService(repository, activeSessions);
+        service = new SessionService(new AlgorithmRegistry(List.of(new Bfs())), scenarios, activeSessions);
+    }
+
+    private SessionResponse startBfs() {
+        return service.start(new StartSessionRequest("BFS", TRIANGLE));
     }
 
     @Test
     void startSendsStepsOnlyUpToTheFirstQuestion() {
-        SessionResponse session = service.start(bfsRequest());
+        SessionResponse session = startBfs();
 
         assertThat(session.sessionId()).isNotNull();
+        assertThat(session.scenarioId()).isEqualTo(TRIANGLE);
         assertThat(session.finished()).isFalse();
         StepDto last = session.steps().getLast();
         assertThat(last.question()).isNotNull();
@@ -45,7 +59,7 @@ class SessionServiceTest {
 
     @Test
     void correctAnswerSendsTheRestOfTheTrace() {
-        SessionResponse session = service.start(bfsRequest());
+        SessionResponse session = startBfs();
         String questionId = session.steps().getLast().question().id();
 
         PredictionResponse response = service.answer(session.sessionId(), new PredictionRequest(questionId, "B"));
@@ -60,7 +74,7 @@ class SessionServiceTest {
 
     @Test
     void wrongAnswerIsCountedAndRevealsTheCorrectOne() {
-        SessionResponse session = service.start(bfsRequest());
+        SessionResponse session = startBfs();
         String questionId = session.steps().getLast().question().id();
 
         PredictionResponse response = service.answer(session.sessionId(), new PredictionRequest(questionId, "C"));
@@ -73,7 +87,7 @@ class SessionServiceTest {
 
     @Test
     void cannotAnswerTheSameQuestionTwice() {
-        SessionResponse session = service.start(bfsRequest());
+        SessionResponse session = startBfs();
         String questionId = session.steps().getLast().question().id();
         service.answer(session.sessionId(), new PredictionRequest(questionId, "B"));
 
@@ -83,11 +97,21 @@ class SessionServiceTest {
 
     @Test
     void answerMustBeOneOfTheOptions() {
-        SessionResponse session = service.start(bfsRequest());
+        SessionResponse session = startBfs();
         String questionId = session.steps().getLast().question().id();
 
         assertThatThrownBy(() -> service.answer(session.sessionId(), new PredictionRequest(questionId, "Z")))
                 .isInstanceOf(BusinessRuleException.class);
+    }
+
+    @Test
+    void scenarioIsInUseUntilTheSessionFinishes() {
+        SessionResponse session = startBfs();
+        assertThat(activeSessions.hasUnfinishedSessionFor(TRIANGLE)).isTrue();
+
+        service.answer(session.sessionId(), new PredictionRequest(session.steps().getLast().question().id(), "B"));
+
+        assertThat(activeSessions.hasUnfinishedSessionFor(TRIANGLE)).isFalse();
     }
 
     @Test
@@ -98,52 +122,20 @@ class SessionServiceTest {
 
     @Test
     void unknownAlgorithmIsNotFound() {
-        StartSessionRequest request = new StartSessionRequest("QUICKSORT", bfsRequest().graph());
-
-        assertThatThrownBy(() -> service.start(request)).isInstanceOf(ResourceNotFoundException.class);
+        assertThatThrownBy(() -> service.start(new StartSessionRequest("QUICKSORT", TRIANGLE)))
+                .isInstanceOf(ResourceNotFoundException.class);
     }
 
     @Test
-    void graphAlgorithmNeedsAGraph() {
-        assertThatThrownBy(() -> service.start(new StartSessionRequest("BFS", null)))
-                .isInstanceOf(BusinessRuleException.class);
+    void unknownScenarioIsNotFound() {
+        assertThatThrownBy(() -> service.start(new StartSessionRequest("BFS", 99L)))
+                .isInstanceOf(ResourceNotFoundException.class);
     }
 
     @Test
-    void graphNeedsAtLeastTwoNodes() {
-        GraphRequest single = new GraphRequest(List.of(new NodeRequest("A", "A")), List.of(), "A", false);
-
-        assertThatThrownBy(() -> service.start(new StartSessionRequest("BFS", single)))
+    void graphAlgorithmRejectsAnArrayScenario() {
+        assertThatThrownBy(() -> service.start(new StartSessionRequest("BFS", ARRAY)))
                 .isInstanceOf(BusinessRuleException.class)
-                .hasMessageContaining("2 nodos");
-    }
-
-    @Test
-    void edgesMustReferenceExistingNodes() {
-        GraphRequest graph = new GraphRequest(
-                List.of(new NodeRequest("A", "A"), new NodeRequest("B", "B")),
-                List.of(new EdgeRequest("A", "Z", 1)), "A", false);
-
-        assertThatThrownBy(() -> service.start(new StartSessionRequest("BFS", graph)))
-                .isInstanceOf(BusinessRuleException.class)
-                .hasMessageContaining("Z");
-    }
-
-    @Test
-    void nodeIdsMustBeUnique() {
-        GraphRequest graph = new GraphRequest(
-                List.of(new NodeRequest("A", "A"), new NodeRequest("A", "Otro")), List.of(), "A", false);
-
-        assertThatThrownBy(() -> service.start(new StartSessionRequest("BFS", graph)))
-                .isInstanceOf(BusinessRuleException.class);
-    }
-
-    @Test
-    void startNodeMustExist() {
-        GraphRequest graph = new GraphRequest(
-                List.of(new NodeRequest("A", "A"), new NodeRequest("B", "B")), List.of(), "Z", false);
-
-        assertThatThrownBy(() -> service.start(new StartSessionRequest("BFS", graph)))
-                .isInstanceOf(BusinessRuleException.class);
+                .hasMessageContaining("grafo");
     }
 }

@@ -366,6 +366,7 @@ Todo depende de esto. Se define **primero** y no se cambia sin acordarlo entre l
 public interface TraceableAlgorithm<I extends AlgorithmInput> {
     String code();          // "DIJKSTRA"
     Class<I> inputType();   // GraphInput.class o ArrayInput.class
+    List<String> pseudocode(); // líneas a las que apunta Step.codeLine
     Trace run(I input);     // traza completa
 }
 
@@ -419,22 +420,22 @@ public record Question(String id, String prompt, List<String> options, String co
 
 | Entidad (tabla) | Para qué |
 |---|---|
-| **Algorithm** (`algorithm`) | Catálogo: code, name, family, description, pseudocode |
-| **Scenario** (`scenario`) | Grafos o arreglos que el alumno crea, edita y guarda (nodos con `x, y`) |
+| **Algorithm** (`algorithm`) | Catálogo (solo lectura, lo carga `data.sql`): code, name, family, description, complejidades. El pseudocódigo NO va acá: lo define cada algoritmo del engine, porque los pasos apuntan a sus líneas |
+| **Scenario** (`scenario` + `scenario_node`, `scenario_edge`, `scenario_array_value`) | Grafos o arreglos que el alumno crea, edita y guarda (nodos con `x, y`). ABML completo |
 | **AppUser** (`app_user`) | `User` es palabra reservada en SQL Server |
 | **Session** (`session`) | Cada recorrido de un algoritmo: aciertos, errores, fecha |
 | **Prediction** (`prediction`) | Qué respondió, en qué tipo de paso, si acertó |
 | **Mastery** (`mastery`) | Nivel del usuario por algoritmo y tipo de paso |
 
-**Validaciones funcionales (punto 3.4):** escenario con al menos 2 nodos; aristas que referencien nodos existentes; pesos no negativos en Dijkstra; arreglo no vacío y ordenado para búsqueda binaria; no responder dos veces la misma pregunta; no borrar un escenario con sesiones en curso.
+**Validaciones funcionales (punto 3.4)**, implementadas en `ScenarioRules` y `SessionService`: grafo de 2 a 26 nodos con ids únicos; aristas entre nodos existentes, sin lazos, sin repetidas y con peso ≥ 0; nodo inicial existente; arreglo de 1 a 30 valores; nombre de escenario único; el tipo de escenario tiene que coincidir con el algoritmo; no responder dos veces la misma pregunta; no modificar ni borrar un escenario con una sesión en curso. Pendiente: arreglo ordenado para búsqueda binaria.
 
 ### Endpoints iniciales
 
 ```
-GET    /api/algorithms
-GET    /api/scenarios           POST /api/scenarios
+GET    /api/algorithms              GET /api/algorithms/{code}
+GET    /api/scenarios?type=GRAPH    GET /api/scenarios/{id}      POST /api/scenarios
 PUT    /api/scenarios/{id}      DELETE /api/scenarios/{id}
-POST   /api/sessions                       { algorithmId, scenarioId } → pasos hasta la 1ª pregunta
+POST   /api/sessions                       { algorithmCode, scenarioId } → pasos hasta la 1ª pregunta
 POST   /api/sessions/{id}/predictions      { questionId, answer } → correct, explanation, pasos siguientes
 GET    /api/users/{id}/mastery
 ```

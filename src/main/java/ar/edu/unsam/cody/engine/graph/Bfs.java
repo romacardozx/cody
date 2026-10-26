@@ -65,6 +65,11 @@ public final class Bfs implements TraceableAlgorithm<GraphInput> {
     }
 
     @Override
+    public List<String> pseudocode() {
+        return PSEUDOCODE;
+    }
+
+    @Override
     public Trace run(GraphInput graph) {
         return new Run(graph).execute();
     }

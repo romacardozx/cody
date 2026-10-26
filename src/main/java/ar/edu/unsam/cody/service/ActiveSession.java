@@ -16,19 +16,25 @@ import java.util.UUID;
 final class ActiveSession {
 
     private final UUID id;
+    private final Long scenarioId;
     private final Trace trace;
     private int nextIndex;
     private Question pendingQuestion;
     private int correctCount;
     private int wrongCount;
 
-    ActiveSession(UUID id, Trace trace) {
+    ActiveSession(UUID id, Long scenarioId, Trace trace) {
         this.id = id;
+        this.scenarioId = scenarioId;
         this.trace = trace;
     }
 
     UUID id() {
         return id;
+    }
+
+    Long scenarioId() {
+        return scenarioId;
     }
 
     Trace trace() {

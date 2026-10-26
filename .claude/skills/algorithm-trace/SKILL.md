@@ -6,7 +6,7 @@ description: Usar al implementar o modificar un algoritmo del paquete engine, o 
 # Contrato de la traza (paquete `ar.edu.unsam.cody.engine`)
 
 - Implementar `TraceableAlgorithm<GraphInput>` o `TraceableAlgorithm<ArrayInput>`; sin Spring, JPA ni Lombok (lo verifica `EngineIsolationTest`).
-- Métodos: `code()` (el del catálogo), `inputType()` (`GraphInput.class` / `ArrayInput.class`) y `run(input)`.
+- Métodos: `code()` (el del catálogo), `inputType()` (`GraphInput.class` / `ArrayInput.class`), `pseudocode()` (en español; `codeLine` apunta a estas líneas, por eso viven en la clase y no en la base) y `run(input)`.
 - Armar la traza con `TraceRecorder`: `record(...)` por paso y `askOnLastStep(...)` para preguntar en el paso ANTERIOR al que revela la respuesta.
 - Registrar el algoritmo con un `@Bean` en `config/EngineConfig`; `AlgorithmRegistry` lo encuentra solo.
 - Recibe un `GraphInput` / `ArrayInput` (records del engine), nunca la entidad `Scenario`. El service convierte.
@@ -31,4 +31,4 @@ description: Usar al implementar o modificar un algoritmo del paquete engine, o 
 3. Test de un caso borde (empates, grafo desconectado, arreglo de 1 elemento).
 
 # Agregar un algoritmo nuevo
-Clase en `engine/graph/` o `engine/array/`, test en `src/test/java/.../engine/<familia>/`, pseudocódigo en data.sql (INSERT idempotente).
+Clase en `engine/graph/` o `engine/array/`, test en `src/test/java/.../engine/<familia>/`, fila del catálogo en data.sql (INSERT idempotente) y un test de que `codeLine` cae dentro del pseudocódigo.

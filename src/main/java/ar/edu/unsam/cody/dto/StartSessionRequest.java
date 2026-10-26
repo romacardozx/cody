@@ -1,18 +1,15 @@
 package ar.edu.unsam.cody.dto;
 
-import jakarta.validation.Valid;
 import jakarta.validation.constraints.NotBlank;
+import jakarta.validation.constraints.NotNull;
 
 /**
- * Request to start walking through an algorithm.
- *
- * <p>For now the scenario travels inline; once the Scenario ABML exists this will take a
- * {@code scenarioId} instead.
+ * Request to start walking through an algorithm on a saved scenario.
  *
  * @param algorithmCode code of the algorithm, for example {@code "BFS"}
- * @param graph         the graph to run on (graph algorithms only)
+ * @param scenarioId    id of the scenario to run on; its type must match the algorithm
  */
 public record StartSessionRequest(
         @NotBlank(message = "Indicá el algoritmo.") String algorithmCode,
-        @Valid GraphRequest graph) {
+        @NotNull(message = "Indicá el escenario.") Long scenarioId) {
 }

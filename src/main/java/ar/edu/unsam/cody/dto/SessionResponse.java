@@ -8,6 +8,7 @@ import java.util.UUID;
  *
  * @param sessionId     id to use when answering
  * @param algorithmCode the algorithm being walked through
+ * @param scenarioId    the scenario it runs on
  * @param totalSteps    length of the whole trace, so the player can show progress
  * @param steps         steps up to and including the first question (or the whole trace if none)
  * @param finished      {@code true} when there is nothing left to answer
@@ -15,6 +16,7 @@ import java.util.UUID;
 public record SessionResponse(
         UUID sessionId,
         String algorithmCode,
+        Long scenarioId,
         int totalSteps,
         List<StepDto> steps,
         boolean finished) {

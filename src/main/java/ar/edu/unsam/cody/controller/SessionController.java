@@ -26,22 +26,7 @@ import org.springframework.web.bind.annotation.RestController;
 public class SessionController {
 
     private static final String BFS_EXAMPLE = """
-            {
-              "algorithmCode": "BFS",
-              "graph": {
-                "nodes": [
-                  {"id": "A", "label": "A"}, {"id": "B", "label": "B"}, {"id": "C", "label": "C"},
-                  {"id": "D", "label": "D"}, {"id": "E", "label": "E"}
-                ],
-                "edges": [
-                  {"from": "A", "to": "B", "weight": 1}, {"from": "A", "to": "C", "weight": 1},
-                  {"from": "B", "to": "D", "weight": 1}, {"from": "C", "to": "D", "weight": 1},
-                  {"from": "D", "to": "E", "weight": 1}
-                ],
-                "startNodeId": "A",
-                "directed": false
-              }
-            }
+            {"algorithmCode": "BFS", "scenarioId": 1}
             """;
 
     private final SessionService sessionService;
@@ -52,7 +37,7 @@ public class SessionController {
 
     @PostMapping
     @Operation(summary = "Empezar una sesión",
-            description = "Ejecuta el algoritmo y devuelve los pasos hasta la primera pregunta.")
+            description = "Ejecuta el algoritmo sobre un escenario guardado y devuelve los pasos hasta la primera pregunta.")
     public ResponseEntity<SessionResponse> start(
             @io.swagger.v3.oas.annotations.parameters.RequestBody(content = @Content(
                     examples = @ExampleObject(name = "BFS", value = BFS_EXAMPLE)))

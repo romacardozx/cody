@@ -1,5 +1,7 @@
 package ar.edu.unsam.cody.engine;
 
+import java.util.List;
+
 /**
  * An algorithm that, besides solving its problem, records every step it takes.
  *
@@ -24,6 +26,14 @@ public interface TraceableAlgorithm<I extends AlgorithmInput> {
      * @return {@code GraphInput.class} or {@code ArrayInput.class}
      */
     Class<I> inputType();
+
+    /**
+     * Pseudocode shown next to the animation. {@link Step#codeLine()} points into it (starting at
+     * 1), so it lives with the implementation and both change together.
+     *
+     * @return the pseudocode lines, in Spanish
+     */
+    List<String> pseudocode();
 
     /**
      * Runs the algorithm over the given input.

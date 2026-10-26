@@ -1,67 +1,66 @@
 package ar.edu.unsam.cody.service;
 
-import ar.edu.unsam.cody.dto.GraphRequest;
-import ar.edu.unsam.cody.dto.GraphRequest.EdgeRequest;
-import ar.edu.unsam.cody.dto.GraphRequest.NodeRequest;
 import ar.edu.unsam.cody.dto.PredictionRequest;
 import ar.edu.unsam.cody.dto.PredictionResponse;
 import ar.edu.unsam.cody.dto.SessionResponse;
 import ar.edu.unsam.cody.dto.StartSessionRequest;
 import ar.edu.unsam.cody.dto.StepDto;
 import ar.edu.unsam.cody.engine.AlgorithmInput;
+import ar.edu.unsam.cody.engine.ArrayInput;
 import ar.edu.unsam.cody.engine.GraphInput;
 import ar.edu.unsam.cody.engine.Question;
 import ar.edu.unsam.cody.engine.Trace;
 import ar.edu.unsam.cody.engine.TraceableAlgorithm;
 import ar.edu.unsam.cody.exception.BusinessRuleException;
 import ar.edu.unsam.cody.exception.ResourceNotFoundException;
-import java.util.HashSet;
+import ar.edu.unsam.cody.model.Scenario;
+import ar.edu.unsam.cody.model.ScenarioType;
 import java.util.List;
-import java.util.Map;
-import java.util.Set;
 import java.util.UUID;
-import java.util.concurrent.ConcurrentHashMap;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 /**
- * Runs algorithms and walks the user through their traces, question by question.
+ * Runs algorithms on saved scenarios and walks the user through their traces, question by
+ * question.
  *
  * <p>The full trace stays on the server. The client only receives steps up to the next pending
  * question, and answers are checked here, so the correct answer is never exposed in advance.
- *
- * <p>Sessions are kept in memory for now (they are lost on restart); they will move to the
- * database with the {@code Session} entity.
  */
 @Service
 public class SessionService {
 
-    private static final int MIN_NODES = 2;
-
     private final AlgorithmRegistry algorithms;
-    private final Map<UUID, ActiveSession> sessions = new ConcurrentHashMap<>();
+    private final ScenarioService scenarios;
+    private final ActiveSessionStore activeSessions;
 
-    public SessionService(AlgorithmRegistry algorithms) {
+    public SessionService(AlgorithmRegistry algorithms, ScenarioService scenarios, ActiveSessionStore activeSessions) {
         this.algorithms = algorithms;
+        this.scenarios = scenarios;
+        this.activeSessions = activeSessions;
     }
 
     /**
-     * Starts a session: validates the scenario, runs the algorithm and returns the first steps.
+     * Starts a session: loads the scenario, runs the algorithm and returns the first steps.
      *
-     * <p>Complexity: that of the algorithm (O(V + E) for BFS) plus O(V + E) for validation.
+     * <p>Complexity: that of the algorithm (O(V + E) for BFS) plus loading the scenario.
      *
-     * @param request algorithm and scenario
+     * @param request algorithm code and scenario id
      * @return the session id and the steps up to the first question
-     * @throws ResourceNotFoundException if the algorithm does not exist
-     * @throws BusinessRuleException     if the scenario breaks a functional rule
+     * @throws ResourceNotFoundException if the algorithm or the scenario do not exist
+     * @throws BusinessRuleException     if the scenario type does not fit the algorithm
      */
+    @Transactional(readOnly = true)
     public SessionResponse start(StartSessionRequest request) {
         TraceableAlgorithm<?> algorithm = algorithms.get(request.algorithmCode());
-        Trace trace = run(algorithm, inputFor(algorithm, request));
+        Scenario scenario = scenarios.findEntity(request.scenarioId());
+        Trace trace = run(algorithm, inputFor(algorithm, scenario));
 
-        ActiveSession session = new ActiveSession(UUID.randomUUID(), trace);
-        sessions.put(session.id(), session);
+        ActiveSession session = new ActiveSession(UUID.randomUUID(), scenario.getId(), trace);
+        activeSessions.save(session);
         List<StepDto> steps = StepDto.fromAll(session.nextSteps());
-        return new SessionResponse(session.id(), trace.algorithmCode(), trace.size(), steps, session.finished());
+        return new SessionResponse(session.id(), trace.algorithmCode(), scenario.getId(), trace.size(), steps,
+                session.finished());
     }
 
     /**
@@ -76,10 +75,8 @@ public class SessionService {
      * @throws BusinessRuleException     if there is no such pending question or the option is invalid
      */
     public PredictionResponse answer(UUID sessionId, PredictionRequest request) {
-        ActiveSession session = sessions.get(sessionId);
-        if (session == null) {
-            throw new ResourceNotFoundException("No existe la sesión " + sessionId + ".");
-        }
+        ActiveSession session = activeSessions.find(sessionId)
+                .orElseThrow(() -> new ResourceNotFoundException("No existe la sesión " + sessionId + "."));
 
         boolean correct;
         Question question;
@@ -103,42 +100,28 @@ public class SessionService {
                 session.correctCount(), session.wrongCount());
     }
 
-    private AlgorithmInput inputFor(TraceableAlgorithm<?> algorithm, StartSessionRequest request) {
+    /** Converts the scenario into the input the algorithm declares, checking that they fit. */
+    private static AlgorithmInput inputFor(TraceableAlgorithm<?> algorithm, Scenario scenario) {
         if (algorithm.inputType() == GraphInput.class) {
-            if (request.graph() == null) {
-                throw new BusinessRuleException("El algoritmo " + algorithm.code() + " necesita un grafo.");
-            }
-            return toGraphInput(request.graph());
+            requireType(algorithm, scenario, ScenarioType.GRAPH, "un grafo");
+            return new GraphInput(
+                    scenario.getNodes().stream().map(node -> new GraphInput.Node(node.getNodeId(), node.getLabel())).toList(),
+                    scenario.getEdges().stream()
+                            .map(edge -> new GraphInput.Edge(edge.getFromNode(), edge.getToNode(), edge.getWeight()))
+                            .toList(),
+                    scenario.getStartNodeId(),
+                    scenario.isDirected());
         }
-        throw new BusinessRuleException("El algoritmo " + algorithm.code() + " todavía no se puede ejecutar.");
+        requireType(algorithm, scenario, ScenarioType.ARRAY, "un arreglo");
+        return new ArrayInput(scenario.getArrayValues(), scenario.getTarget());
     }
 
-    /** Functional validations of a graph (section 3.4), with messages for the user. */
-    private static GraphInput toGraphInput(GraphRequest graph) {
-        if (graph.nodes().size() < MIN_NODES) {
-            throw new BusinessRuleException("El grafo necesita al menos " + MIN_NODES + " nodos.");
+    private static void requireType(TraceableAlgorithm<?> algorithm, Scenario scenario, ScenarioType expected,
+            String description) {
+        if (scenario.getType() != expected) {
+            throw new BusinessRuleException("El algoritmo " + algorithm.code() + " necesita un escenario con "
+                    + description + "; \"" + scenario.getName() + "\" no lo es.");
         }
-        Set<String> ids = new HashSet<>();
-        for (NodeRequest node : graph.nodes()) {
-            if (!ids.add(node.id())) {
-                throw new BusinessRuleException("Hay dos nodos con el id " + node.id() + ".");
-            }
-        }
-        for (EdgeRequest edge : graph.edges()) {
-            if (!ids.contains(edge.from()) || !ids.contains(edge.to())) {
-                throw new BusinessRuleException("La arista " + edge.from() + " → " + edge.to()
-                        + " usa un nodo que no existe.");
-            }
-        }
-        if (!ids.contains(graph.startNodeId())) {
-            throw new BusinessRuleException("El nodo inicial " + graph.startNodeId() + " no existe en el grafo.");
-        }
-
-        return new GraphInput(
-                graph.nodes().stream().map(node -> new GraphInput.Node(node.id(), node.label())).toList(),
-                graph.edges().stream().map(edge -> new GraphInput.Edge(edge.from(), edge.to(), edge.weight())).toList(),
-                graph.startNodeId(),
-                graph.directed());
     }
 
     /** Captures the wildcard so the input can be cast to the type the algorithm declares. */

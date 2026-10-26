@@ -4,6 +4,7 @@ import ar.edu.unsam.cody.engine.TraceableAlgorithm;
 import ar.edu.unsam.cody.exception.ResourceNotFoundException;
 import java.util.List;
 import java.util.Map;
+import java.util.Optional;
 import java.util.function.Function;
 import java.util.stream.Collectors;
 import org.springframework.stereotype.Component;
@@ -23,17 +24,24 @@ public class AlgorithmRegistry {
     }
 
     /**
-     * Looks up an algorithm.
+     * Looks up an algorithm that must exist.
      *
      * @param code algorithm code, for example {@code "BFS"}
      * @return the algorithm
-     * @throws ResourceNotFoundException if no algorithm has that code
+     * @throws ResourceNotFoundException if the engine does not implement that code
      */
     public TraceableAlgorithm<?> get(String code) {
-        TraceableAlgorithm<?> algorithm = algorithmsByCode.get(code);
-        if (algorithm == null) {
-            throw new ResourceNotFoundException("No existe el algoritmo " + code + ".");
-        }
-        return algorithm;
+        return find(code).orElseThrow(() ->
+                new ResourceNotFoundException("El algoritmo " + code + " no existe o todavía no está disponible."));
+    }
+
+    /**
+     * Looks up an algorithm that may not be implemented yet.
+     *
+     * @param code algorithm code
+     * @return the algorithm, or empty
+     */
+    public Optional<TraceableAlgorithm<?>> find(String code) {
+        return Optional.ofNullable(algorithmsByCode.get(code));
     }
 }
