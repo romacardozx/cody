@@ -57,7 +57,7 @@
 | Objetivo | En Cody |
 |---|---|
 | Aplicar fundamentos de programación backend en Java | Spring Boot + motor de algoritmos en Java puro |
-| Variables, estructuras de control, estructuras de datos y POO | Interfaz `Algoritmo` + implementaciones (polimorfismo); grafos, colas, arreglos, mapas en el motor |
+| Variables, estructuras de control, estructuras de datos y POO | Interfaz `TraceableAlgorithm` + implementaciones (polimorfismo); grafos, colas, arreglos, mapas en el `engine` |
 | Pensamiento crítico para resolver problemas | Los algoritmos y la generación de preguntas |
 | Equipos de 3: compartir código, explicar soluciones, cumplir plazos | Repo compartido, reparto (sección 13), hitos (sección 14) |
 
@@ -82,7 +82,7 @@
 | 3.3 | Acceso a datos con **JPA/Hibernate** y consultas | Repositorios JPA + consultas derivadas para estadísticas |
 | 3.3 | API REST: **recursos, endpoints, DTO, ResponseEntity, validaciones** | Endpoints de la sección 9; DTOs; nunca exponer entidades |
 | 3.3 | Opcional: **Swagger/OpenAPI** y pruebas con **Postman** | springdoc + colección de Postman para la demo |
-| 3.3 | **Validación, manejo de errores y pruebas automatizadas** (Spring Boot Test, MockMvc, JaCoCo) | `@Valid`, `@ControllerAdvice`, tests del motor + MockMvc + JaCoCo |
+| 3.3 | **Validación, manejo de errores y pruebas automatizadas** (Spring Boot Test, MockMvc, JaCoCo) | `@Valid`, `@ControllerAdvice`, tests del engine + MockMvc + JaCoCo |
 | 3.4 | **Validaciones funcionales** (no de tipo de dato) para evitar excepciones | Lista de la sección 9 |
 | 3.5 | **Código comentado** explicando procedimientos y módulos | Javadoc en servicios y algoritmos |
 
@@ -93,7 +93,7 @@
 | Java compatible con la versión de Spring Boot | Java 21 |
 | **Spring Boot** como framework principal | ✔ |
 | Laboratorio en **VS Code** | Demo desde VS Code |
-| Arquitectura **en capas**: presentación/controladores, negocio, datos | controller / service / repository (+ motor) |
+| Arquitectura **en capas**: presentación/controladores, negocio, datos | controller / service / repository (+ engine) |
 | **Maven** para dependencias, configuración y build | Maven + `frontend-maven-plugin` |
 | Persistencia: **JPA/Hibernate + SQL Server + SSMS** | ✔ |
 | Pruebas de endpoints: **Postman**; automatizadas: **Spring Boot Test + JUnit 5** | ✔ |
@@ -320,17 +320,17 @@ cody/
 ├── pom.xml
 ├── .claude/
 │   └── skills/
-│       └── traza-algoritmos/SKILL.md      ← skill propia (sección 11)
+│       └── algorithm-trace/SKILL.md       ← skill propia (sección 11)
 ├── frontend/
 │   └── src/
-│       ├── componentes/
-│       │   ├── Reproductor.jsx            ← play/pausa/avance/retroceso/velocidad
-│       │   ├── VistaGrafo.jsx             ← SVG + Motion
-│       │   ├── VistaArreglo.jsx           ← barras con layout de Motion
-│       │   ├── Codigo.jsx                 ← prism-react-renderer + línea activa
-│       │   ├── PanelVariables.jsx
-│       │   └── Pregunta.jsx
-│       ├── paginas/
+│       ├── components/
+│       │   ├── Player.jsx                 ← play/pausa/avance/retroceso/velocidad
+│       │   ├── GraphView.jsx              ← SVG + Motion
+│       │   ├── ArrayView.jsx              ← barras con layout de Motion
+│       │   ├── CodePanel.jsx              ← prism-react-renderer + línea activa
+│       │   ├── VariablesPanel.jsx
+│       │   └── QuestionCard.jsx
+│       ├── pages/
 │       └── api/
 └── src/
     ├── main/java/ar/edu/unsam/cody/
@@ -341,77 +341,101 @@ cody/
     │   ├── dto/
     │   ├── exception/                      ← @ControllerAdvice
     │   ├── config/
-    │   └── motor/                          ← el corazón: sin Spring, Java puro
-    │       ├── Algoritmo.java              ← interfaz
-    │       ├── Paso.java, TipoPaso.java, Pregunta.java
-    │       ├── grafos/  (Bfs.java, Dijkstra.java)
-    │       └── arreglos/ (Burbuja.java, BusquedaBinaria.java)
+    │   └── engine/                         ← el corazón: sin Spring, Java puro
+    │       ├── TraceableAlgorithm.java     ← interfaz
+    │       ├── Trace, Step, StepType, ElementState, Question
+    │       ├── AlgorithmInput, GraphInput, ArrayInput
+    │       ├── graph/  (Bfs.java, Dijkstra.java)
+    │       └── array/  (BubbleSort.java, BinarySearch.java)
     └── test/java/ar/edu/unsam/cody/
-        ├── motor/                          ← tests unitarios de cada algoritmo
+        ├── engine/                         ← tests unitarios del contrato y de cada algoritmo
         └── controller/                     ← MockMvc
 ```
 
-**Regla clave:** el paquete `motor` no depende de Spring. Se testea con JUnit puro, rápido y sin base de datos.
+**Regla clave:** el paquete `engine` no depende de Spring, JPA ni Lombok (lo verifica `EngineIsolationTest`). Se testea con JUnit puro, rápido y sin base de datos.
+
+**Idioma:** todo el código, la base y la API van en inglés. En español solo lo que ve el usuario: textos de la UI, preguntas, explicaciones y mensajes de error.
 
 ---
 
 ## 8. El contrato de la traza
 
-Todo depende de esto. Se define **primero** y no se cambia sin acordarlo entre los tres.
+Todo depende de esto. Se define **primero** y no se cambia sin acordarlo entre los tres. Código real en `src/main/java/ar/edu/unsam/cody/engine/`.
 
 ```java
-public interface Algoritmo {
-    String codigo();                        // "DIJKSTRA"
-    List<Paso> ejecutar(Escenario entrada); // traza completa
+public interface TraceableAlgorithm<I extends AlgorithmInput> {
+    String code();          // "DIJKSTRA"
+    Trace run(I input);     // traza completa
 }
 
-public record Paso(
-    int numero,
-    TipoPaso tipo,                    // VISITAR, RELAJAR, COMPARAR, INTERCAMBIAR, ...
-    int lineaCodigo,                  // línea del pseudocódigo a resaltar
-    Map<String, String> estadoNodos,  // foto COMPLETA, no solo lo que cambió
-    Map<String, Integer> valores,     // distancias, contenido del arreglo, etc.
-    List<String> resaltados,          // aristas o índices destacados
-    Map<String, String> variables,    // para el panel: u = B, dist[C] = 3
-    String explicacion,
-    Pregunta pregunta                 // null si en este paso no se pregunta
+// Entrada propia del engine: el service convierte la entidad Scenario en uno de estos
+public sealed interface AlgorithmInput permits GraphInput, ArrayInput {}
+public record GraphInput(List<Node> nodes, List<Edge> edges, String startNodeId, boolean directed) {}
+public record ArrayInput(List<Integer> values, Integer target) {}   // target: solo búsqueda binaria
+
+public record Trace(String algorithmCode, List<Step> steps) {
+    List<Step> stepsUntilNextQuestion(int fromIndex);  // lo que se le manda al cliente
+    Optional<Step> findQuestionStep(String questionId);
+}
+
+public record Step(
+    int index,                                // posición en la traza, desde 0
+    StepType type,                            // START, DEQUEUE, VISIT, RELAX, COMPARE, SWAP, ...
+    int codeLine,                             // línea del pseudocódigo a resaltar, desde 1
+    Map<String, ElementState> elementStates,  // foto COMPLETA: DEFAULT, FRONTIER, CURRENT, VISITED, ...
+    Map<String, Integer> values,              // distancias, contenido del arreglo, etc.
+    List<String> highlights,                  // aristas o elementos destacados
+    Map<String, String> variables,            // para el panel: u = B, dist[C] = 3
+    String explanation,                       // en español
+    Question question                         // null si en este paso no se pregunta
 ) {}
 
-public record Pregunta(String id, String enunciado, List<String> opciones) {}
-// La respuesta correcta NO viaja en este record: queda en el servidor.
+public record Question(String id, String prompt, List<String> options, String correctAnswer) {
+    boolean isCorrect(String answer);
+}
+// correctAnswer queda en el servidor: la API expone un QuestionDto sin ese campo.
 ```
 
-**Invariantes:**
+**Decisiones tomadas** (corrigen problemas del borrador original):
 
-1. Cada paso es una **foto completa**: retroceder es mostrar el paso anterior.
-2. Los elementos tienen **ids estables** (no usar el valor como id: puede haber repetidos).
-3. El servidor envía los pasos **solo hasta la próxima pregunta**; el resto llega después de responder.
-4. Cada algoritmo tiene un test que verifica su resultado final **y** la forma de su traza.
+- La interfaz se llama `TraceableAlgorithm` para no chocar con la entidad JPA `Algorithm`.
+- El engine recibe `GraphInput` / `ArrayInput`, no la entidad: así sigue siendo Java puro.
+- La respuesta correcta vive en `Question.correctAnswer` y se filtra en el DTO.
+- Los estados son un enum (`ElementState`), no `String` (punto 11.c: tipos de datos adecuados).
+- Los algoritmos son **deterministas**: el servidor puede regenerar la traza de una sesión en vez de guardarla.
+
+**Invariantes** (los valida el constructor de `Trace`):
+
+1. Cada paso es una **foto completa**: todos los pasos describen el mismo conjunto de elementos.
+2. Los elementos tienen **ids estables**: nodos por su `id`, arreglos `e0, e1, ...` por posición inicial (puede haber valores repetidos).
+3. Los `index` coinciden con la posición y los ids de pregunta no se repiten.
+4. El servidor envía los pasos **solo hasta la próxima pregunta** (`stepsUntilNextQuestion`); el resto llega después de responder.
+5. Cada algoritmo tiene un test que verifica su resultado final **y** la forma de su traza.
 
 ---
 
 ## 9. Modelo de datos (ABML)
 
-| Entidad | Para qué |
+| Entidad (tabla) | Para qué |
 |---|---|
-| **Algoritmo** | Catálogo: nombre, familia, descripción, pseudocódigo |
-| **Escenario** | Grafos o arreglos que el alumno crea, edita y guarda (nodos con `x, y`) |
-| **Usuario** | |
-| **Sesion** | Cada recorrido de un algoritmo: aciertos, errores, fecha |
-| **Prediccion** | Qué respondió, en qué tipo de paso, si acertó |
-| **Dominio** | Nivel del usuario por algoritmo y tipo de paso |
+| **Algorithm** (`algorithm`) | Catálogo: code, name, family, description, pseudocode |
+| **Scenario** (`scenario`) | Grafos o arreglos que el alumno crea, edita y guarda (nodos con `x, y`) |
+| **AppUser** (`app_user`) | `User` es palabra reservada en SQL Server |
+| **Session** (`session`) | Cada recorrido de un algoritmo: aciertos, errores, fecha |
+| **Prediction** (`prediction`) | Qué respondió, en qué tipo de paso, si acertó |
+| **Mastery** (`mastery`) | Nivel del usuario por algoritmo y tipo de paso |
 
 **Validaciones funcionales (punto 3.4):** escenario con al menos 2 nodos; aristas que referencien nodos existentes; pesos no negativos en Dijkstra; arreglo no vacío y ordenado para búsqueda binaria; no responder dos veces la misma pregunta; no borrar un escenario con sesiones en curso.
 
 ### Endpoints iniciales
 
 ```
-GET    /api/algoritmos
-GET    /api/escenarios          POST /api/escenarios
-PUT    /api/escenarios/{id}     DELETE /api/escenarios/{id}
-POST   /api/sesiones                       { algoritmoId, escenarioId } → pasos hasta la 1ª pregunta
-POST   /api/sesiones/{id}/predicciones     { preguntaId, respuesta } → correcta, explicación, pasos siguientes
-GET    /api/usuarios/{id}/dominio
+GET    /api/algorithms
+GET    /api/scenarios           POST /api/scenarios
+PUT    /api/scenarios/{id}      DELETE /api/scenarios/{id}
+POST   /api/sessions                       { algorithmId, scenarioId } → pasos hasta la 1ª pregunta
+POST   /api/sessions/{id}/predictions      { questionId, answer } → correct, explanation, pasos siguientes
+GET    /api/users/{id}/mastery
 ```
 
 ---
@@ -429,11 +453,11 @@ GET    /api/usuarios/{id}/dominio
 | Diseño de UI | **Impeccable** (pbakaus) | `yarn global add impeccable && impeccable install` → en Claude Code: `/impeccable init` y `/impeccable hooks on` |
 | Testing de la UI | `webapp-testing` (Anthropic) | `npx skills add anthropics/skills@webapp-testing` |
 | Animación | `motion` (comunidad) | `npx -y skills add secondsky/claude-skills --skill motion --agent claude-code` |
-| Algoritmos | **Skill propia** `traza-algoritmos` | Ver sección 11 (crear con `skill-creator`) |
+| Algoritmos | **Skill propia** `algorithm-trace` | Ya creada (sección 11) |
 
 **Cómo usarlas:**
 
-- **Superpowers** marca el ritmo: brainstorming → plan → TDD (rojo, verde, refactor) → revisión. Ideal para el `motor`: cada algoritmo arranca con un test que falla.
+- **Superpowers** marca el ritmo: brainstorming → plan → TDD (rojo, verde, refactor) → revisión. Ideal para el `engine`: cada algoritmo arranca con un test que falla.
 - **spring-boot-patterns** para controllers, DTOs, servicios y repositorios.
 - **Impeccable** (extiende la `frontend-design` de Anthropic con referencias de tipografía, color, espaciado, **motion**, interacción y redacción de UI, más un detector de patrones típicos de UI hecha por IA). Uso:
   - `/impeccable init` **una sola vez**, con la estética acordada entre los tres (oscura, técnica, tipo editor de código). Genera `PRODUCT.md` y `DESIGN.md`, que se commitean: así las pantallas de los tres comparten el mismo estilo.
@@ -473,87 +497,33 @@ graphify hook install       # reconstruye en cada commit
 **Trade-offs honestos:**
 
 - caveman solo comprime **lo que Claude escribe**, que es la porción chica del consumo. Mediciones independientes reportan ahorros reales mucho menores que el 75% publicitado. Lo que sí rinde es `caveman-compress` sobre el `CLAUDE.md`.
-- **No usar caveman cuando estén aprendiendo algo.** La nota es individual y hay defensa oral: si Claude no explica el porqué, nadie va a poder defender el código. caveman para tareas mecánicas (fixes, renombres, boilerplate); modo normal para el `motor` y las decisiones de diseño.
+- **No usar caveman cuando estén aprendiendo algo.** La nota es individual y hay defensa oral: si Claude no explica el porqué, nadie va a poder defender el código. caveman para tareas mecánicas (fixes, renombres, boilerplate); modo normal para el `engine` y las decisiones de diseño.
 - graphify rinde cuando el repo crece. **Activarlo después de la revisión del 28/10**, no el primer día con 10 archivos.
 - La mayor palanca de ahorro no es ninguna skill: **sesiones cortas y enfocadas**, una tarea por sesión, y un `CLAUDE.md` chico.
 
 ---
 
-## 11. Skill propia: `traza-algoritmos`
+## 11. Skill propia: `algorithm-trace`
 
-Crearla con la skill oficial `skill-creator` y guardarla en `.claude/skills/traza-algoritmos/SKILL.md` (se commitea, así la usan los tres).
-
-Esqueleto:
-
-```markdown
----
-name: traza-algoritmos
-description: Usar al implementar o modificar un algoritmo del paquete motor, o al tocar Paso, TipoPaso o Pregunta. Define el contrato de la traza y cómo testearla.
----
-
-# Contrato de la traza
-- Implementar `Algoritmo`; sin dependencias de Spring.
-- Cada `Paso` es una foto COMPLETA del estado.
-- Ids estables por elemento; nunca usar el valor como id.
-- `lineaCodigo` apunta al pseudocódigo guardado en la entidad Algoritmo (base 1).
-- La respuesta correcta de una `Pregunta` nunca se serializa al cliente.
-
-# Puntos de pregunta por algoritmo
-- Burbuja: ¿se intercambian estos dos?
-- Búsqueda binaria: ¿izquierda o derecha?
-- BFS: ¿qué nodo sale de la cola?
-- Dijkstra: ¿qué nodo de la frontera se visita?
-
-# Cómo testear (TDD)
-1. Test del resultado final (orden, camino, distancias).
-2. Test de la forma de la traza: primer y último paso, cantidad de preguntas, que no haya pasos con estado incompleto.
-3. Test de un caso borde (empates, grafo desconectado, arreglo de 1 elemento).
-
-# Agregar un algoritmo nuevo
-Clase en motor/<familia>/, test en test/.../motor/, pseudocódigo en data.sql.
-```
+Está en `.claude/skills/algorithm-trace/SKILL.md` (se commitea, así la usan los tres). Resume el contrato de la sección 8, los puntos de pregunta de cada algoritmo, cómo testear con TDD y dónde va cada archivo al agregar un algoritmo. Si cambia el contrato, actualizarla en el mismo commit.
 
 ---
 
-## 12. `CLAUDE.md` del repo (punto de partida)
+## 12. `CLAUDE.md` del repo
 
-Corto a propósito: se lee en cada sesión. Después se puede pasar por `/caveman-compress`.
-
-```markdown
-# Proyecto: Cody — visualizador de algoritmos con predicción
-
-## Stack
-Java 21 · Spring Boot · JPA/Hibernate · SQL Server · Maven · React+Vite · Motion · prism-react-renderer
-
-## Comandos
-- Backend: ./mvnw spring-boot:run
-- Frontend dev: cd frontend && npm run dev
-- Tests + cobertura: ./mvnw verify
-- Build completo: ./mvnw clean package
-
-## Reglas
-- motor/ es Java puro: sin anotaciones de Spring.
-- TDD: test que falla primero, siempre en motor/.
-- Controllers devuelven ResponseEntity<DTO>; nunca entidades.
-- Errores vía @ControllerAdvice con mensajes claros en español.
-- Javadoc en servicios y en cada algoritmo (complejidad incluida).
-- Contrato de la traza: ver skill traza-algoritmos. No cambiarlo sin avisar.
-- Comentarios y mensajes de UI en español.
-- UI: respetar DESIGN.md y PRODUCT.md (Impeccable). No inventar estilos nuevos por pantalla.
-- Al cerrar una tarea: explicar en 3-5 líneas qué se hizo y por qué (el equipo tiene que poder defenderlo).
-```
+Está en la raíz y es corto a propósito: se lee en cada sesión. Tiene el stack, los comandos (Makefile), la convención de idioma y las reglas del proyecto. Después se puede pasar por `/caveman-compress`.
 
 ---
 
 ## 13. Reparto inicial
 
-Todos tocan algo del `motor`: en la defensa individual van a preguntar por los algoritmos.
+Todos tocan algo del `engine`: en la defensa individual van a preguntar por los algoritmos.
 
 | Persona | Responsable de | Además |
 |---|---|---|
-| **1** | Entidades, repositorios, ABML de Escenario y Algoritmo, `data.sql` | BFS en el motor |
+| **1** | Entidades, repositorios, ABML de Scenario y Algorithm, `data.sql` | BFS en el engine |
 | **2** | Motor: contrato de la traza, Dijkstra, generación de preguntas, validación | Tests y JaCoCo |
-| **3** | Frontend: reproductor, vistas de grafo y arreglo, código resaltado | Burbuja y búsqueda binaria en el motor |
+| **3** | Frontend: reproductor, vistas de grafo y arreglo, código resaltado | BubbleSort y BinarySearch en el engine |
 
 ---
 
