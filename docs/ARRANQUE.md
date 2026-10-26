@@ -454,7 +454,7 @@ GET    /api/users/{id}/mastery
 |---|---|---|
 | Spring Boot | `spring-boot-patterns` (decebals) | `npx -y skills add decebals/claude-code-java --skill spring-boot-patterns --agent claude-code` |
 | Proceso y TDD | Superpowers (obra) | `/plugin install superpowers@claude-plugins-official` |
-| Diseño de UI | **Impeccable** (pbakaus) | `yarn global add impeccable && impeccable install` → en Claude Code: `/impeccable init` y `/impeccable hooks on` |
+| Diseño de UI | **Impeccable** (pbakaus) | Ya en el repo (`.claude/skills/impeccable`, agentes en `.claude/agents`, hooks del detector en `.claude/settings.json`). El binario se descarga solo la primera vez. CLI opcional: `yarn global add impeccable` y `impeccable telemetry off` |
 | Testing de la UI | `webapp-testing` (Anthropic) | `npx skills add anthropics/skills@webapp-testing` |
 | Animación | `motion` (comunidad) | `npx -y skills add secondsky/claude-skills --skill motion --agent claude-code` |
 | Algoritmos | **Skill propia** `algorithm-trace` | Ya creada (sección 11) |
