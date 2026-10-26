@@ -1,24 +1,29 @@
 import { Suspense, use, useCallback, useEffect, useMemo, useState } from 'react'
 import { AnimatePresence, MotionConfig, motion } from 'motion/react'
 import { getAlgorithm, getScenarios } from '../api/cody.js'
+import { CodePanel } from '../components/CodePanel.jsx'
 import { ErrorBoundary } from '../components/ErrorBoundary.jsx'
 import { GraphView } from '../components/GraphView.jsx'
+import { HistoryPanel } from '../components/HistoryPanel.jsx'
 import { Icon } from '../components/Icon.jsx'
+import { Link } from '../components/Link.jsx'
 import { PlayerControls, StepTrack } from '../components/PlayerControls.jsx'
 import { Feedback, PredictionPanel } from '../components/PredictionPanel.jsx'
-import { PseudocodePanel } from '../components/PseudocodePanel.jsx'
+import { RichText } from '../components/RichText.jsx'
 import { VariablesPanel } from '../components/VariablesPanel.jsx'
 import panels from '../components/Panels.module.css'
 import { useHotkeys } from '../hooks/useHotkeys.js'
 import { usePlayback } from '../hooks/usePlayback.js'
 import { useSession } from '../hooks/useSession.js'
-import { Link } from '../components/Link.jsx'
+import { EXPLAINERS } from '../lib/explainers.js'
 import { FAMILY } from '../lib/families.js'
+import { GLOSSARY } from '../lib/glossary.js'
 import styles from './VisualizerPage.module.css'
 
 const STEP_TYPES = {
   START: 'Inicio',
   ENQUEUE: 'Encolar',
+  SKIP: 'Ignorar',
   DEQUEUE: 'Desencolar',
   VISIT: 'Visitar',
   RELAX: 'Relajar',
@@ -38,9 +43,6 @@ export default function VisualizerPage({ code }) {
     // Animations follow the OS "reduce motion" setting
     <MotionConfig reducedMotion="user">
       <main className={styles.page}>
-        <Link to="/" className={styles.back}>
-          <Icon name="back" size={16} /> Algoritmos
-        </Link>
         <ErrorBoundary title="No pudimos abrir este algoritmo">
           <Suspense fallback={<VisualizerSkeleton />}>
             <Visualizer code={code} />
@@ -56,6 +58,7 @@ function Visualizer({ code }) {
   if (!algorithm.available) {
     return (
       <div className={styles.unavailable}>
+        <Breadcrumb algorithm={algorithm} />
         <h1 className={styles.title}>{algorithm.name}</h1>
         <p>Todavía no está disponible para predecir. Mientras tanto, probá con BFS.</p>
         <Link to="/algorithms/BFS" className={styles.unavailableLink}>Ir a BFS <Icon name="arrow" size={16} /></Link>
@@ -64,6 +67,18 @@ function Visualizer({ code }) {
   }
   const scenarios = use(getScenarios(algorithm.scenarioType))
   return <Player algorithm={algorithm} scenarios={scenarios} />
+}
+
+function Breadcrumb({ algorithm }) {
+  return (
+    <nav className={styles.breadcrumb} aria-label="Ubicación">
+      <Link to="/" className={styles.crumbLink}>
+        <Icon name="back" size={16} /> Algoritmos
+      </Link>
+      <span aria-hidden="true">/</span>
+      <span>{FAMILY[algorithm.family].label}</span>
+    </nav>
+  )
 }
 
 function Player({ algorithm, scenarios }) {
@@ -77,12 +92,6 @@ function Player({ algorithm, scenarios }) {
     if (scenarioId != null) start(scenarioId)
   }, [scenarioId, start])
 
-  const chooseScenario = (id) => {
-    playback.cancelResume()
-    setPlaying(false)
-    setScenarioId(id)
-  }
-
   // The graph drawn is the one the current steps belong to, even while a new one loads
   const shown = scenarios.find((s) => s.id === session.scenarioId)
   const selected = scenarios.find((s) => s.id === scenarioId)
@@ -94,17 +103,14 @@ function Player({ algorithm, scenarios }) {
 
   const next = useCallback(() => go(cursor + 1), [go, cursor])
   const prev = useCallback(() => go(cursor - 1), [go, cursor])
-  const playback = usePlayback({
-    playing,
-    setPlaying,
-    speed,
-    canGoNext: session.canGoNext,
-    blocked: session.blocked,
-    next,
-  })
+  usePlayback({ playing, setPlaying, speed, canGoNext: session.canGoNext, blocked: session.blocked, next })
+
+  const chooseScenario = (id) => {
+    setPlaying(false)
+    setScenarioId(id)
+  }
 
   const restart = () => {
-    playback.cancelResume()
     setPlaying(false)
     start(scenarioId)
   }
@@ -123,27 +129,25 @@ function Player({ algorithm, scenarios }) {
     ),
   })
 
-  // The step right after an answered question reveals the answer: show how it went
+  // The step right after an answered question reveals the answer: the feedback lives there
   const previous = session.steps[cursor - 1]
   const lastResult = previous?.question ? session.answers[previous.question.id] : null
   const step = session.step
-  const family = FAMILY[algorithm.family]
   const loading = session.status === 'loading'
+  const explainer = EXPLAINERS[algorithm.code]
 
   return (
     <>
+      <Breadcrumb algorithm={algorithm} />
       <header className={styles.head}>
         <div className={styles.headText}>
-          <p className={styles.family}>
-            <Icon name={family.icon} size={15} /> {family.label}
-          </p>
           <h1 className={styles.title}>{algorithm.name}</h1>
-          <p className={styles.description}>{algorithm.description}</p>
+          <p className={styles.description}><RichText>{algorithm.description}</RichText></p>
         </div>
         <div className={styles.headSide}>
           <div className={styles.complexities}>
-            <span className={styles.complexity}><span>tiempo</span> {algorithm.timeComplexity}</span>
-            <span className={styles.complexity}><span>espacio</span> {algorithm.spaceComplexity}</span>
+            <span className={styles.complexity} title="Complejidad temporal"><span>tiempo</span> {algorithm.timeComplexity}</span>
+            <span className={styles.complexity} title="Espacio extra"><span>espacio</span> {algorithm.spaceComplexity}</span>
           </div>
           <label className={styles.picker}>
             <span className={styles.pickerLabel}>Escenario</span>
@@ -204,22 +208,33 @@ function Player({ algorithm, scenarios }) {
             )}
 
             <AnimatePresence mode="wait">
-              {lastResult?.status === 'done' && <Feedback key={previous.question.id} answer={lastResult} labelOf={labelOf} />}
+              {lastResult?.status === 'done' && (
+                <Feedback
+                  key={previous.question.id}
+                  answer={lastResult}
+                  labelOf={labelOf}
+                  onContinue={next}
+                  canContinue={session.canGoNext}
+                />
+              )}
             </AnimatePresence>
 
-            {step && (
-              <motion.div
-                key={`${session.sessionId}-${step.index}`}
-                className={styles.explanation}
-                initial={{ opacity: 0.4 }}
-                animate={{ opacity: 1 }}
-                transition={{ duration: 0.2 }}
-                aria-live="polite"
-              >
-                <span className={styles.stepType}>{STEP_TYPES[step.type] ?? step.type}</span>
-                <p>{step.explanation}</p>
-              </motion.div>
-            )}
+            <AnimatePresence mode="wait" initial={false}>
+              {step && (
+                <motion.div
+                  key={`${session.sessionId}-${step.index}`}
+                  className={styles.explanation}
+                  initial={{ opacity: 0, y: 6 }}
+                  animate={{ opacity: 1, y: 0 }}
+                  exit={{ opacity: 0, y: -4 }}
+                  transition={{ duration: 0.18, ease: [0.2, 0.8, 0.2, 1] }}
+                  aria-live="polite"
+                >
+                  <span className={styles.stepType}>{STEP_TYPES[step.type] ?? step.type}</span>
+                  <p><RichText>{step.explanation}</RichText></p>
+                </motion.div>
+              )}
+            </AnimatePresence>
 
             {question && (
               <PredictionPanel
@@ -250,27 +265,55 @@ function Player({ algorithm, scenarios }) {
         </div>
 
         <aside className={styles.side}>
-          <section className={panels.panel} aria-labelledby="score-title">
-            <h2 id="score-title" className={panels.panelTitle}>Tus predicciones</h2>
-            <div className={panels.score}>
-              <div className={`${panels.scoreItem} ${panels.scoreOk}`}>
-                <span className={panels.scoreValue}>{session.score.correct}</span>
-                <span className={panels.scoreLabel}>aciertos</span>
-              </div>
-              <div className={`${panels.scoreItem} ${panels.scoreBad}`}>
-                <span className={panels.scoreValue}>{session.score.wrong}</span>
-                <span className={panels.scoreLabel}>errores</span>
-              </div>
-            </div>
-          </section>
-          <PseudocodePanel lines={algorithm.pseudocode} activeLine={step?.codeLine} />
-          <VariablesPanel variables={step?.variables} labelOf={labelOf} conceal={Boolean(question) && questionAnswer?.status !== 'done'} />
+          <CodePanel
+            pseudocode={algorithm.pseudocode}
+            javaCode={algorithm.javaCode}
+            javaLines={algorithm.javaLines}
+            activeLine={step?.codeLine}
+          />
+          <VariablesPanel
+            variables={step?.variables}
+            labelOf={labelOf}
+            conceal={Boolean(question) && questionAnswer?.status !== 'done'}
+          />
+          <HistoryPanel score={session.score} history={session.history} labelOf={labelOf} onGo={go} />
           <p className={styles.shortcuts}>
             <kbd>Espacio</kbd> reproducir · <kbd>←</kbd> <kbd>→</kbd> pasos · <kbd>1</kbd>–<kbd>9</kbd> responder
           </p>
         </aside>
       </div>
+
+      {explainer && <Explainer explainer={explainer} />}
     </>
+  )
+}
+
+function Explainer({ explainer }) {
+  return (
+    <section className={styles.explainer} aria-labelledby="explainer-title">
+      <h2 id="explainer-title" className={styles.explainerTitle}>{explainer.title}</h2>
+      <ol className={styles.ideas}>
+        {explainer.ideas.map((idea, i) => (
+          <li key={idea.title} className={styles.idea}>
+            <span className={styles.ideaNumber} aria-hidden="true">{i + 1}</span>
+            <div>
+              <h3 className={styles.ideaTitle}>{idea.title}</h3>
+              <p className={styles.ideaText}><RichText>{idea.text}</RichText></p>
+            </div>
+          </li>
+        ))}
+      </ol>
+
+      <h2 className={styles.explainerTitle}>Glosario</h2>
+      <dl className={styles.glossary}>
+        {GLOSSARY.map((entry) => (
+          <div key={entry.term} className={styles.glossaryEntry}>
+            <dt>{entry.term}</dt>
+            <dd>{entry.definition}</dd>
+          </div>
+        ))}
+      </dl>
+    </section>
   )
 }
 
@@ -279,8 +322,8 @@ function FinishCard({ score, asked, onRestart }) {
   return (
     <motion.div
       className={styles.finish}
-      initial={{ opacity: 0, y: 8 }}
-      animate={{ opacity: 1, y: 0 }}
+      initial={{ opacity: 0, y: 10, scale: 0.98 }}
+      animate={{ opacity: 1, y: 0, scale: 1 }}
       transition={{ type: 'spring', stiffness: 380, damping: 30 }}
     >
       <div>
@@ -288,7 +331,7 @@ function FinishCard({ score, asked, onRestart }) {
         <p className={styles.finishText}>
           {asked === 0
             ? 'Este escenario no tuvo momentos para predecir. Probá con otro más grande.'
-            : `Acertaste ${score.correct} de ${asked} ${asked === 1 ? 'predicción' : 'predicciones'}.`}
+            : `Acertaste ${score.correct} de ${asked} ${asked === 1 ? 'predicción' : 'predicciones'}. En "Tus predicciones" podés repasar cada una.`}
         </p>
       </div>
       <button type="button" className={styles.finishButton} onClick={onRestart}>

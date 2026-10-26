@@ -70,8 +70,8 @@ export function HeroGraph() {
         ))}
         {nextUp && current && (
           <g key={nextUp} transform={`translate(${NODES[nextUp][0] + 16} ${NODES[nextUp][1] - 30})`} className={styles.bubble}>
-            <rect x="-4" y="-15" width="52" height="24" rx="12" />
-            <text x="22" y="1.5">¿sigue?</text>
+            <rect x="-6" y="-15" width="70" height="26" rx="13" />
+            <text x="29" y="2.5">¿sigue?</text>
           </g>
         )}
       </svg>

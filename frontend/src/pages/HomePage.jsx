@@ -13,19 +13,16 @@ const FILTERS = [{ value: 'ALL', label: 'Todos' }, ...Object.entries(FAMILY).map
 
 const STEPS = [
   {
-    icon: 'eye',
     title: 'Mirá',
     text: 'El algoritmo corre de verdad en Java y la animación muestra cada paso: el estado completo, la línea de pseudocódigo y las variables.',
   },
   {
-    icon: 'question',
     title: 'Predecí',
     text: 'En los momentos clave se frena y te pregunta qué pasa ahora. Respondés con un clic en la opción o directamente sobre el grafo.',
   },
   {
-    icon: 'spark',
     title: 'Entendé',
-    text: 'Si acertás, sigue. Si no, te muestra la respuesta y por qué. La respuesta correcta nunca viaja antes de que contestes.',
+    text: 'Si acertás, sigue. Si no, te muestra la respuesta y por qué, y todo queda en tu historial para repasarlo. Las palabras técnicas tienen su definición a un clic.',
   },
 ]
 
@@ -34,15 +31,14 @@ export function HomePage() {
     <main>
       <section className={styles.hero}>
         <div className={styles.heroText}>
-          <p className={styles.eyebrow}>Visualizador de algoritmos · ECyT-UNSAM</p>
           <h1 className={styles.title}>
             No mires el algoritmo.
             <br />
             <span className={styles.titleAccent}>Adiviná</span> qué hace.
           </h1>
           <p className={styles.lead}>
-            Cody frena la animación en los momentos clave y te pregunta qué pasa ahora. Si acertás, sigue;
-            si no, te explica por qué. Pensarlo es lo que hace que se entienda.
+            Cody es un visualizador de algoritmos que frena la animación en los momentos clave y te pregunta
+            qué pasa ahora. Si acertás, sigue; si no, te explica por qué. Pensarlo es lo que hace que se entienda.
           </p>
           <div className={styles.actions}>
             <Link
@@ -83,11 +79,11 @@ export function HomePage() {
         <ol className={styles.steps}>
           {STEPS.map((step, i) => (
             <li key={step.title} className={`${styles.step} ${i === 1 ? styles.stepKey : ''}`}>
-              <span className={styles.stepIcon}><Icon name={step.icon} size={22} /></span>
-              <h3 className={styles.stepTitle}>
-                <span className={styles.stepNumber}>{i + 1}</span> {step.title}
-              </h3>
-              <p className={styles.stepText}>{step.text}</p>
+              <span className={styles.stepNumber} aria-hidden="true">{i + 1}</span>
+              <div>
+                <h3 className={styles.stepTitle}>{step.title}</h3>
+                <p className={styles.stepText}>{step.text}</p>
+              </div>
             </li>
           ))}
         </ol>

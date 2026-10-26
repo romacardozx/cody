@@ -122,7 +122,7 @@ export const GraphView = memo(function GraphView({ graph, step, valueLabel, opti
             {value !== undefined && (
               <g transform={`translate(${R * 0.78} ${-R * 0.95})`} className={styles.badge}>
                 <title>{`${valueLabel}: ${value}`}</title>
-                <rect x="-11" y="-10" width="22" height="20" rx="6" />
+                <rect x="-12" y="-11" width="24" height="22" rx="7" />
                 <text dy="0.36em">{value}</text>
               </g>
             )}

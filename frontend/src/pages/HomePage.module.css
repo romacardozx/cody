@@ -1,7 +1,8 @@
 .hero {
+  animation: rise 0.5s var(--ease-out);
   max-width: var(--page-max);
   margin: 0 auto;
-  padding: var(--space-8) var(--space-5) var(--space-7);
+  padding: var(--space-8) var(--space-6) var(--space-7);
   display: grid;
   grid-template-columns: 1.1fr 0.9fr;
   gap: var(--space-7);
@@ -95,7 +96,7 @@
 .section {
   max-width: var(--page-max);
   margin: 0 auto;
-  padding: var(--space-7) var(--space-5);
+  padding: var(--space-7) var(--space-6);
   border-top: 1px solid var(--border);
 }
 
@@ -189,51 +190,37 @@
   padding: 0;
   display: grid;
   grid-template-columns: repeat(3, 1fr);
-  gap: var(--space-4);
-  counter-reset: step;
+  gap: var(--space-6);
 }
 
 .step {
-  padding: var(--space-5);
-  border-radius: var(--radius-lg);
-  border: 1px solid var(--border);
-  background: var(--surface);
+  padding: var(--space-5) 0;
+  border-top: 2px solid var(--border-strong);
   display: grid;
-  gap: var(--space-3);
-  align-content: start;
+  grid-template-columns: auto 1fr;
+  gap: var(--space-4);
+  align-items: start;
 }
 
 .stepKey {
-  border-color: color-mix(in srgb, var(--accent) 50%, var(--border));
-  background: linear-gradient(160deg, var(--accent-soft), var(--surface) 60%);
-}
-
-.stepIcon {
-  width: 44px;
-  height: 44px;
-  display: grid;
-  place-items: center;
-  border-radius: var(--radius);
-  background: var(--surface-2);
-  color: var(--text);
-}
-
-.stepKey .stepIcon {
-  background: var(--accent);
-  color: var(--accent-ink);
-}
-
-.stepTitle {
-  font-size: 1.35rem;
-  display: flex;
-  align-items: baseline;
-  gap: var(--space-2);
+  border-top-color: var(--accent);
 }
 
 .stepNumber {
-  font-family: var(--font-mono);
-  font-size: 0.85rem;
+  font-family: var(--font-display);
+  font-size: 3.4rem;
+  font-weight: 760;
+  line-height: 0.85;
   color: var(--text-3);
+}
+
+.stepKey .stepNumber {
+  color: var(--accent);
+}
+
+.stepTitle {
+  font-size: 1.5rem;
+  margin-bottom: var(--space-2);
 }
 
 .stepText {

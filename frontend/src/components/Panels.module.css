@@ -6,86 +6,16 @@
 }
 
 .panelTitle {
-  font-family: var(--font-mono);
-  font-size: 0.72rem;
+  font-family: var(--font-display);
+  font-size: var(--text-md);
   font-weight: 700;
-  letter-spacing: 0.1em;
-  text-transform: uppercase;
-  color: var(--text-3);
+  letter-spacing: -0.01em;
   margin-bottom: var(--space-3);
 }
 
 .muted {
   color: var(--text-3);
-  font-size: 0.9rem;
-}
-
-/* Pseudocode */
-.code {
-  list-style: none;
-  margin: 0;
-  padding: 0;
-  font-family: var(--font-mono);
-  font-size: 0.8rem;
-  line-height: 1.5;
-}
-
-.codeLine {
-  position: relative;
-  display: flex;
-  gap: var(--space-3);
-  padding: 3px var(--space-2);
-  border-radius: var(--radius-sm);
-  color: var(--text-2);
-  transition: color 0.2s;
-}
-
-.codeLineActive {
-  color: var(--text);
-}
-
-.codeMarker {
-  position: absolute;
-  inset: 0;
-  border-radius: var(--radius-sm);
-  background: var(--accent-soft);
-  box-shadow: inset 3px 0 0 var(--accent);
-  z-index: 0;
-}
-
-.lineNumber {
-  position: relative;
-  width: 1.4em;
-  flex: none;
-  text-align: right;
-  color: var(--text-3);
-  user-select: none;
-}
-
-.codeLineActive .lineNumber {
-  color: var(--accent);
-}
-
-.lineText {
-  position: relative;
-  font-family: inherit;
-  white-space: pre-wrap;
-  /* Wrapped lines keep their indentation */
-  padding-left: 2ch;
-  text-indent: -2ch;
-}
-
-.kw {
-  color: var(--frontier);
-  font-weight: 600;
-}
-
-.op {
-  color: var(--accent);
-}
-
-.fn {
-  color: var(--visited);
+  font-size: var(--text-sm);
 }
 
 /* Variables */
@@ -104,7 +34,7 @@
 
 .varName {
   font-family: var(--font-mono);
-  font-size: 0.85rem;
+  font-size: var(--text-sm);
   color: var(--text-3);
 }
 
@@ -116,15 +46,20 @@
 .scalar {
   display: inline-grid;
   place-items: center;
-  min-width: 34px;
-  height: 34px;
+  min-width: 38px;
+  height: 38px;
   padding: 0 10px;
   border-radius: var(--radius);
   background: var(--accent);
   color: var(--accent-ink);
   font-family: var(--font-display);
   font-weight: 700;
-  font-size: 1.05rem;
+  font-size: var(--text-lg);
+}
+
+.scalarSoft {
+  background: var(--surface-3);
+  color: var(--text);
 }
 
 .queue {
@@ -134,7 +69,7 @@
   display: flex;
   flex-wrap: wrap;
   gap: 6px;
-  min-height: 44px;
+  min-height: 48px;
   border-radius: var(--radius);
   border: 1px dashed var(--border-strong);
 }
@@ -142,26 +77,30 @@
 .queueItem {
   display: grid;
   place-items: center;
-  min-width: 34px;
-  height: 34px;
+  min-width: 38px;
+  height: 38px;
   padding: 0 8px;
   border-radius: var(--radius-sm);
   border: 2px solid var(--frontier);
   background: var(--frontier-soft);
   font-family: var(--font-display);
   font-weight: 700;
-}
-
-/* The head of the queue is the next to leave: a small notch marks it */
-.queueHead {
-  box-shadow: -3px 0 0 var(--frontier);
+  font-size: var(--text-md);
 }
 
 .queueEmpty {
   align-self: center;
   padding: 0 var(--space-2);
   color: var(--text-3);
-  font-size: 0.85rem;
+  font-size: var(--text-sm);
+}
+
+.queueEnds {
+  display: flex;
+  justify-content: space-between;
+  margin-top: 4px;
+  font-size: var(--text-xs);
+  color: var(--text-3);
 }
 
 .concealed {
@@ -169,7 +108,7 @@
   flex-wrap: wrap;
   align-items: center;
   gap: 6px;
-  min-height: 44px;
+  min-height: 48px;
   padding: 4px;
   border-radius: var(--radius);
   border: 1px dashed var(--accent);
@@ -179,8 +118,8 @@
 .concealedItem {
   display: grid;
   place-items: center;
-  width: 34px;
-  height: 34px;
+  width: 38px;
+  height: 38px;
   border-radius: var(--radius-sm);
   border: 2px dashed color-mix(in srgb, var(--accent) 60%, transparent);
   font-family: var(--font-display);
@@ -190,11 +129,11 @@
 
 .concealedNote {
   padding: 0 var(--space-2);
-  font-size: 0.8rem;
-  color: var(--text-3);
+  font-size: var(--text-sm);
+  color: var(--text-2);
 }
 
-/* Score */
+/* Score and history */
 .score {
   display: grid;
   grid-template-columns: 1fr 1fr;
@@ -205,18 +144,19 @@
   padding: var(--space-3);
   border-radius: var(--radius);
   background: var(--surface-2);
+  overflow: hidden;
 }
 
 .scoreValue {
   display: block;
   font-family: var(--font-display);
-  font-size: 1.9rem;
+  font-size: 2rem;
   font-weight: 750;
   line-height: 1;
 }
 
 .scoreLabel {
-  font-size: 0.82rem;
+  font-size: var(--text-sm);
   color: var(--text-3);
 }
 
@@ -228,12 +168,111 @@
   color: var(--bad);
 }
 
+.history {
+  list-style: none;
+  margin: var(--space-3) 0 0;
+  padding: 0;
+  display: grid;
+  gap: var(--space-2);
+  max-height: 340px;
+  overflow-y: auto;
+}
+
+.historyItem {
+  overflow: hidden;
+}
+
+.historyDetails {
+  border-radius: var(--radius);
+  background: var(--surface-2);
+}
+
+.historySummary {
+  display: flex;
+  align-items: center;
+  gap: var(--space-3);
+  padding: var(--space-2) var(--space-3);
+  cursor: pointer;
+  list-style: none;
+  border-radius: var(--radius);
+}
+
+.historySummary::-webkit-details-marker {
+  display: none;
+}
+
+.historySummary::after {
+  content: '+';
+  margin-left: auto;
+  font-family: var(--font-mono);
+  color: var(--text-3);
+}
+
+.historyDetails[open] .historySummary::after {
+  content: '−';
+}
+
+.historyMark {
+  flex: none;
+  width: 24px;
+  height: 24px;
+  border-radius: 50%;
+  display: grid;
+  place-items: center;
+  color: var(--bg);
+}
+
+.markOk {
+  background: var(--ok);
+}
+
+.markBad {
+  background: var(--bad);
+}
+
+.historyText {
+  font-size: var(--text-sm);
+  line-height: 1.35;
+}
+
+.historyStep {
+  display: block;
+  font-family: var(--font-mono);
+  font-size: var(--text-xs);
+  color: var(--text-3);
+}
+
+.historyBody {
+  display: grid;
+  gap: var(--space-2);
+  padding: 0 var(--space-3) var(--space-3) calc(var(--space-3) + 24px + var(--space-3));
+  font-size: var(--text-sm);
+  color: var(--text-2);
+}
+
+.historyQuestion {
+  font-weight: 700;
+  color: var(--text);
+}
+
+.linkButton {
+  justify-self: start;
+  padding: 0;
+  border: 0;
+  background: none;
+  color: var(--accent);
+  font-weight: 650;
+  cursor: pointer;
+  text-decoration: underline;
+  text-underline-offset: 3px;
+}
+
 /* Legend */
 .legend {
   display: flex;
   flex-wrap: wrap;
   gap: var(--space-2) var(--space-4);
-  font-size: 0.82rem;
+  font-size: var(--text-sm);
   color: var(--text-3);
 }
 
@@ -244,8 +283,8 @@
 }
 
 .swatch {
-  width: 12px;
-  height: 12px;
+  width: 13px;
+  height: 13px;
   border-radius: 50%;
   border: 2px solid var(--node-stroke);
   background: var(--node-fill);

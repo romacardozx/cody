@@ -64,16 +64,14 @@ a.card:active {
   display: inline-flex;
   align-items: center;
   gap: 6px;
-  font-size: 0.78rem;
+  font-size: var(--text-sm);
   font-weight: 600;
-  text-transform: uppercase;
-  letter-spacing: 0.07em;
   color: var(--text-3);
 }
 
 .number {
   font-family: var(--font-mono);
-  font-size: 0.78rem;
+  font-size: var(--text-xs);
   color: var(--text-3);
 }
 
@@ -102,7 +100,7 @@ a.card:active {
 
 .complexity {
   font-family: var(--font-mono);
-  font-size: 0.78rem;
+  font-size: var(--text-xs);
   padding: 3px 8px;
   border-radius: var(--radius-sm);
   background: var(--surface-2);

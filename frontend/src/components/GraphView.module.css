@@ -57,7 +57,7 @@
   text-anchor: middle;
   font-family: var(--font-display);
   font-weight: 700;
-  font-size: 17px;
+  font-size: 19px;
   fill: var(--text);
   transition: fill 0.4s;
   pointer-events: none;
@@ -71,6 +71,27 @@
 .current .body {
   stroke: var(--accent);
   fill: var(--accent);
+  animation: nodePop 0.5s var(--ease-out-expo);
+}
+
+.visited .body {
+  animation: settle 0.45s var(--ease-out);
+}
+
+.body {
+  transform-box: fill-box;
+  transform-origin: center;
+}
+
+@keyframes nodePop {
+  0% { transform: scale(0.82); }
+  60% { transform: scale(1.12); }
+  100% { transform: scale(1); }
+}
+
+@keyframes settle {
+  0% { transform: scale(1.08); }
+  100% { transform: scale(1); }
 }
 
 .current .label {
@@ -80,6 +101,10 @@
 .visited .body {
   stroke: var(--visited);
   fill: var(--visited-soft);
+}
+
+.frontier .body {
+  animation: settle 0.4s var(--ease-out);
 }
 
 .pulse {
@@ -103,6 +128,19 @@
 }
 
 /* Value badge (level in BFS, distance in Dijkstra) */
+.badge {
+  transform-box: fill-box;
+  transform-origin: center;
+  animation: badgeIn 0.4s var(--ease-out-expo);
+}
+
+@keyframes badgeIn {
+  from {
+    opacity: 0;
+    transform: scale(0.3);
+  }
+}
+
 .badge rect {
   fill: var(--text);
 }
@@ -110,7 +148,7 @@
 .badge text {
   text-anchor: middle;
   font-family: var(--font-mono);
-  font-size: 11.5px;
+  font-size: 13px;
   font-weight: 700;
   fill: var(--bg);
 }

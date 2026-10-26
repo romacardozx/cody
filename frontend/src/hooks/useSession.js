@@ -18,7 +18,8 @@ const initialState = {
   steps: [],
   cursor: 0,
   finished: false,
-  answers: {}, // questionId -> { choice, status: 'pending' | 'done', correct, correctAnswer, explanation }
+  // questionId -> { choice, stepIndex, status: 'pending' | 'done', correct, correctAnswer, explanation, choiceFeedback }
+  answers: {},
   score: { correct: 0, wrong: 0 },
   error: null,
   answerError: null,
@@ -47,7 +48,10 @@ function reducer(state, action) {
       return {
         ...state,
         answerError: null,
-        answers: { ...state.answers, [action.questionId]: { choice: action.choice, status: 'pending' } },
+        answers: {
+          ...state.answers,
+          [action.questionId]: { choice: action.choice, stepIndex: state.cursor, status: 'pending' },
+        },
       }
     case 'answered': {
       const { response, questionId } = action
@@ -62,11 +66,12 @@ function reducer(state, action) {
         answers: {
           ...state.answers,
           [questionId]: {
-            choice: state.answers[questionId]?.choice,
+            ...state.answers[questionId],
             status: 'done',
             correct: response.correct,
             correctAnswer: response.correctAnswer,
             explanation: response.explanation,
+            choiceFeedback: response.choiceFeedback,
           },
         },
       }
@@ -121,7 +126,11 @@ export function useSession(algorithmCode) {
   // The user must answer before moving past a question step
   const blocked = Boolean(question && questionAnswer?.status !== 'done')
   const atLastReceived = state.cursor >= state.steps.length - 1
-  const asked = Object.values(state.answers).filter((a) => a.status === 'done').length
+  // Answered predictions in the order they happened, with their question, for the history panel
+  const history = Object.entries(state.answers)
+    .filter(([, a]) => a.status === 'done')
+    .map(([questionId, a]) => ({ questionId, ...a, question: state.steps[a.stepIndex]?.question }))
+    .sort((a, b) => a.stepIndex - b.stepIndex)
 
   return {
     ...state,
@@ -132,7 +141,8 @@ export function useSession(algorithmCode) {
     canGoNext: !blocked && !atLastReceived,
     canGoPrev: state.cursor > 0,
     done: state.finished && atLastReceived,
-    asked,
+    asked: history.length,
+    history,
     start,
     go,
     answer,

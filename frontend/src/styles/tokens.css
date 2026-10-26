@@ -1,13 +1,21 @@
 /*
  * Cody design tokens. Visual direction: "lab blackboard" — warm graphite, chalk-colored text and a
  * single vermillion accent reserved for the prediction moment. Graph states have their own hues:
- * amber = frontier, vermillion = current, mint = visited.
+ * amber = frontier, vermillion = current, mint = visited. The light theme is cool slate paper (not
+ * cream). Every text color passes WCAG AA (4.5:1) on the surfaces it is used on.
  */
 
 :root {
   --font-display: 'Bricolage Grotesque Variable', ui-sans-serif, system-ui, sans-serif;
   --font-body: 'Atkinson Hyperlegible Next Variable', ui-sans-serif, system-ui, sans-serif;
   --font-mono: 'JetBrains Mono Variable', ui-monospace, 'SFMono-Regular', monospace;
+
+  /* Type scale: nothing functional goes below --text-xs (13.6px) */
+  --text-xs: 0.8rem;
+  --text-sm: 0.88rem;
+  --text-md: 1rem;
+  --text-lg: 1.15rem;
+  --text-xl: 1.4rem;
 
   --radius-sm: 5px;
   --radius: 9px;
@@ -23,8 +31,9 @@
   --space-8: 72px;
 
   --ease-out: cubic-bezier(0.2, 0.8, 0.2, 1);
-  --header-h: 64px;
-  --page-max: 1200px;
+  --ease-out-expo: cubic-bezier(0.16, 1, 0.3, 1);
+  --header-h: 66px;
+  --page-max: 1320px;
 }
 
 :root,
@@ -38,8 +47,8 @@
   --border: #2e2923;
   --border-strong: #463f36;
   --text: #f1ebdf;
-  --text-2: #bdb3a3;
-  --text-3: #8a8173;
+  --text-2: #c4baa9;
+  --text-3: #9c9283;
 
   --accent: #ff6a3d;
   --accent-strong: #ff8b66;
@@ -56,40 +65,40 @@
   --bad-soft: rgba(255, 107, 127, 0.13);
 
   --node-fill: #1d1a16;
-  --node-stroke: #554d42;
-  --edge: #3b352d;
+  --node-stroke: #5d554a;
+  --edge: #3d372f;
   --shadow: 0 1px 0 rgba(255, 255, 255, 0.03) inset, 0 18px 40px -22px rgba(0, 0, 0, 0.75);
 }
 
 [data-theme='light'] {
   color-scheme: light;
-  --bg: #f4efe4;
-  --bg-grid: rgba(60, 45, 20, 0.08);
-  --surface: #fbf8f1;
-  --surface-2: #f1ebde;
-  --surface-3: #e7e0d0;
-  --border: #ddd4c2;
-  --border-strong: #c3b8a2;
-  --text: #1d1a15;
-  --text-2: #4f4738;
-  --text-3: #776e5f;
+  --bg: #eceef1;
+  --bg-grid: rgba(20, 23, 28, 0.08);
+  --surface: #f9fafb;
+  --surface-2: #e3e6ea;
+  --surface-3: #d8dce1;
+  --border: #d3d8de;
+  --border-strong: #b4bbc4;
+  --text: #14171c;
+  --text-2: #3a4049;
+  --text-3: #565d68;
 
-  --accent: #d9481a;
-  --accent-strong: #b93c12;
-  --accent-ink: #fff8f3;
-  --accent-soft: rgba(217, 72, 26, 0.1);
+  --accent: #b5400f;
+  --accent-strong: #973309;
+  --accent-ink: #ffffff;
+  --accent-soft: rgba(181, 64, 15, 0.1);
 
-  --frontier: #b07405;
-  --frontier-soft: rgba(176, 116, 5, 0.13);
-  --visited: #1f8455;
-  --visited-soft: rgba(31, 132, 85, 0.11);
-  --ok: #1f8455;
-  --ok-soft: rgba(31, 132, 85, 0.1);
-  --bad: #c42443;
-  --bad-soft: rgba(196, 36, 67, 0.09);
+  --frontier: #875500;
+  --frontier-soft: rgba(196, 128, 10, 0.16);
+  --visited: #136b44;
+  --visited-soft: rgba(19, 107, 68, 0.12);
+  --ok: #136b44;
+  --ok-soft: rgba(19, 107, 68, 0.1);
+  --bad: #b81f3c;
+  --bad-soft: rgba(184, 31, 60, 0.09);
 
-  --node-fill: #fffdf8;
-  --node-stroke: #b6aa92;
-  --edge: #cdc2ab;
-  --shadow: 0 14px 34px -22px rgba(70, 45, 10, 0.4);
+  --node-fill: #ffffff;
+  --node-stroke: #9aa2ad;
+  --edge: #c3c9d1;
+  --shadow: 0 14px 34px -22px rgba(20, 30, 50, 0.35);
 }

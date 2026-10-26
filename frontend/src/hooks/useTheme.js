@@ -8,7 +8,7 @@ export function useTheme() {
     setTheme((current) => {
       const next = current === 'dark' ? 'light' : 'dark'
       document.documentElement.dataset.theme = next
-      document.querySelector('meta[name="theme-color"]')?.setAttribute('content', next === 'dark' ? '#100f0d' : '#f4efe4')
+      document.querySelector('meta[name="theme-color"]')?.setAttribute('content', next === 'dark' ? '#100f0d' : '#eceef1')
       try {
         localStorage.setItem('cody-theme', next)
       } catch {
