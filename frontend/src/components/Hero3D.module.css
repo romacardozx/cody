@@ -60,6 +60,53 @@
   opacity: var(--scene-opacity, 1);
 }
 
+/* Data panel for the map scenes */
+.hud {
+  position: absolute;
+  top: var(--space-3);
+  left: var(--space-3);
+  display: grid;
+  gap: 4px;
+  min-width: 200px;
+  padding: var(--space-3) var(--space-4);
+  border-radius: var(--radius);
+  border: 1px solid var(--border);
+  background: color-mix(in srgb, var(--surface) 88%, transparent);
+  box-shadow: var(--shadow);
+  pointer-events: none;
+  opacity: 0;
+  transition: opacity 0.3s var(--ease-out);
+}
+
+.hud[data-visible='true'] {
+  opacity: var(--scene-opacity, 1);
+}
+
+.hudTitle {
+  font-family: var(--font-display);
+  font-size: var(--text-lg);
+  font-weight: 750;
+  margin-bottom: var(--space-1);
+}
+
+.hudRow {
+  display: flex;
+  justify-content: space-between;
+  gap: var(--space-4);
+  font-size: var(--text-sm);
+}
+
+.hudName {
+  color: var(--text-3);
+}
+
+.hudValue {
+  font-family: var(--font-mono);
+  font-weight: 700;
+  font-variant-numeric: tabular-nums;
+  color: var(--text);
+}
+
 .caption {
   display: grid;
   justify-items: center;
@@ -69,6 +116,8 @@
 
 .switcher {
   display: flex;
+  flex-wrap: wrap;
+  justify-content: center;
   padding: 3px;
   border-radius: 99px;
   border: 1px solid var(--border);
@@ -76,7 +125,7 @@
 }
 
 .sceneButton {
-  min-width: 92px;
+  min-width: 64px;
   height: 34px;
   padding: 0 var(--space-3);
   border: 0;

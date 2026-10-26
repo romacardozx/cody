@@ -4,6 +4,7 @@ import { useReducedMotion } from '../lib/useReducedMotion.js'
 import { createBfsScene } from './hero3d/bfsScene.js'
 import { createBubbleScene } from './hero3d/bubbleScene.js'
 import { createDijkstraScene } from './hero3d/dijkstraScene.js'
+import { createMapSearchScene } from './hero3d/mapSearchScene.js'
 import { ease } from './hero3d/timeline.js'
 import { HeroGraph } from './HeroGraph.jsx'
 import styles from './Hero3D.module.css'
@@ -28,6 +29,20 @@ const SCENES = [
     caption: 'Busca la ruta más rápida: suma minutos, no cuadras',
     legend: [['frontier', 'en frontera'], ['current', 'actual y ruta'], ['visited', 'cerrado']],
     create: createDijkstraScene,
+  },
+  {
+    key: 'astar',
+    name: 'A*',
+    caption: 'Dijkstra con brújula: mira hacia el destino y explora mucho menos',
+    legend: [['frontier', 'explorado'], ['current', 'ruta']],
+    create: (ctx) => createMapSearchScene(ctx, 'astar'),
+  },
+  {
+    key: 'bidirectional',
+    name: 'Bidireccional',
+    caption: 'Dos búsquedas, desde el origen y desde el destino, que se encuentran a mitad de camino',
+    legend: [['frontier', 'desde el origen'], ['visited', 'desde el destino'], ['current', 'ruta']],
+    create: (ctx) => createMapSearchScene(ctx, 'bidirectional'),
   },
   {
     key: 'bubble',
@@ -77,6 +92,7 @@ export default function Hero3D() {
   const mount = useRef(null)
   const ask = useRef(null)
   const labels = useRef([])
+  const hud = useRef(null)
   const selectScene = useRef(() => {})
   const reduceMotion = useReducedMotion()
   const [webgl] = useState(supportsWebGL)
@@ -172,7 +188,7 @@ export default function Hero3D() {
       phaseTime += dt
       if (!still) {
         if (phase === 'in' && phaseTime >= FADE_IN) phase = 'play'
-        if (phase === 'hold' && phaseTime >= HOLD) [phase, phaseTime] = ['out', 0]
+        if (phase === 'hold' && phaseTime >= (current.hold ?? HOLD)) [phase, phaseTime] = ['out', 0]
         if (phase === 'out' && phaseTime >= FADE_OUT) {
           load(pending ?? (index + 1) % SCENES.length)
           pending = null
@@ -203,6 +219,20 @@ export default function Hero3D() {
       } else {
         ring.material.opacity += (0 - ring.material.opacity) * (still ? 1 : ease(dt, 10))
         ask.current.dataset.visible = 'false'
+      }
+      // Data panel (search scenes): only touch the DOM when the text changes
+      const hudText = result.hud ? `${result.hud.title}|${result.hud.rows.flat().join('|')}` : ''
+      if (hud.current.dataset.text !== hudText) {
+        hud.current.dataset.text = hudText
+        hud.current.dataset.visible = result.hud ? 'true' : 'false'
+        if (result.hud) {
+          hud.current.querySelector('[data-title]').textContent = result.hud.title
+          hud.current.querySelectorAll('[data-row]').forEach((row, i) => {
+            const [name, value] = result.hud.rows[i] ?? ['', '']
+            row.firstChild.textContent = name
+            row.lastChild.textContent = value
+          })
+        }
       }
       labels.current.forEach((element, i) => {
         const label = result.labels[i]
@@ -285,6 +315,15 @@ export default function Hero3D() {
       <div ref={mount} className={styles.stage}>
         <div className={styles.canvas} aria-hidden="true" />
         <span ref={ask} className={styles.ask} data-visible="false" aria-hidden="true" />
+        <div ref={hud} className={styles.hud} data-visible="false" aria-hidden="true">
+          <span data-title className={styles.hudTitle} />
+          {[0, 1, 2].map((i) => (
+            <span key={i} data-row className={styles.hudRow}>
+              <span className={styles.hudName} />
+              <span className={styles.hudValue} />
+            </span>
+          ))}
+        </div>
         {[0, 1].map((i) => (
           <span key={i} ref={(element) => (labels.current[i] = element)} className={styles.label} data-visible="false" aria-hidden="true" />
         ))}
