@@ -1,33 +1,35 @@
--- Datos de ejemplo para la demo (punto 6 del enunciado).
+-- Sample data for the demo (section 6 of the assignment).
 --
--- Este script corre en CADA arranque (spring.sql.init.mode=always), así que todo
--- INSERT tiene que ser idempotente: solo inserta si la fila todavía no existe.
+-- This script runs on EVERY startup (spring.sql.init.mode=always), so every
+-- INSERT must be idempotent: it only inserts when the row does not exist yet.
 --
--- Reglas:
---   1. Una sentencia por línea lógica, terminada en ';'. Spring separa el script
---      por ';', así que no usar bloques BEGIN ... END con varias sentencias adentro.
---   2. Buscar por una clave natural (codigo, nombre), nunca por el id autogenerado.
---   3. No insertar ids a mano: SQL Server los genera (IDENTITY) y forzarlos
---      requiere SET IDENTITY_INSERT.
---   4. Solo referenciar tablas que ya existan como entidad JPA: SQL Server valida
---      la sentencia entera antes de ejecutarla, aunque esté dentro de un IF.
+-- Rules:
+--   1. One statement per logical line, ending with ';'. Spring splits the script
+--      on ';', so do not use BEGIN ... END blocks with several statements inside.
+--   2. Look rows up by a natural key (code, name), never by the generated id.
+--   3. Do not insert ids by hand: SQL Server generates them (IDENTITY) and forcing
+--      them requires SET IDENTITY_INSERT.
+--   4. Only reference tables that already exist as a JPA entity: SQL Server
+--      validates the whole statement before running it, even inside an IF.
 --
--- Patrón:
---   IF NOT EXISTS (SELECT 1 FROM tabla WHERE clave = 'X') INSERT INTO tabla (clave, ...) VALUES ('X', ...);
+-- Pattern:
+--   IF NOT EXISTS (SELECT 1 FROM some_table WHERE code = 'X') INSERT INTO some_table (code, ...) VALUES ('X', ...);
 --
--- TODO (Persona 1): descomentar cuando exista la entidad Algoritmo y ajustar las columnas.
--- Después sumar el pseudocódigo y los escenarios precargados.
+-- Codes and column names are in English; user-facing text (name, description) is in Spanish.
+--
+-- TODO (Person 1): uncomment once the Algorithm entity exists and adjust the columns.
+-- Then add the pseudocode and the preloaded scenarios.
 
 SELECT 1;
 
--- IF NOT EXISTS (SELECT 1 FROM algoritmo WHERE codigo = 'BURBUJA')
---     INSERT INTO algoritmo (codigo, nombre, familia, descripcion) VALUES ('BURBUJA', 'Ordenamiento burbuja', 'ARREGLOS', 'Compara pares adyacentes y los intercambia si están desordenados. O(n^2).');
+-- IF NOT EXISTS (SELECT 1 FROM algorithm WHERE code = 'BUBBLE_SORT')
+--     INSERT INTO algorithm (code, name, family, description) VALUES ('BUBBLE_SORT', 'Ordenamiento burbuja', 'ARRAY', 'Compara pares adyacentes y los intercambia si están desordenados. O(n^2).');
 --
--- IF NOT EXISTS (SELECT 1 FROM algoritmo WHERE codigo = 'BUSQUEDA_BINARIA')
---     INSERT INTO algoritmo (codigo, nombre, familia, descripcion) VALUES ('BUSQUEDA_BINARIA', 'Búsqueda binaria', 'ARREGLOS', 'Divide a la mitad un arreglo ordenado en cada paso. O(log n).');
+-- IF NOT EXISTS (SELECT 1 FROM algorithm WHERE code = 'BINARY_SEARCH')
+--     INSERT INTO algorithm (code, name, family, description) VALUES ('BINARY_SEARCH', 'Búsqueda binaria', 'ARRAY', 'Divide a la mitad un arreglo ordenado en cada paso. O(log n).');
 --
--- IF NOT EXISTS (SELECT 1 FROM algoritmo WHERE codigo = 'BFS')
---     INSERT INTO algoritmo (codigo, nombre, familia, descripcion) VALUES ('BFS', 'Búsqueda en anchura (BFS)', 'GRAFOS', 'Recorre el grafo por niveles usando una cola. O(V + E).');
+-- IF NOT EXISTS (SELECT 1 FROM algorithm WHERE code = 'BFS')
+--     INSERT INTO algorithm (code, name, family, description) VALUES ('BFS', 'Búsqueda en anchura (BFS)', 'GRAPH', 'Recorre el grafo por niveles usando una cola. O(V + E).');
 --
--- IF NOT EXISTS (SELECT 1 FROM algoritmo WHERE codigo = 'DIJKSTRA')
---     INSERT INTO algoritmo (codigo, nombre, familia, descripcion) VALUES ('DIJKSTRA', 'Dijkstra', 'GRAFOS', 'Camino mínimo desde un origen con pesos no negativos. O((V + E) log V) con cola de prioridad.');
+-- IF NOT EXISTS (SELECT 1 FROM algorithm WHERE code = 'DIJKSTRA')
+--     INSERT INTO algorithm (code, name, family, description) VALUES ('DIJKSTRA', 'Dijkstra', 'GRAPH', 'Camino mínimo desde un origen con pesos no negativos. O((V + E) log V) con cola de prioridad.');

@@ -1,5 +1,5 @@
-# SQL Server para desarrollo. Levantar con: docker compose up -d
-# Las contraseñas salen del archivo .env (copiar .env.example a .env).
+# SQL Server for development. Start it with: docker compose up -d
+# Passwords come from the .env file (copy .env.example to .env).
 services:
   sqlserver:
     image: mcr.microsoft.com/mssql/server:2025-latest
@@ -19,7 +19,7 @@ services:
       retries: 30
       start_period: 20s
 
-  # Corre una vez y termina: crea la base "cody" y el login "cody_app" si no existen.
+  # Runs once and exits: creates the "cody" database and the "cody_app" login if missing.
   sqlserver-init:
     image: mcr.microsoft.com/mssql/server:2025-latest
     depends_on:

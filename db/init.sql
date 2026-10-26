@@ -1,5 +1,5 @@
--- Crea la base y el usuario de la aplicación. Idempotente: se puede correr varias veces.
--- Lo ejecuta el servicio sqlserver-init de compose.yaml; $(DB_PASSWORD) lo reemplaza sqlcmd.
+-- Creates the database and the application user. Idempotent: safe to run many times.
+-- Run by the sqlserver-init service in compose.yaml; sqlcmd replaces $(DB_PASSWORD).
 
 IF DB_ID('cody') IS NULL
     CREATE DATABASE cody;

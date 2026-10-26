@@ -12,7 +12,7 @@
 	<artifactId>cody</artifactId>
 	<version>0.0.1-SNAPSHOT</version>
 	<name>cody</name>
-	<description>Visualizador de algoritmos con predicción (TPI Programación III, UNSAM)</description>
+	<description>Algorithm visualizer with predictions (TPI Programación III, UNSAM)</description>
 	<url/>
 	<licenses>
 		<license/>
@@ -94,7 +94,7 @@
 				<artifactId>spring-boot-maven-plugin</artifactId>
 			</plugin>
 
-			<!-- Lombok como procesador de anotaciones (@Getter, @RequiredArgsConstructor, ...) -->
+			<!-- Lombok as annotation processor (@Getter, @RequiredArgsConstructor, ...) -->
 			<plugin>
 				<groupId>org.apache.maven.plugins</groupId>
 				<artifactId>maven-compiler-plugin</artifactId>
@@ -128,7 +128,7 @@
 				</executions>
 			</plugin>
 
-			<!-- Cobertura de tests: reporte en target/site/jacoco/index.html tras ./mvnw verify -->
+			<!-- Test coverage: report at target/site/jacoco/index.html after ./mvnw verify -->
 			<plugin>
 				<groupId>org.jacoco</groupId>
 				<artifactId>jacoco-maven-plugin</artifactId>
@@ -146,7 +146,7 @@
 				</executions>
 			</plugin>
 
-			<!-- Compila el frontend React. En desarrollo se saltea con -Dskip.yarn -Dskip.installnodeyarn -->
+			<!-- Builds the React frontend. Skip it in development with -Dskip.yarn -Dskip.installnodeyarn -->
 			<plugin>
 				<groupId>com.github.eirslett</groupId>
 				<artifactId>frontend-maven-plugin</artifactId>
@@ -174,7 +174,7 @@
 				</executions>
 			</plugin>
 
-			<!-- Copia frontend/dist a static/ para servir todo desde el mismo .jar -->
+			<!-- Copies frontend/dist into static/ so a single .jar serves everything -->
 			<plugin>
 				<artifactId>maven-resources-plugin</artifactId>
 				<executions>
