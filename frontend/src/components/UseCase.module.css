@@ -43,7 +43,8 @@
 
 .text {
   color: var(--text-2);
-  max-width: 62ch;
+  /* ch is the width of "0"; average letters are narrower, so 50ch is about 72 characters */
+  max-width: 50ch;
 }
 
 .mapping {
