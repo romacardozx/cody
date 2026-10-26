@@ -365,6 +365,7 @@ Todo depende de esto. Se define **primero** y no se cambia sin acordarlo entre l
 ```java
 public interface TraceableAlgorithm<I extends AlgorithmInput> {
     String code();          // "DIJKSTRA"
+    Class<I> inputType();   // GraphInput.class o ArrayInput.class
     Trace run(I input);     // traza completa
 }
 

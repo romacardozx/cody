@@ -19,6 +19,13 @@ public interface TraceableAlgorithm<I extends AlgorithmInput> {
     String code();
 
     /**
+     * Kind of input this algorithm expects, so callers can check it before running.
+     *
+     * @return {@code GraphInput.class} or {@code ArrayInput.class}
+     */
+    Class<I> inputType();
+
+    /**
      * Runs the algorithm over the given input.
      *
      * @param input the scenario to run on, already validated

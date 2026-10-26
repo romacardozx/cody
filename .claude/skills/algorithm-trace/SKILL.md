@@ -6,6 +6,9 @@ description: Usar al implementar o modificar un algoritmo del paquete engine, o 
 # Contrato de la traza (paquete `ar.edu.unsam.cody.engine`)
 
 - Implementar `TraceableAlgorithm<GraphInput>` o `TraceableAlgorithm<ArrayInput>`; sin Spring, JPA ni Lombok (lo verifica `EngineIsolationTest`).
+- Métodos: `code()` (el del catálogo), `inputType()` (`GraphInput.class` / `ArrayInput.class`) y `run(input)`.
+- Armar la traza con `TraceRecorder`: `record(...)` por paso y `askOnLastStep(...)` para preguntar en el paso ANTERIOR al que revela la respuesta.
+- Registrar el algoritmo con un `@Bean` en `config/EngineConfig`; `AlgorithmRegistry` lo encuentra solo.
 - Recibe un `GraphInput` / `ArrayInput` (records del engine), nunca la entidad `Scenario`. El service convierte.
 - Devuelve un `Trace`; su constructor valida los invariantes, así que una traza mal armada falla en el test del algoritmo.
 - Cada `Step` es una foto COMPLETA: `elementStates` tiene TODOS los elementos en TODOS los pasos.
