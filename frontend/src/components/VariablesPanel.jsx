@@ -7,11 +7,11 @@ function parseList(value) {
   return inner ? inner.split(',').map((item) => item.trim()) : []
 }
 
-// What each variable means, read by screen readers and shown on hover
+// What each variable means, written next to its name: a name alone ("actual") is not enough
 const MEANING = {
-  cola: 'Nodos descubiertos que esperan su turno',
-  u: 'Nodo que se está procesando',
-  v: 'Vecino de u que se está mirando',
+  cola: 'nodos descubiertos que esperan su turno',
+  actual: 'el nodo que se está procesando',
+  vecino: 'el vecino de actual que se está mirando',
 }
 
 /**
@@ -33,7 +33,10 @@ export function VariablesPanel({ variables, labelOf, conceal }) {
           const items = isList ? parseList(value) : []
           return (
             <div key={name} className={styles.var}>
-              <dt className={styles.varName} title={MEANING[name]}>{name}</dt>
+              <dt className={styles.varHead}>
+                <span className={styles.varName}>{name}</span>
+                {MEANING[name] && <span className={styles.varMeaning}>{MEANING[name]}</span>}
+              </dt>
               <dd className={styles.varValue}>
                 {isList && conceal ? (
                   <div className={styles.concealed} aria-label={`${name}: oculta hasta que respondas`}>
@@ -70,7 +73,7 @@ export function VariablesPanel({ variables, labelOf, conceal }) {
                 ) : (
                   <motion.span
                     key={value}
-                    className={`${styles.scalar} ${name === 'u' ? '' : styles.scalarSoft}`}
+                    className={`${styles.scalar} ${name === 'actual' ? '' : styles.scalarSoft}`}
                     initial={{ scale: 0.6, opacity: 0 }}
                     animate={{ scale: 1, opacity: 1 }}
                     transition={{ type: 'spring', stiffness: 520, damping: 26 }}

@@ -425,8 +425,8 @@ public record Question(String id, String prompt, List<String> options, String co
 | **Algorithm** (`algorithm`) | Catálogo (solo lectura, lo carga `data.sql`): code, name, family, description, complejidades. El pseudocódigo NO va acá: lo define cada algoritmo del engine, porque los pasos apuntan a sus líneas |
 | **Scenario** (`scenario` + `scenario_node`, `scenario_edge`, `scenario_array_value`) | Grafos o arreglos que el alumno crea, edita y guarda (nodos con `x, y`). ABML completo |
 | **AppUser** (`app_user`) | `User` es palabra reservada en SQL Server |
-| **Session** (`session`) | Cada recorrido de un algoritmo: aciertos, errores, fecha |
-| **Prediction** (`prediction`) | Qué respondió, en qué tipo de paso, si acertó |
+| **LearningSession** (`learning_session`) | Cada recorrido de un algoritmo: alumno (id anónimo del navegador), escenario (copia del nombre, sin FK), aciertos, errores, inicio y fin. No se llama `Session` para no confundirla con la de Hibernate |
+| **Prediction** (`prediction`) | Qué se preguntó, en qué paso y tipo de paso, qué respondió, la correcta, si acertó y las dos explicaciones, tal como se mostraron |
 | **Mastery** (`mastery`) | Nivel del usuario por algoritmo y tipo de paso |
 
 **Validaciones funcionales (punto 3.4)**, implementadas en `ScenarioRules` y `SessionService`: grafo de 2 a 26 nodos con ids únicos; aristas entre nodos existentes, sin lazos, sin repetidas y con peso ≥ 0; nodo inicial existente; arreglo de 1 a 30 valores; nombre de escenario único; el tipo de escenario tiene que coincidir con el algoritmo; no responder dos veces la misma pregunta; no modificar ni borrar un escenario con una sesión en curso. Pendiente: arreglo ordenado para búsqueda binaria.
@@ -439,6 +439,8 @@ GET    /api/scenarios?type=GRAPH    GET /api/scenarios/{id}      POST /api/scena
 PUT    /api/scenarios/{id}      DELETE /api/scenarios/{id}
 POST   /api/sessions                       { algorithmCode, scenarioId } → pasos hasta la 1ª pregunta
 POST   /api/sessions/{id}/predictions      { questionId, answer } → correct, explanation, pasos siguientes
+GET    /api/sessions?learnerId=…              historial del alumno (últimas 50)
+GET    /api/sessions/{id}                     una sesión pasada con sus predicciones
 GET    /api/users/{id}/mastery
 ```
 

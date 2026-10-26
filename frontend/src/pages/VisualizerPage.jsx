@@ -3,6 +3,7 @@ import { AnimatePresence, MotionConfig, motion } from 'motion/react'
 import { getAlgorithm, getScenarios } from '../api/cody.js'
 import { CodePanel } from '../components/CodePanel.jsx'
 import { ErrorBoundary } from '../components/ErrorBoundary.jsx'
+import { GlossaryPanel } from '../components/GlossaryPanel.jsx'
 import { GraphView } from '../components/GraphView.jsx'
 import { HistoryPanel } from '../components/HistoryPanel.jsx'
 import { Icon } from '../components/Icon.jsx'
@@ -277,6 +278,7 @@ function Player({ algorithm, scenarios }) {
             conceal={Boolean(question) && questionAnswer?.status !== 'done'}
           />
           <HistoryPanel score={session.score} history={session.history} labelOf={labelOf} onGo={go} />
+          <GlossaryPanel />
           <p className={styles.shortcuts}>
             <kbd>Espacio</kbd> reproducir · <kbd>←</kbd> <kbd>→</kbd> pasos · <kbd>1</kbd>–<kbd>9</kbd> responder
           </p>

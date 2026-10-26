@@ -26,16 +26,14 @@
 }
 
 .var {
-  display: grid;
-  grid-template-columns: 56px 1fr;
-  align-items: center;
-  gap: var(--space-3);
+  display: block;
 }
 
 .varName {
   font-family: var(--font-mono);
-  font-size: var(--text-sm);
-  color: var(--text-3);
+  font-size: var(--text-md);
+  font-weight: 700;
+  color: var(--text);
 }
 
 .varValue {
@@ -309,4 +307,88 @@
   border-radius: 4px;
   border: 0;
   background: var(--text);
+}
+
+.historyLink {
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+  margin-top: var(--space-3);
+  color: var(--accent);
+  font-size: var(--text-sm);
+  font-weight: 650;
+  text-decoration: none;
+}
+
+.historyLink:hover {
+  text-decoration: underline;
+  text-underline-offset: 3px;
+}
+
+/* Variables: name and what it means, then its value */
+.varHead {
+  display: flex;
+  align-items: baseline;
+  gap: var(--space-2);
+  margin: 0 0 6px;
+}
+
+.varMeaning {
+  font-size: var(--text-sm);
+  color: var(--text-3);
+}
+
+/* Glossary */
+.glossaryHint {
+  margin: 0 0 var(--space-3);
+  font-size: var(--text-sm);
+  color: var(--text-2);
+}
+
+.glossaryList {
+  margin: 0;
+  display: grid;
+  gap: 2px;
+}
+
+.glossaryItem {
+  border-radius: var(--radius);
+}
+
+.glossaryItem summary {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 6px var(--space-2);
+  border-radius: var(--radius);
+  cursor: pointer;
+  list-style: none;
+  font-family: var(--font-display);
+  font-weight: 700;
+}
+
+.glossaryItem summary::-webkit-details-marker {
+  display: none;
+}
+
+.glossaryItem summary::after {
+  content: '+';
+  font-family: var(--font-mono);
+  font-weight: 400;
+  color: var(--text-3);
+}
+
+.glossaryItem[open] summary::after {
+  content: '−';
+}
+
+.glossaryItem summary:hover {
+  background: var(--surface-2);
+}
+
+.glossaryItem p {
+  margin: 0;
+  padding: 0 var(--space-2) var(--space-3);
+  font-size: var(--text-sm);
+  color: var(--text-2);
 }

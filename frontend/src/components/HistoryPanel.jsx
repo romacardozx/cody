@@ -1,11 +1,13 @@
 import { AnimatePresence, motion } from 'motion/react'
 import { Icon } from './Icon.jsx'
+import { Link } from './Link.jsx'
 import { RichText } from './RichText.jsx'
 import styles from './Panels.module.css'
 
 /**
- * Score and every prediction so far, with its explanation, so mistakes can be reviewed after the
- * animation moved on. Each entry can take the user back to the step where it was asked.
+ * Score and every prediction of this session, with its explanation, so mistakes can be reviewed
+ * after the animation moved on. Each entry can take the user back to the step where it was asked;
+ * everything is also stored and shows up on the history page.
  */
 export function HistoryPanel({ score, history, labelOf, onGo }) {
   return (
@@ -65,6 +67,9 @@ export function HistoryPanel({ score, history, labelOf, onGo }) {
           </AnimatePresence>
         </ol>
       )}
+      <Link to="/history" className={styles.historyLink}>
+        Ver todo el historial <Icon name="arrow" size={15} />
+      </Link>
     </section>
   )
 }

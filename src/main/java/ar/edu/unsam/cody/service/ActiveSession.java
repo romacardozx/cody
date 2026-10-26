@@ -4,6 +4,7 @@ import ar.edu.unsam.cody.engine.Question;
 import ar.edu.unsam.cody.engine.Step;
 import ar.edu.unsam.cody.engine.Trace;
 import java.util.List;
+import java.util.Map;
 import java.util.UUID;
 
 /**
@@ -17,16 +18,23 @@ final class ActiveSession {
 
     private final UUID id;
     private final Long scenarioId;
+    private final Map<String, String> labels;
     private final Trace trace;
     private int nextIndex;
     private Question pendingQuestion;
     private int correctCount;
     private int wrongCount;
 
-    ActiveSession(UUID id, Long scenarioId, Trace trace) {
+    ActiveSession(UUID id, Long scenarioId, Trace trace, Map<String, String> labels) {
         this.id = id;
         this.scenarioId = scenarioId;
         this.trace = trace;
+        this.labels = Map.copyOf(labels);
+    }
+
+    /** Text the user sees for an element id (node label); the id itself when there is none. */
+    String labelOf(String elementId) {
+        return labels.getOrDefault(elementId, elementId);
     }
 
     UUID id() {

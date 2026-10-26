@@ -74,7 +74,7 @@ class BfsTest {
             Question question = step.question();
             Step next = trace.steps().get(step.index() + 1);
             assertThat(next.type()).isEqualTo(StepType.DEQUEUE);
-            assertThat(next.variables()).containsEntry("u", question.correctAnswer());
+            assertThat(next.variables()).containsEntry("actual", question.correctAnswer());
         }
     }
 
@@ -132,9 +132,9 @@ class BfsTest {
 
         // D is reached from B first; when C looks at D it is already discovered
         Step skipD = trace.steps().stream()
-                .filter(step -> step.type() == StepType.SKIP && "D".equals(step.variables().get("v")))
+                .filter(step -> step.type() == StepType.SKIP && "D".equals(step.variables().get("vecino")))
                 .findFirst().orElseThrow();
-        assertThat(skipD.variables()).containsEntry("u", "C");
+        assertThat(skipD.variables()).containsEntry("actual", "C");
         assertThat(skipD.explanation()).contains("ya estaba descubierto");
         // Skipping never enqueues twice: every node is dequeued exactly once
         assertThat(dequeueOrder(trace)).doesNotHaveDuplicates();
@@ -144,7 +144,7 @@ class BfsTest {
     void javaListingCoversEveryPseudocodeLine() {
         assertThat(Bfs.JAVA.lineForPseudocode()).hasSize(Bfs.PSEUDOCODE.size());
         assertThat(bfs.javaListing().lines().get(Bfs.JAVA.javaLineFor(5) - 1)).contains("queue.poll()");
-        assertThat(bfs.javaListing().lines().get(Bfs.JAVA.javaLineFor(9) - 1)).contains("queue.add(v)");
+        assertThat(bfs.javaListing().lines().get(Bfs.JAVA.javaLineFor(9) - 1)).contains("queue.add(neighbor)");
     }
 
     @Test
@@ -194,7 +194,7 @@ class BfsTest {
     private static List<String> dequeueOrder(Trace trace) {
         return trace.steps().stream()
                 .filter(step -> step.type() == StepType.DEQUEUE)
-                .map(step -> step.variables().get("u"))
+                .map(step -> step.variables().get("actual"))
                 .toList();
     }
 

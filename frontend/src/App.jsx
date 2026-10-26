@@ -8,6 +8,7 @@ import styles from './App.module.css'
 // The visualizer (and the motion library it uses) is loaded only when needed, or ahead of time
 // when the user hovers an algorithm card
 const VisualizerPage = lazy(() => import('./pages/VisualizerPage.jsx'))
+const HistoryPage = lazy(() => import('./pages/HistoryPage.jsx'))
 
 export default function App() {
   const { pathname } = useLocation()
@@ -16,6 +17,7 @@ export default function App() {
   let page
   if (pathname === '/' || pathname === '/algorithms') page = <HomePage />
   else if (visualizer) page = <VisualizerPage key={visualizer.code} code={visualizer.code} />
+  else if (pathname === '/history') page = <HistoryPage />
   else page = <NotFound />
 
   return (

@@ -2,6 +2,7 @@ package ar.edu.unsam.cody.service;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
+import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
 
@@ -13,7 +14,13 @@ import ar.edu.unsam.cody.dto.StepDto;
 import ar.edu.unsam.cody.engine.graph.Bfs;
 import ar.edu.unsam.cody.exception.BusinessRuleException;
 import ar.edu.unsam.cody.exception.ResourceNotFoundException;
+import ar.edu.unsam.cody.dto.SessionDetailDto;
+import ar.edu.unsam.cody.engine.StepType;
+import ar.edu.unsam.cody.model.LearningSession;
+import ar.edu.unsam.cody.repository.LearningSessionRepository;
 import ar.edu.unsam.cody.repository.ScenarioRepository;
+import java.util.HashMap;
+import java.util.Map;
 import java.util.List;
 import java.util.Optional;
 import java.util.UUID;
@@ -27,6 +34,7 @@ class SessionServiceTest {
 
     private ActiveSessionStore activeSessions;
     private SessionService service;
+    private final Map<UUID, LearningSession> stored = new HashMap<>();
 
     @BeforeEach
     void setUp() {
@@ -35,9 +43,22 @@ class SessionServiceTest {
         when(repository.findById(ARRAY)).thenReturn(Optional.of(TestScenarios.arrayEntity(ARRAY)));
         when(repository.findById(99L)).thenReturn(Optional.empty());
 
+        // History repository backed by a map, to check what gets stored
+        LearningSessionRepository history = mock(LearningSessionRepository.class);
+        when(history.save(any(LearningSession.class))).thenAnswer(invocation -> {
+            LearningSession session = invocation.getArgument(0);
+            stored.put(session.getId(), session);
+            return session;
+        });
+        when(history.findById(any(UUID.class))).thenAnswer(invocation -> Optional.ofNullable(stored.get(invocation.getArgument(0))));
+        when(history.findWithPredictionsById(any(UUID.class)))
+                .thenAnswer(invocation -> Optional.ofNullable(stored.get(invocation.getArgument(0))));
+        when(history.findTop50ByLearnerIdOrderByStartedAtDesc("ana"))
+                .thenAnswer(invocation -> stored.values().stream().filter(s -> "ana".equals(s.getLearnerId())).toList());
+
         activeSessions = new ActiveSessionStore();
         ScenarioService scenarios = new ScenarioService(repository, activeSessions);
-        service = new SessionService(new AlgorithmRegistry(List.of(new Bfs())), scenarios, activeSessions);
+        service = new SessionService(new AlgorithmRegistry(List.of(new Bfs())), scenarios, activeSessions, history);
     }
 
     private SessionResponse startBfs() {
@@ -114,6 +135,38 @@ class SessionServiceTest {
         service.answer(session.sessionId(), new PredictionRequest(session.steps().getLast().question().id(), "B"));
 
         assertThat(activeSessions.hasUnfinishedSessionFor(TRIANGLE)).isFalse();
+    }
+
+    @Test
+    void storesTheSessionAndEachPredictionForTheHistory() {
+        SessionResponse session = service.start(new StartSessionRequest("BFS", TRIANGLE, "ana"));
+        String questionId = session.steps().getLast().question().id();
+
+        service.answer(session.sessionId(), new PredictionRequest(questionId, "C"));
+
+        SessionDetailDto detail = service.detail(session.sessionId());
+        assertThat(detail.summary().scenarioName()).isEqualTo("Triángulo");
+        assertThat(detail.summary().wrongCount()).isEqualTo(1);
+        assertThat(detail.summary().finishedAt()).isNotNull();
+        SessionDetailDto.PredictionDto prediction = detail.predictions().getFirst();
+        assertThat(prediction.stepNumber()).isEqualTo(session.steps().getLast().index() + 1);
+        assertThat(prediction.stepType()).isEqualTo(StepType.VISIT);
+        assertThat(prediction.choice()).isEqualTo("C");
+        assertThat(prediction.correctAnswer()).isEqualTo("B");
+        assertThat(prediction.correct()).isFalse();
+        assertThat(prediction.explanation()).contains("FIFO");
+        assertThat(prediction.choiceFeedback()).isNotBlank();
+        assertThat(service.historyOf("ana")).extracting(s -> s.id()).containsExactly(session.sessionId());
+    }
+
+    @Test
+    void historyNeedsALearner() {
+        assertThatThrownBy(() -> service.historyOf(" ")).isInstanceOf(BusinessRuleException.class);
+    }
+
+    @Test
+    void unknownStoredSessionIsNotFound() {
+        assertThatThrownBy(() -> service.detail(UUID.randomUUID())).isInstanceOf(ResourceNotFoundException.class);
     }
 
     @Test

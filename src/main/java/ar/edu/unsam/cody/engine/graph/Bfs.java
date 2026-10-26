@@ -42,34 +42,34 @@ public final class Bfs implements TraceableAlgorithm<GraphInput> {
             "  cola ← [inicio]",
             "  marcar inicio como descubierto",
             "  mientras la cola tenga nodos:",
-            "    u ← sacar el primero de la cola",
-            "    para cada vecino v de u:",
-            "      si v no fue descubierto:",
-            "        marcar v como descubierto",
-            "        agregar v al final de la cola",
-            "    marcar u como visitado",
+            "    actual ← sacar el primero de la cola",
+            "    para cada vecino de actual:",
+            "      si vecino no fue descubierto:",
+            "        marcar vecino como descubierto",
+            "        agregar vecino al final de la cola",
+            "    marcar actual como visitado",
             "  fin: la cola quedó vacía");
 
-    /** The same algorithm in plain Java, without tracing; identifiers in English like the rest of the code. */
+    /** The same algorithm in plain Java, without tracing (Google style, 2-space indent). */
     public static final JavaListing JAVA = new JavaListing(
             List.of(
                     "List<String> bfs(Graph graph, String start) {",
-                    "    Deque<String> queue = new ArrayDeque<>();",
-                    "    Set<String> discovered = new HashSet<>();",
-                    "    List<String> order = new ArrayList<>();",
-                    "    queue.add(start);",
-                    "    discovered.add(start);",
-                    "    while (!queue.isEmpty()) {",
-                    "        String u = queue.poll();",
-                    "        for (String v : graph.neighbors(u)) {",
-                    "            if (!discovered.contains(v)) {",
-                    "                discovered.add(v);",
-                    "                queue.add(v);",
-                    "            }",
-                    "        }",
-                    "        order.add(u);",
+                    "  Deque<String> queue = new ArrayDeque<>();",
+                    "  Set<String> discovered = new HashSet<>();",
+                    "  List<String> order = new ArrayList<>();",
+                    "  queue.add(start);",
+                    "  discovered.add(start);",
+                    "  while (!queue.isEmpty()) {",
+                    "    String current = queue.poll();",
+                    "    for (String neighbor : graph.neighbors(current)) {",
+                    "      if (!discovered.contains(neighbor)) {",
+                    "        discovered.add(neighbor);",
+                    "        queue.add(neighbor);",
+                    "      }",
                     "    }",
-                    "    return order;",
+                    "    order.add(current);",
+                    "  }",
+                    "  return order;",
                     "}"),
             // Java line for each of the 11 pseudocode lines
             List.of(1, 5, 6, 7, 8, 9, 10, 11, 12, 15, 17));
@@ -222,14 +222,14 @@ public final class Bfs implements TraceableAlgorithm<GraphInput> {
         }
 
         private void record(StepType type, int line, List<String> highlights, String explanation) {
-            // Variables, options and highlights use node ids; the frontend maps them to labels
+            // Variable names are the pseudocode ones (user-facing); values are node ids the frontend maps to labels
             Map<String, String> variables = new LinkedHashMap<>();
             variables.put("cola", queue.toString());
             if (current != null) {
-                variables.put("u", current);
+                variables.put("actual", current);
             }
             if (neighbor != null) {
-                variables.put("v", neighbor);
+                variables.put("vecino", neighbor);
             }
             recorder.record(type, line, states, levels, highlights, variables, explanation);
         }

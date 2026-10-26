@@ -1,4 +1,5 @@
 import { request } from './http.js'
+import { learnerId } from '../lib/learner.js'
 
 // Read-only resources are cached as promises: the same request is never made twice, prefetching
 // on hover makes the next page instant, and React's use() can suspend on them.
@@ -29,7 +30,12 @@ export function prefetchVisualizer(algorithm) {
 }
 
 export const startSession = (algorithmCode, scenarioId, signal) =>
-  request('/api/sessions', { method: 'POST', body: { algorithmCode, scenarioId }, signal })
+  request('/api/sessions', { method: 'POST', body: { algorithmCode, scenarioId, learnerId: learnerId() }, signal })
 
 export const answerQuestion = (sessionId, questionId, answer) =>
   request(`/api/sessions/${sessionId}/predictions`, { method: 'POST', body: { questionId, answer } })
+
+// History is not cached: it changes every time the user answers
+export const getHistory = () => request(`/api/sessions?learnerId=${encodeURIComponent(learnerId())}`)
+
+export const getSessionDetail = (sessionId) => request(`/api/sessions/${sessionId}`)

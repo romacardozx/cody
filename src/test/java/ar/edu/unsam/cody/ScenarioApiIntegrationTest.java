@@ -87,6 +87,37 @@ class ScenarioApiIntegrationTest {
     }
 
     @Test
+    void predictionsAreStoredAndShowUpInTheHistory() throws Exception {
+        String scenarios = mockMvc.perform(get("/api/scenarios").param("type", "GRAPH"))
+                .andReturn().getResponse().getContentAsString();
+        java.util.List<Integer> ids = JsonPath.read(scenarios, "$[?(@.name == 'Rombo con cola')].id");
+        String learner = "it-" + java.util.UUID.randomUUID();
+
+        String started = mockMvc.perform(post("/api/sessions").contentType(MediaType.APPLICATION_JSON)
+                        .content("{\"algorithmCode\": \"BFS\", \"scenarioId\": " + ids.getFirst()
+                                + ", \"learnerId\": \"" + learner + "\"}"))
+                .andExpect(status().isCreated())
+                .andReturn().getResponse().getContentAsString();
+        String sessionId = JsonPath.read(started, "$.sessionId");
+        String questionId = JsonPath.read(started, "$.steps[-1].question.id");
+
+        mockMvc.perform(post("/api/sessions/{id}/predictions", sessionId).contentType(MediaType.APPLICATION_JSON)
+                        .content("{\"questionId\": \"" + questionId + "\", \"answer\": \"C\"}"))
+                .andExpect(status().isOk());
+
+        mockMvc.perform(get("/api/sessions").param("learnerId", learner))
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("$", hasSize(1)))
+                .andExpect(jsonPath("$[0].scenarioName").value("Rombo con cola"))
+                .andExpect(jsonPath("$[0].wrongCount").value(1));
+        mockMvc.perform(get("/api/sessions/{id}", sessionId))
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("$.predictions[0].choice").value("C"))
+                .andExpect(jsonPath("$.predictions[0].correctAnswer").value("B"))
+                .andExpect(jsonPath("$.predictions[0].explanation").isNotEmpty());
+    }
+
+    @Test
     void bfsRunsOnASampleScenario() throws Exception {
         String scenarios = mockMvc.perform(get("/api/scenarios").param("type", "GRAPH"))
                 .andReturn().getResponse().getContentAsString();

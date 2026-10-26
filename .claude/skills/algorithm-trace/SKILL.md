@@ -20,6 +20,7 @@ description: Usar al implementar o modificar un algoritmo del paquete engine, o 
 - Si un paso no cambia nada pero enseña algo (un vecino ya descubierto), registrarlo igual (`StepType.SKIP`).
 - Al cliente se le mandan los pasos con `Trace.stepsUntilNextQuestion(from)`: nunca pasos posteriores a una pregunta sin responder.
 - Código y nombres en inglés; `explanation` y `Question.prompt` en español (los ve el usuario).
+- Los nombres de `variables` son los del pseudocódigo y tienen que entenderse solos (`cola`, `actual`, `vecino`; nada de `u`, `v`). El frontend muestra al lado qué significa cada una (`VariablesPanel`).
 
 # Puntos de pregunta por algoritmo
 - Bubble sort (`BUBBLE_SORT`): ¿se intercambian estos dos? (opciones: "Sí" / "No")

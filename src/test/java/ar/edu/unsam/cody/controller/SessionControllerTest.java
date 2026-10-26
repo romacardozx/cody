@@ -9,6 +9,7 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
 import ar.edu.unsam.cody.config.EngineConfig;
+import ar.edu.unsam.cody.repository.LearningSessionRepository;
 import ar.edu.unsam.cody.repository.ScenarioRepository;
 import ar.edu.unsam.cody.service.ActiveSessionStore;
 import ar.edu.unsam.cody.service.AlgorithmRegistry;
@@ -37,6 +38,9 @@ class SessionControllerTest {
 
     @MockitoBean
     private ScenarioRepository scenarioRepository;
+
+    @MockitoBean
+    private LearningSessionRepository learningSessionRepository;
 
     @BeforeEach
     void setUp() {

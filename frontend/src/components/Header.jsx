@@ -42,6 +42,9 @@ export function Header() {
           }}>
             Cómo funciona
           </a>
+          <Link to="/history" className={styles.navLink} aria-current={pathname === '/history' ? 'page' : undefined}>
+            Historial
+          </Link>
           <span className={styles.navSoon} title="Llega con el editor de escenarios">
             Mis escenarios <span className={styles.soon}>pronto</span>
           </span>
