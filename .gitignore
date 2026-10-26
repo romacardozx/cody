@@ -46,3 +46,6 @@ frontend/node/
 
 ### Entrega ###
 *.zip
+
+### Impeccable: platform binary is downloaded on first use, not committed ###
+.claude/skills/impeccable/scripts/bin/

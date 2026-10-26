@@ -1,0 +1,139 @@
+.card {
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-3);
+  padding: var(--space-5);
+  border: 1px solid var(--border);
+  border-radius: var(--radius-lg);
+  background: var(--surface);
+  text-decoration: none;
+  color: inherit;
+  transition: border-color 0.2s, transform 0.2s var(--ease-out), box-shadow 0.2s;
+  isolation: isolate;
+  overflow: hidden;
+}
+
+/* Vermillion corner that grows on hover: the card "asks" to be predicted */
+.card::after {
+  content: '';
+  position: absolute;
+  inset: auto -40px -40px auto;
+  width: 90px;
+  height: 90px;
+  border-radius: 50%;
+  background: var(--accent-soft);
+  transform: scale(0.4);
+  opacity: 0;
+  transition: transform 0.35s var(--ease-out), opacity 0.35s;
+  z-index: -1;
+}
+
+a.card:hover {
+  border-color: color-mix(in srgb, var(--accent) 55%, var(--border));
+  transform: translateY(-2px);
+  box-shadow: var(--shadow);
+}
+
+a.card:hover::after {
+  transform: scale(2.4);
+  opacity: 1;
+}
+
+a.card:active {
+  transform: translateY(0);
+}
+
+.disabled {
+  border-style: dashed;
+  background: transparent;
+}
+
+.disabled .name,
+.disabled .description {
+  color: var(--text-3);
+}
+
+.top {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.family {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  font-size: var(--text-sm);
+  font-weight: 600;
+  color: var(--text-3);
+}
+
+.number {
+  font-family: var(--font-mono);
+  font-size: var(--text-xs);
+  color: var(--text-3);
+}
+
+.name {
+  font-size: 1.45rem;
+  font-weight: 680;
+}
+
+.description {
+  color: var(--text-2);
+  font-size: 0.95rem;
+  display: -webkit-box;
+  -webkit-line-clamp: 3;
+  -webkit-box-orient: vertical;
+  overflow: hidden;
+}
+
+.footer {
+  margin-top: auto;
+  padding-top: var(--space-3);
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: var(--space-2);
+}
+
+.complexity {
+  font-family: var(--font-mono);
+  font-size: var(--text-xs);
+  padding: 3px 8px;
+  border-radius: var(--radius-sm);
+  background: var(--surface-2);
+  color: var(--text);
+}
+
+.metric {
+  color: var(--text-3);
+}
+
+.cta,
+.soon {
+  margin-left: auto;
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  font-size: 0.9rem;
+  font-weight: 600;
+}
+
+.cta {
+  color: var(--accent);
+}
+
+.cta svg {
+  transition: transform 0.2s var(--ease-out);
+}
+
+a.card:hover .cta svg {
+  transform: translateX(3px);
+}
+
+.soon {
+  color: var(--text-3);
+  font-weight: 500;
+}

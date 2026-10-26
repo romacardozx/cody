@@ -1,0 +1,32 @@
+.box {
+  border: 1px solid color-mix(in srgb, var(--bad) 45%, var(--border));
+  background: var(--bad-soft);
+  border-radius: var(--radius-lg);
+  padding: var(--space-5);
+  display: grid;
+  gap: var(--space-2);
+  justify-items: start;
+}
+
+.title {
+  font-family: var(--font-display);
+  font-weight: 650;
+  font-size: 1.1rem;
+}
+
+.detail {
+  color: var(--text-2);
+}
+
+.retry {
+  margin-top: var(--space-2);
+  padding: 8px 14px;
+  border-radius: var(--radius);
+  border: 1px solid var(--border-strong);
+  background: var(--surface);
+  cursor: pointer;
+}
+
+.retry:hover {
+  border-color: var(--text-3);
+}

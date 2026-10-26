@@ -1,0 +1,211 @@
+.svg {
+  display: block;
+  width: 100%;
+  height: 100%;
+  transition: opacity 0.25s var(--ease-out), filter 0.25s;
+  user-select: none;
+}
+
+.dimmed {
+  opacity: 0.4;
+  filter: grayscale(0.6);
+}
+
+.gridDot {
+  fill: var(--bg-grid);
+}
+
+.edge,
+.edgeTouched {
+  stroke-width: 2.6;
+  stroke-linecap: round;
+  transition: stroke 0.4s var(--ease-out);
+}
+
+.edge {
+  stroke: var(--edge);
+}
+
+.edgeTouched {
+  stroke: color-mix(in srgb, var(--visited) 45%, var(--edge));
+}
+
+.edgeActive {
+  stroke: var(--accent);
+  stroke-width: 4;
+  stroke-linecap: round;
+  filter: drop-shadow(0 0 6px color-mix(in srgb, var(--accent) 55%, transparent));
+}
+
+.arrowHead {
+  fill: var(--edge);
+}
+
+.arrowHeadActive {
+  fill: var(--accent);
+}
+
+/* Nodes */
+.body {
+  fill: var(--node-fill);
+  stroke: var(--node-stroke);
+  stroke-width: 2.6;
+  transition: fill 0.4s var(--ease-out), stroke 0.4s var(--ease-out);
+}
+
+.label {
+  text-anchor: middle;
+  font-family: var(--font-display);
+  font-weight: 700;
+  font-size: 19px;
+  fill: var(--text);
+  transition: fill 0.4s;
+  pointer-events: none;
+}
+
+.frontier .body {
+  stroke: var(--frontier);
+  fill: var(--frontier-soft);
+}
+
+.current .body {
+  stroke: var(--accent);
+  fill: var(--accent);
+  animation: nodePop 0.5s var(--ease-out-expo);
+}
+
+.visited .body {
+  animation: settle 0.45s var(--ease-out);
+}
+
+.body {
+  transform-box: fill-box;
+  transform-origin: center;
+}
+
+@keyframes nodePop {
+  0% { transform: scale(0.82); }
+  60% { transform: scale(1.12); }
+  100% { transform: scale(1); }
+}
+
+@keyframes settle {
+  0% { transform: scale(1.08); }
+  100% { transform: scale(1); }
+}
+
+.current .label {
+  fill: var(--accent-ink);
+}
+
+.visited .body {
+  stroke: var(--visited);
+  fill: var(--visited-soft);
+}
+
+.frontier .body {
+  animation: settle 0.4s var(--ease-out);
+}
+
+.pulse {
+  fill: none;
+  stroke: var(--accent);
+  stroke-width: 2;
+  transform-box: fill-box;
+  transform-origin: center;
+  animation: pulse 1.6s var(--ease-out) infinite;
+}
+
+@keyframes pulse {
+  from {
+    opacity: 0.7;
+    transform: scale(0.82);
+  }
+  to {
+    opacity: 0;
+    transform: scale(1.35);
+  }
+}
+
+/* Value badge (level in BFS, distance in Dijkstra) */
+.badge {
+  transform-box: fill-box;
+  transform-origin: center;
+  animation: badgeIn 0.4s var(--ease-out-expo);
+}
+
+@keyframes badgeIn {
+  from {
+    opacity: 0;
+    transform: scale(0.3);
+  }
+}
+
+.badge rect {
+  fill: var(--text);
+}
+
+.badge text {
+  text-anchor: middle;
+  font-family: var(--font-mono);
+  font-size: 13px;
+  font-weight: 700;
+  fill: var(--bg);
+}
+
+/* Prediction moment: everything that is not an option steps back */
+.asking .node:not(.option) {
+  opacity: 0.45;
+}
+
+.asking .edge,
+.asking .edgeTouched {
+  opacity: 0.55;
+}
+
+.node {
+  transition: opacity 0.3s var(--ease-out);
+  outline: none;
+}
+
+.optionRing {
+  fill: none;
+  stroke: var(--accent);
+  stroke-width: 2;
+  stroke-dasharray: 5 6;
+  transform-box: fill-box;
+  transform-origin: center;
+  animation: spin 9s linear infinite;
+}
+
+@keyframes spin {
+  to {
+    transform: rotate(360deg);
+  }
+}
+
+.option[role='button'] {
+  cursor: pointer;
+}
+
+.option[role='button']:hover .body,
+.option[role='button']:focus-visible .body {
+  stroke: var(--accent);
+  stroke-width: 3.5;
+}
+
+.option[role='button']:focus-visible .optionRing {
+  stroke-width: 3;
+  stroke-dasharray: none;
+}
+
+.choice .optionRing {
+  stroke-dasharray: none;
+  stroke-width: 3.5;
+  animation: none;
+}
+
+.choice .body {
+  stroke: var(--accent);
+  stroke-width: 3.5;
+}
