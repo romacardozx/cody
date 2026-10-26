@@ -89,6 +89,15 @@ a.card:active {
   overflow: hidden;
 }
 
+.useCase {
+  font-size: var(--text-sm);
+  color: var(--text);
+}
+
+.useCaseLabel {
+  color: var(--text-3);
+}
+
 .footer {
   margin-top: auto;
   padding-top: var(--space-3);

@@ -1,15 +1,15 @@
-import { Suspense, use, useState } from 'react'
+import { Suspense, use } from 'react'
 import { getAlgorithms, prefetchVisualizer } from '../api/cody.js'
 import { AlgorithmCard } from '../components/AlgorithmCard.jsx'
+import { CategoryCard } from '../components/CategoryCard.jsx'
 import { ErrorBoundary } from '../components/ErrorBoundary.jsx'
 import { HeroGraph } from '../components/HeroGraph.jsx'
 import { Icon } from '../components/Icon.jsx'
 import { Link } from '../components/Link.jsx'
-import { FAMILY } from '../lib/families.js'
+import { FAMILY, FAMILY_ORDER } from '../lib/families.js'
+import { USE_CASES } from '../lib/useCases.js'
 import { useLocation } from '../lib/router.js'
 import styles from './HomePage.module.css'
-
-const FILTERS = [{ value: 'ALL', label: 'Todos' }, ...Object.entries(FAMILY).map(([value, f]) => ({ value, label: f.label }))]
 
 const STEPS = [
   {
@@ -62,7 +62,7 @@ export function HomePage() {
       <section id="algoritmos" className={styles.section}>
         <div className={styles.sectionHead}>
           <h2 className={styles.sectionTitle}>Algoritmos</h2>
-          <p className={styles.sectionLead}>Elegí uno y recorrelo prediciendo. Se suman más a medida que el equipo los implementa.</p>
+          <p className={styles.sectionLead}>Ordenados por tipo. Elegí una categoría y recorré sus algoritmos prediciendo cada paso.</p>
         </div>
         <ErrorBoundary title="No pudimos cargar el catálogo">
           <Suspense fallback={<CatalogSkeleton />}>
@@ -100,41 +100,39 @@ export function HomePage() {
 function Catalog() {
   const algorithms = use(getAlgorithms())
   const { query } = useLocation()
-  const [family, setFamily] = useState('ALL')
   const text = (query.get('q') ?? '').trim().toLowerCase()
 
-  const visible = algorithms.filter((algorithm) => {
-    const matchesFamily = family === 'ALL' || algorithm.family === family
-    const haystack = `${algorithm.name} ${algorithm.code} ${algorithm.description} ${FAMILY[algorithm.family].label}`.toLowerCase()
-    return matchesFamily && (!text || haystack.includes(text))
-  })
+  // Searching: show the matching algorithms directly
+  if (text) {
+    const found = algorithms.filter((algorithm) => {
+      const useCase = USE_CASES[algorithm.code]?.short ?? ''
+      const haystack = `${algorithm.name} ${algorithm.code} ${algorithm.description} ${FAMILY[algorithm.family].label} ${useCase}`
+      return haystack.toLowerCase().includes(text)
+    })
+    return (
+      <>
+        <p className={styles.searching}>
+          {found.length === 0 ? 'Ningún algoritmo' : found.length === 1 ? '1 algoritmo' : `${found.length} algoritmos`} para “{query.get('q')}”
+        </p>
+        {found.length > 0 && (
+          <div className={styles.grid}>
+            {found.map((algorithm) => (
+              <AlgorithmCard key={algorithm.code} algorithm={algorithm} index={algorithms.indexOf(algorithm)} />
+            ))}
+          </div>
+        )}
+      </>
+    )
+  }
 
+  // Otherwise: one card per family, so the catalog can grow and stay ordered
   return (
-    <>
-      <div className={styles.filters} role="group" aria-label="Filtrar por familia">
-        {FILTERS.map((filter) => (
-          <button
-            key={filter.value}
-            type="button"
-            className={styles.chip}
-            aria-pressed={family === filter.value}
-            onClick={() => setFamily(filter.value)}
-          >
-            {filter.label}
-          </button>
-        ))}
-        {text && <span className={styles.searching}>Buscando “{query.get('q')}”</span>}
-      </div>
-      {visible.length > 0 ? (
-        <div className={styles.grid}>
-          {visible.map((algorithm) => (
-            <AlgorithmCard key={algorithm.code} algorithm={algorithm} index={algorithms.indexOf(algorithm)} />
-          ))}
-        </div>
-      ) : (
-        <p className={styles.empty}>Ningún algoritmo coincide con la búsqueda.</p>
-      )}
-    </>
+    <div className={styles.categories}>
+      {FAMILY_ORDER.map((family) => {
+        const inFamily = algorithms.filter((algorithm) => algorithm.family === family)
+        return inFamily.length > 0 && <CategoryCard key={family} family={family} algorithms={inFamily} />
+      })}
+    </div>
   )
 }
 

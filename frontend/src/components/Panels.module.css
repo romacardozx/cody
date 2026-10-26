@@ -312,7 +312,7 @@
 .historyLink {
   display: inline-flex;
   align-items: center;
-  gap: 4px;
+  gap: 6px;
   margin-top: var(--space-3);
   color: var(--accent);
   font-size: var(--text-sm);

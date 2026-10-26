@@ -9,15 +9,18 @@ import styles from './App.module.css'
 // when the user hovers an algorithm card
 const VisualizerPage = lazy(() => import('./pages/VisualizerPage.jsx'))
 const HistoryPage = lazy(() => import('./pages/HistoryPage.jsx'))
+const CategoryPage = lazy(() => import('./pages/CategoryPage.jsx'))
 
 export default function App() {
   const { pathname } = useLocation()
   const visualizer = matchPath('/algorithms/:code', pathname)
+  const category = matchPath('/categories/:slug', pathname)
 
   let page
   if (pathname === '/' || pathname === '/algorithms') page = <HomePage />
   else if (visualizer) page = <VisualizerPage key={visualizer.code} code={visualizer.code} />
   else if (pathname === '/history') page = <HistoryPage />
+  else if (category) page = <CategoryPage key={category.slug} slug={category.slug} />
   else page = <NotFound />
 
   return (

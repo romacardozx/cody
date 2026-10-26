@@ -1,0 +1,307 @@
+.svg {
+  display: block;
+  width: 100%;
+  height: auto;
+  font-family: var(--font-body);
+}
+
+.svg text {
+  text-anchor: middle;
+  fill: var(--text);
+  font-size: 14px;
+}
+
+/* ---------- Dijkstra: map ---------- */
+.block {
+  fill: var(--surface-2);
+}
+
+.street {
+  fill: none;
+  stroke: var(--edge);
+  stroke-width: 9;
+  stroke-linecap: round;
+  stroke-linejoin: round;
+}
+
+.svg .streetName {
+  font-size: 12px;
+  fill: var(--text-3);
+}
+
+.routeSlow {
+  fill: none;
+  stroke: var(--bad);
+  stroke-width: 4;
+  stroke-dasharray: 2 9;
+  stroke-linecap: round;
+  opacity: 0.85;
+}
+
+.routeFast {
+  fill: none;
+  stroke: var(--accent);
+  stroke-width: 5;
+  stroke-linecap: round;
+  stroke-linejoin: round;
+  stroke-dasharray: 1;
+  animation: draw 4s var(--ease-out-expo) infinite both;
+}
+
+@keyframes draw {
+  0% { stroke-dashoffset: 1; }
+  45%, 100% { stroke-dashoffset: 0; }
+}
+
+.tag rect {
+  fill: var(--surface);
+  stroke: var(--bad);
+  stroke-width: 1.5;
+}
+
+.svg .tag text {
+  font-family: var(--font-mono);
+  font-size: 12.5px;
+  font-weight: 700;
+  fill: var(--bad);
+}
+
+.tagFast rect {
+  fill: var(--accent);
+  stroke: none;
+}
+
+.svg .tagFast text {
+  fill: var(--accent-ink);
+}
+
+.pin circle {
+  fill: var(--surface);
+  stroke: var(--text);
+  stroke-width: 3;
+}
+
+.pinGoal circle {
+  fill: var(--accent);
+  stroke: var(--accent);
+}
+
+.svg .pin text {
+  font-weight: 700;
+  font-size: 13px;
+}
+
+/* ---------- BFS: contacts ---------- */
+.link {
+  stroke: var(--edge);
+  stroke-width: 2.5;
+}
+
+.me circle {
+  fill: var(--accent);
+}
+
+.svg .me text {
+  fill: var(--accent-ink);
+  font-weight: 700;
+}
+
+.person circle {
+  fill: var(--node-fill);
+  stroke: var(--node-stroke);
+  stroke-width: 2.5;
+}
+
+.svg .person text {
+  font-family: var(--font-display);
+  font-weight: 700;
+}
+
+.wave1 circle {
+  animation: wave1 5s var(--ease-out) infinite both;
+}
+
+.wave2 circle {
+  animation: wave2 5s var(--ease-out) infinite both;
+}
+
+/* Each wave goes "in the queue" (amber) and then "visited" (mint), one after the other */
+@keyframes wave1 {
+  0%, 10% { fill: var(--node-fill); stroke: var(--node-stroke); }
+  20%, 35% { fill: var(--frontier-soft); stroke: var(--frontier); }
+  45%, 100% { fill: var(--visited-soft); stroke: var(--visited); }
+}
+
+/* The second wave ends discovered (amber), so 1° and 2° stay distinguishable */
+@keyframes wave2 {
+  0%, 40% { fill: var(--node-fill); stroke: var(--node-stroke); }
+  52%, 100% { fill: var(--frontier-soft); stroke: var(--frontier); }
+}
+
+.degree rect {
+  fill: var(--text);
+}
+
+.svg .degree text {
+  fill: var(--bg);
+  font-family: var(--font-mono);
+  font-size: 12.5px;
+  font-weight: 700;
+}
+
+.degree.wave1 {
+  animation: show1 5s var(--ease-out) infinite both;
+}
+
+.degree.wave2 {
+  animation: show2 5s var(--ease-out) infinite both;
+}
+
+@keyframes show1 {
+  0%, 15% { opacity: 0; }
+  25%, 100% { opacity: 1; }
+}
+
+@keyframes show2 {
+  0%, 50% { opacity: 0; }
+  60%, 100% { opacity: 1; }
+}
+
+/* ---------- Binary search: dictionary ---------- */
+.svg .query {
+  font-family: var(--font-display);
+  font-size: 17px;
+  font-weight: 700;
+}
+
+.page rect {
+  fill: var(--surface-2);
+  stroke: var(--border-strong);
+  stroke-width: 1.5;
+}
+
+.svg .page text {
+  font-family: var(--font-mono);
+  font-size: 13px;
+  fill: var(--text-2);
+}
+
+.pageDropped {
+  animation: drop 6s var(--ease-out) infinite both;
+}
+
+@keyframes drop {
+  0%, 30% { opacity: 1; }
+  40%, 100% { opacity: 0.25; }
+}
+
+.pageFirstLook rect {
+  animation: firstLook 6s var(--ease-out) infinite both;
+}
+
+@keyframes firstLook {
+  0%, 5% { fill: var(--surface-2); stroke: var(--border-strong); }
+  12%, 30% { fill: var(--frontier-soft); stroke: var(--frontier); }
+  40%, 100% { fill: var(--surface-2); stroke: var(--border-strong); }
+}
+
+.pageFound rect {
+  animation: found 6s var(--ease-out) infinite both;
+}
+
+@keyframes found {
+  0%, 50% { fill: var(--surface-2); stroke: var(--border-strong); }
+  60%, 100% { fill: var(--accent); stroke: var(--accent); }
+}
+
+.svg .pageFound text {
+  animation: foundText 6s var(--ease-out) infinite both;
+}
+
+@keyframes foundText {
+  0%, 50% { fill: var(--text-2); }
+  60%, 100% { fill: var(--accent-ink); }
+}
+
+.svg .look1 text,
+.svg .look2 text {
+  font-size: 13px;
+  fill: var(--text-2);
+}
+
+.look1 {
+  animation: show1Look 6s var(--ease-out) infinite both;
+}
+
+.look2 {
+  animation: show2Look 6s var(--ease-out) infinite both;
+}
+
+@keyframes show1Look {
+  0%, 8% { opacity: 0; }
+  15%, 100% { opacity: 1; }
+}
+
+@keyframes show2Look {
+  0%, 52% { opacity: 0; }
+  60%, 100% { opacity: 1; }
+}
+
+/* ---------- Bubble sort: standings ---------- */
+.svg .tableHead {
+  font-size: 12.5px;
+  fill: var(--text-3);
+  text-anchor: start;
+}
+
+.svg .right {
+  text-anchor: end;
+}
+
+.svg .position {
+  font-family: var(--font-mono);
+  fill: var(--text-3);
+}
+
+.row rect {
+  fill: var(--surface-2);
+}
+
+.svg .team {
+  text-anchor: start;
+  font-weight: 700;
+}
+
+.svg .points {
+  font-family: var(--font-mono);
+  font-weight: 700;
+}
+
+.r0 { transform: translateY(0); }
+.r1 { transform: translateY(40px); animation: boca 6s var(--ease-out) infinite both; }
+.r2 { transform: translateY(80px); animation: racing 6s var(--ease-out) infinite both; }
+.r3 { transform: translateY(120px); animation: banfield 6s var(--ease-out) infinite both; }
+.r4 { transform: translateY(160px); }
+
+.r3 rect {
+  fill: var(--accent-soft);
+  stroke: var(--accent);
+  stroke-width: 1.5;
+}
+
+/* Banfield swaps with Racing, then with Boca: two bubble-sort swaps */
+@keyframes banfield {
+  0%, 20% { transform: translateY(120px); }
+  32%, 48% { transform: translateY(80px); }
+  60%, 100% { transform: translateY(40px); }
+}
+
+@keyframes racing {
+  0%, 20% { transform: translateY(80px); }
+  32%, 100% { transform: translateY(120px); }
+}
+
+@keyframes boca {
+  0%, 48% { transform: translateY(40px); }
+  60%, 100% { transform: translateY(80px); }
+}

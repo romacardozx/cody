@@ -49,6 +49,9 @@ Las fuentes van empaquetadas con `@fontsource` (la demo funciona sin internet).
 - Accesibilidad: todo usable con teclado (`Espacio`, `←`/`→`, `1`–`9`, `Ctrl K`), foco visible bermellón, `prefers-reduced-motion` respetado, textos en español rioplatense.
 - Rendimiento: el visualizador se carga aparte (code splitting) y se precarga al pasar el mouse por una tarjeta; las lecturas de la API se cachean; sin librerías de resaltado ni de router.
 - Glosario: los términos técnicos de las explicaciones (`lib/glossary.js`) se subrayan y muestran su definición al pasar el mouse, enfocar o tocar.
+- Catálogo por **categorías** (`lib/families.js`): la home muestra una tarjeta por familia (ícono al costado, nunca en un cuadradito arriba) y cada una tiene su página `/categories/{slug}`. Un algoritmo nuevo aparece solo en su sector.
+- Cada algoritmo tiene un **caso de uso real** (`lib/useCases.js` + una ilustración animada en `UseCaseIllustrations.jsx`) con la tabla "en el algoritmo / en la vida real". La animación termina en el cuadro completo, así con movimiento reducido se ve el resultado.
+- Las opciones de una pregunta se muestran en **orden aleatorio por sesión** (lo hace el backend).
 - El feedback de una predicción **no desaparece solo**: queda hasta "Seguir" y además va al historial.
 - Animación: easing exponencial (`--ease-out-expo`) o resortes de motion; nada de rebotes con overshoot en cubic-bezier.
 

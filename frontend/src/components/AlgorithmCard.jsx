@@ -1,5 +1,6 @@
 import { prefetchVisualizer } from '../api/cody.js'
 import { FAMILY } from '../lib/families.js'
+import { USE_CASES } from '../lib/useCases.js'
 import { Link } from './Link.jsx'
 import { Icon } from './Icon.jsx'
 import styles from './AlgorithmCard.module.css'
@@ -17,6 +18,11 @@ export function AlgorithmCard({ algorithm, index }) {
       </div>
       <h3 className={styles.name}>{algorithm.name}</h3>
       <p className={styles.description}>{algorithm.description}</p>
+      {USE_CASES[algorithm.code] && (
+        <p className={styles.useCase}>
+          <span className={styles.useCaseLabel}>Se usa en</span> {USE_CASES[algorithm.code].short}
+        </p>
+      )}
       <div className={styles.footer}>
         <span className={styles.complexity} title="Complejidad temporal">
           <span className={styles.metric}>tiempo</span> {algorithm.timeComplexity}
@@ -30,18 +36,19 @@ export function AlgorithmCard({ algorithm, index }) {
           </span>
         ) : (
           <span className={styles.soon}>
-            <Icon name="lock" size={14} /> Próximamente
+            Próximamente · ver dónde se usa <Icon name="arrow" size={15} />
           </span>
         )}
       </div>
     </>
   )
 
+  // Not implemented yet: still links to its page, which shows the real-world use case
   if (!algorithm.available) {
     return (
-      <article className={`${styles.card} ${styles.disabled}`} aria-disabled="true">
+      <Link to={`/algorithms/${algorithm.code}`} className={`${styles.card} ${styles.disabled}`}>
         {body}
-      </article>
+      </Link>
     )
   }
 

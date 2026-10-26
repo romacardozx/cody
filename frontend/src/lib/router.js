@@ -15,14 +15,20 @@ function subscribe(listener) {
 }
 
 function snapshot() {
-  return window.location.pathname + window.location.search
+  return window.location.pathname + window.location.search + window.location.hash
 }
 
 export function navigate(to, { replace = false, scroll = true } = {}) {
   if (to === snapshot()) return
   window.history[replace ? 'replaceState' : 'pushState'](null, '', to)
   listeners.forEach((listener) => listener())
-  if (scroll) window.scrollTo({ top: 0, behavior: 'instant' })
+  const hash = to.split('#')[1]
+  if (hash) {
+    // Wait for the new page to render, then go to the anchor
+    requestAnimationFrame(() => document.getElementById(hash)?.scrollIntoView())
+  } else if (scroll) {
+    window.scrollTo({ top: 0, behavior: 'instant' })
+  }
 }
 
 /** Current pathname and query params; re-renders on navigation. */

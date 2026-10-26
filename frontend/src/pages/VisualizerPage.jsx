@@ -11,6 +11,7 @@ import { Link } from '../components/Link.jsx'
 import { PlayerControls, StepTrack } from '../components/PlayerControls.jsx'
 import { Feedback, PredictionPanel } from '../components/PredictionPanel.jsx'
 import { RichText } from '../components/RichText.jsx'
+import { UseCase } from '../components/UseCase.jsx'
 import { VariablesPanel } from '../components/VariablesPanel.jsx'
 import panels from '../components/Panels.module.css'
 import { useHotkeys } from '../hooks/useHotkeys.js'
@@ -61,8 +62,10 @@ function Visualizer({ code }) {
       <div className={styles.unavailable}>
         <Breadcrumb algorithm={algorithm} />
         <h1 className={styles.title}>{algorithm.name}</h1>
-        <p>Todavía no está disponible para predecir. Mientras tanto, probá con BFS.</p>
+        <p className={styles.description}><RichText>{algorithm.description}</RichText></p>
+        <p>Todavía no está disponible para predecir. Mientras tanto, mirá dónde se usa o probá con BFS.</p>
         <Link to="/algorithms/BFS" className={styles.unavailableLink}>Ir a BFS <Icon name="arrow" size={16} /></Link>
+        <UseCase code={algorithm.code} />
       </div>
     )
   }
@@ -77,7 +80,9 @@ function Breadcrumb({ algorithm }) {
         <Icon name="back" size={16} /> Algoritmos
       </Link>
       <span aria-hidden="true">/</span>
-      <span>{FAMILY[algorithm.family].label}</span>
+      <Link to={`/categories/${FAMILY[algorithm.family].slug}`} className={styles.crumbLink}>
+        {FAMILY[algorithm.family].label}
+      </Link>
     </nav>
   )
 }
@@ -291,6 +296,7 @@ function Player({ algorithm, scenarios }) {
         </aside>
       </div>
 
+      <UseCase code={algorithm.code} />
       {explainer && <Explainer explainer={explainer} />}
     </>
   )
