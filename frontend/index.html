@@ -1,10 +1,22 @@
 <!doctype html>
-<html lang="en">
+<html lang="es">
   <head>
     <meta charset="UTF-8" />
-    <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>frontend</title>
+    <meta name="description" content="Cody: visualizador de algoritmos donde no mirás, predecís. La animación se frena en los momentos clave y te pregunta qué pasa ahora." />
+    <meta name="theme-color" content="#100f0d" />
+    <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
+    <title>Cody — algoritmos que se predicen</title>
+    <script>
+      // Apply the saved (or system) theme before the first paint to avoid a flash
+      try {
+        var saved = localStorage.getItem('cody-theme')
+        var theme = saved || (matchMedia('(prefers-color-scheme: light)').matches ? 'light' : 'dark')
+        document.documentElement.dataset.theme = theme
+      } catch (e) {
+        document.documentElement.dataset.theme = 'dark'
+      }
+    </script>
   </head>
   <body>
     <div id="root"></div>

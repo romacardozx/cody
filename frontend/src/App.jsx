@@ -1,122 +1,44 @@
-import { useState } from 'react'
-import heroImg from './assets/hero.png'
-import reactLogo from './assets/react.svg'
-import viteLogo from './assets/vite.svg'
-import './App.css'
+import { lazy, Suspense } from 'react'
+import { Header } from './components/Header.jsx'
+import { Link } from './components/Link.jsx'
+import { matchPath, useLocation } from './lib/router.js'
+import { HomePage } from './pages/HomePage.jsx'
+import styles from './App.module.css'
 
-function App() {
-  const [count, setCount] = useState(0)
+// The visualizer (and the motion library it uses) is loaded only when needed, or ahead of time
+// when the user hovers an algorithm card
+const VisualizerPage = lazy(() => import('./pages/VisualizerPage.jsx'))
+
+export default function App() {
+  const { pathname } = useLocation()
+  const visualizer = matchPath('/algorithms/:code', pathname)
+
+  let page
+  if (pathname === '/' || pathname === '/algorithms') page = <HomePage />
+  else if (visualizer) page = <VisualizerPage key={visualizer.code} code={visualizer.code} />
+  else page = <NotFound />
 
   return (
     <>
-      <section id="center">
-        <div className="hero">
-          <img src={heroImg} className="base" width="170" height="179" alt="" />
-          <img src={reactLogo} className="framework" alt="React logo" />
-          <img src={viteLogo} className="vite" alt="Vite logo" />
-        </div>
-        <div>
-          <h1>Get started</h1>
-          <p>
-            Edit <code>src/App.jsx</code> and save to test <code>HMR</code>
-          </p>
-        </div>
-        <button
-          type="button"
-          className="counter"
-          onClick={() => setCount((count) => count + 1)}
-        >
-          Count is {count}
-        </button>
-      </section>
-
-      <div className="ticks"></div>
-
-      <section id="next-steps">
-        <div id="docs">
-          <svg className="icon" role="presentation" aria-hidden="true">
-            <use href="/icons.svg#documentation-icon"></use>
-          </svg>
-          <h2>Documentation</h2>
-          <p>Your questions, answered</p>
-          <ul>
-            <li>
-              <a href="https://vite.dev/" target="_blank">
-                <img className="logo" src={viteLogo} alt="" />
-                Explore Vite
-              </a>
-            </li>
-            <li>
-              <a href="https://react.dev/" target="_blank">
-                <img className="button-icon" src={reactLogo} alt="" />
-                Learn more
-              </a>
-            </li>
-          </ul>
-        </div>
-        <div id="social">
-          <svg className="icon" role="presentation" aria-hidden="true">
-            <use href="/icons.svg#social-icon"></use>
-          </svg>
-          <h2>Connect with us</h2>
-          <p>Join the Vite community</p>
-          <ul>
-            <li>
-              <a href="https://github.com/vitejs/vite" target="_blank">
-                <svg
-                  className="button-icon"
-                  role="presentation"
-                  aria-hidden="true"
-                >
-                  <use href="/icons.svg#github-icon"></use>
-                </svg>
-                GitHub
-              </a>
-            </li>
-            <li>
-              <a href="https://chat.vite.dev/" target="_blank">
-                <svg
-                  className="button-icon"
-                  role="presentation"
-                  aria-hidden="true"
-                >
-                  <use href="/icons.svg#discord-icon"></use>
-                </svg>
-                Discord
-              </a>
-            </li>
-            <li>
-              <a href="https://x.com/vite_js" target="_blank">
-                <svg
-                  className="button-icon"
-                  role="presentation"
-                  aria-hidden="true"
-                >
-                  <use href="/icons.svg#x-icon"></use>
-                </svg>
-                X.com
-              </a>
-            </li>
-            <li>
-              <a href="https://bsky.app/profile/vite.dev" target="_blank">
-                <svg
-                  className="button-icon"
-                  role="presentation"
-                  aria-hidden="true"
-                >
-                  <use href="/icons.svg#bluesky-icon"></use>
-                </svg>
-                Bluesky
-              </a>
-            </li>
-          </ul>
-        </div>
-      </section>
-
-      <div className="ticks"></div>
-      <section id="spacer"></section>
+      <a href="#contenido" className={styles.skip}>Saltar al contenido</a>
+      <Header />
+      <div id="contenido">
+        <Suspense fallback={<div className={styles.pageLoading} aria-busy="true" />}>{page}</Suspense>
+      </div>
+      <footer className={styles.footer}>
+        <span>Cody · TP Integrador de Programación III · ECyT-UNSAM · 2026</span>
+        <span className={styles.footerNote}>Hecho para pensar, no para mirar.</span>
+      </footer>
     </>
   )
 }
 
-export default App
+function NotFound() {
+  return (
+    <main className={styles.notFound}>
+      <p className={styles.code}>404</p>
+      <h1>Este nodo no está en el grafo.</h1>
+      <Link to="/" className={styles.home}>Volver al inicio</Link>
+    </main>
+  )
+}

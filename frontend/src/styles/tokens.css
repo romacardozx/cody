@@ -1,0 +1,95 @@
+/*
+ * Cody design tokens. Visual direction: "lab blackboard" — warm graphite, chalk-colored text and a
+ * single vermillion accent reserved for the prediction moment. Graph states have their own hues:
+ * amber = frontier, vermillion = current, mint = visited.
+ */
+
+:root {
+  --font-display: 'Bricolage Grotesque Variable', ui-sans-serif, system-ui, sans-serif;
+  --font-body: 'Atkinson Hyperlegible Next Variable', ui-sans-serif, system-ui, sans-serif;
+  --font-mono: 'JetBrains Mono Variable', ui-monospace, 'SFMono-Regular', monospace;
+
+  --radius-sm: 5px;
+  --radius: 9px;
+  --radius-lg: 14px;
+
+  --space-1: 4px;
+  --space-2: 8px;
+  --space-3: 12px;
+  --space-4: 16px;
+  --space-5: 24px;
+  --space-6: 32px;
+  --space-7: 48px;
+  --space-8: 72px;
+
+  --ease-out: cubic-bezier(0.2, 0.8, 0.2, 1);
+  --header-h: 64px;
+  --page-max: 1200px;
+}
+
+:root,
+[data-theme='dark'] {
+  color-scheme: dark;
+  --bg: #100f0d;
+  --bg-grid: rgba(241, 235, 223, 0.06);
+  --surface: #181613;
+  --surface-2: #201d19;
+  --surface-3: #2a2621;
+  --border: #2e2923;
+  --border-strong: #463f36;
+  --text: #f1ebdf;
+  --text-2: #bdb3a3;
+  --text-3: #8a8173;
+
+  --accent: #ff6a3d;
+  --accent-strong: #ff8b66;
+  --accent-ink: #1b0d07;
+  --accent-soft: rgba(255, 106, 61, 0.13);
+
+  --frontier: #f2b84b;
+  --frontier-soft: rgba(242, 184, 75, 0.16);
+  --visited: #6fcf9f;
+  --visited-soft: rgba(111, 207, 159, 0.15);
+  --ok: #6fcf9f;
+  --ok-soft: rgba(111, 207, 159, 0.13);
+  --bad: #ff6b7f;
+  --bad-soft: rgba(255, 107, 127, 0.13);
+
+  --node-fill: #1d1a16;
+  --node-stroke: #554d42;
+  --edge: #3b352d;
+  --shadow: 0 1px 0 rgba(255, 255, 255, 0.03) inset, 0 18px 40px -22px rgba(0, 0, 0, 0.75);
+}
+
+[data-theme='light'] {
+  color-scheme: light;
+  --bg: #f4efe4;
+  --bg-grid: rgba(60, 45, 20, 0.08);
+  --surface: #fbf8f1;
+  --surface-2: #f1ebde;
+  --surface-3: #e7e0d0;
+  --border: #ddd4c2;
+  --border-strong: #c3b8a2;
+  --text: #1d1a15;
+  --text-2: #4f4738;
+  --text-3: #776e5f;
+
+  --accent: #d9481a;
+  --accent-strong: #b93c12;
+  --accent-ink: #fff8f3;
+  --accent-soft: rgba(217, 72, 26, 0.1);
+
+  --frontier: #b07405;
+  --frontier-soft: rgba(176, 116, 5, 0.13);
+  --visited: #1f8455;
+  --visited-soft: rgba(31, 132, 85, 0.11);
+  --ok: #1f8455;
+  --ok-soft: rgba(31, 132, 85, 0.1);
+  --bad: #c42443;
+  --bad-soft: rgba(196, 36, 67, 0.09);
+
+  --node-fill: #fffdf8;
+  --node-stroke: #b6aa92;
+  --edge: #cdc2ab;
+  --shadow: 0 14px 34px -22px rgba(70, 45, 10, 0.4);
+}

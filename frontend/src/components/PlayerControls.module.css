@@ -1,0 +1,143 @@
+.controls {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  justify-content: space-between;
+  gap: var(--space-3);
+}
+
+.transport {
+  display: flex;
+  align-items: center;
+  gap: var(--space-2);
+}
+
+.button,
+.play {
+  display: grid;
+  place-items: center;
+  border-radius: 50%;
+  cursor: pointer;
+  transition: background-color 0.15s, color 0.15s, transform 0.12s var(--ease-out), opacity 0.15s;
+}
+
+.button {
+  width: 40px;
+  height: 40px;
+  border: 1px solid var(--border);
+  background: var(--surface);
+  color: var(--text-2);
+}
+
+.button:hover:not(:disabled) {
+  color: var(--text);
+  border-color: var(--border-strong);
+}
+
+.play {
+  width: 52px;
+  height: 52px;
+  border: 0;
+  background: var(--text);
+  color: var(--bg);
+}
+
+.play:hover:not(:disabled) {
+  background: var(--accent);
+  color: var(--accent-ink);
+}
+
+.button:active:not(:disabled),
+.play:active:not(:disabled) {
+  transform: scale(0.92);
+}
+
+.button:disabled,
+.play:disabled {
+  opacity: 0.35;
+  cursor: not-allowed;
+}
+
+.speed {
+  display: flex;
+  padding: 3px;
+  border-radius: 99px;
+  border: 1px solid var(--border);
+  background: var(--surface);
+}
+
+.speedOption {
+  min-width: 46px;
+  height: 30px;
+  border: 0;
+  border-radius: 99px;
+  background: transparent;
+  color: var(--text-3);
+  font-family: var(--font-mono);
+  font-size: 0.8rem;
+  cursor: pointer;
+  transition: background-color 0.15s, color 0.15s;
+}
+
+.speedOption[aria-checked='true'] {
+  background: var(--surface-3);
+  color: var(--text);
+}
+
+/* Step track */
+.track {
+  display: flex;
+  gap: 3px;
+  height: 14px;
+  align-items: stretch;
+}
+
+.cell {
+  flex: 1;
+  min-width: 3px;
+  padding: 0;
+  border: 0;
+  border-radius: 3px;
+  background: var(--surface-3);
+  cursor: pointer;
+  transition: background-color 0.2s, transform 0.15s;
+}
+
+button.cell:hover {
+  transform: scaleY(1.35);
+}
+
+.past {
+  background: color-mix(in srgb, var(--text) 45%, var(--surface-3));
+}
+
+.current {
+  background: var(--text);
+  transform: scaleY(1.35);
+}
+
+.question {
+  background: var(--accent);
+  opacity: 0.55;
+}
+
+.question.past,
+.question.current {
+  opacity: 1;
+}
+
+.ok {
+  background: var(--ok);
+  opacity: 1;
+}
+
+.bad {
+  background: var(--bad);
+  opacity: 1;
+}
+
+.locked {
+  cursor: default;
+  background: repeating-linear-gradient(135deg, var(--surface-3) 0 3px, transparent 3px 6px);
+  opacity: 0.8;
+}

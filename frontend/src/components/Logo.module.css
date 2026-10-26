@@ -1,0 +1,29 @@
+.logo {
+  display: inline-flex;
+  align-items: center;
+  font-family: var(--font-display);
+  font-weight: 750;
+  font-stretch: 85%;
+  font-size: 1.6rem;
+  letter-spacing: -0.04em;
+  line-height: 1;
+  color: var(--text);
+}
+
+.node {
+  width: 0.78em;
+  height: 0.78em;
+  margin: 0 0.02em 0 0.04em;
+  transform: translateY(0.04em);
+}
+
+.dot {
+  fill: var(--accent);
+  transform-origin: 10px 10px;
+  animation: blink 3.2s var(--ease-out) infinite;
+}
+
+@keyframes blink {
+  0%, 82%, 100% { transform: scale(1); }
+  88% { transform: scale(0.35); }
+}

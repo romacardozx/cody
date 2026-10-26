@@ -1,0 +1,132 @@
+.figure {
+  margin: 0;
+  position: relative;
+  border: 1px solid var(--border);
+  border-radius: var(--radius-lg);
+  background: var(--surface);
+  box-shadow: var(--shadow);
+  overflow: hidden;
+}
+
+.svg {
+  display: block;
+  width: 100%;
+  height: auto;
+}
+
+.dot {
+  fill: var(--bg-grid);
+}
+
+.edge,
+.edgeActive {
+  stroke-width: 2.5;
+  transition: stroke 0.5s var(--ease-out);
+}
+
+.edge {
+  stroke: var(--edge);
+}
+
+.edgeActive {
+  stroke: color-mix(in srgb, var(--visited) 70%, var(--edge));
+}
+
+.node {
+  fill: var(--node-fill);
+  stroke: var(--node-stroke);
+  stroke-width: 2.5;
+  transition: fill 0.45s var(--ease-out), stroke 0.45s var(--ease-out);
+}
+
+.label {
+  text-anchor: middle;
+  font-family: var(--font-display);
+  font-weight: 700;
+  font-size: 15px;
+  fill: var(--text);
+  transition: fill 0.45s;
+}
+
+.frontier .node {
+  stroke: var(--frontier);
+  fill: var(--frontier-soft);
+}
+
+.current .node {
+  stroke: var(--accent);
+  fill: var(--accent);
+}
+
+.current .label {
+  fill: var(--accent-ink);
+}
+
+.visited .node {
+  stroke: var(--visited);
+  fill: var(--visited-soft);
+}
+
+.bubble {
+  animation: pop 0.35s var(--ease-out);
+}
+
+.bubble rect {
+  fill: var(--accent);
+}
+
+.bubble text {
+  text-anchor: middle;
+  font-family: var(--font-mono);
+  font-size: 11px;
+  font-weight: 600;
+  fill: var(--accent-ink);
+}
+
+@keyframes pop {
+  from {
+    opacity: 0;
+    transform: translateY(6px);
+  }
+}
+
+.bubble {
+  transform-box: fill-box;
+}
+
+.caption {
+  display: flex;
+  gap: var(--space-4);
+  padding: var(--space-3) var(--space-4);
+  border-top: 1px solid var(--border);
+  font-size: 0.8rem;
+  color: var(--text-3);
+}
+
+.key {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+}
+
+.key i {
+  width: 10px;
+  height: 10px;
+  border-radius: 50%;
+  border: 2px solid;
+}
+
+.swFrontier {
+  border-color: var(--frontier);
+  background: var(--frontier-soft);
+}
+
+.swCurrent {
+  border-color: var(--accent);
+  background: var(--accent);
+}
+
+.swVisited {
+  border-color: var(--visited);
+  background: var(--visited-soft);
+}
