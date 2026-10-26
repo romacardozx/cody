@@ -23,27 +23,31 @@ import { bidirectional, buildStreetMap, search } from './streetMap.js'
  * route draws itself in vermillion. A HUD counts explored streets against plain Dijkstra.
  */
 
-const EDGES_PER_SECOND = 130
+// Streets lit per second. A* explores so few that it goes slower, so the cone can be seen growing
+const EDGES_PER_SECOND = { astar: 55, bidirectional: 130 }
+// Each algorithm runs on its own city: A* on a planned grid with diagonals, bidirectional on the bay
+const CITY = { astar: 'plata', bidirectional: 'bay' }
 const PATH_SECONDS = 1.3
 const COOL_PER_SECOND = 1.1
 
-let cachedMap = null // the city and plain Dijkstra are the same for both scenes: compute once
+const cache = {} // per city: the map and plain Dijkstra on it, computed once
 
 const kilometers = (units) => `${(units * 1.2).toFixed(1).replace('.', ',')} km`
 
 export function createMapSearchScene(ctx, mode) {
-  if (!cachedMap) {
-    const map = buildStreetMap()
-    cachedMap = { map, dijkstra: search(map) }
+  const city = CITY[mode]
+  if (!cache[city]) {
+    const map = buildStreetMap(city)
+    cache[city] = { map, dijkstra: search(map) }
   }
-  const { map, dijkstra } = cachedMap
+  const { map, dijkstra } = cache[city]
   const result = mode === 'astar' ? search(map, { heuristic: true }) : bidirectional(map)
   const { xs, zs, edges, avenue, source, target } = map
 
   const object = new Group()
-  const city = new Group()
-  city.rotation.x = 0.72 // look at the map from above, tilted
-  object.add(city)
+  const ground = new Group()
+  ground.rotation.x = 0.72 // look at the map from above, tilted
+  object.add(ground)
 
   // Street geometry, shared by the base layer and the glow layer
   const positions = new Float32Array(edges.length * 6)
@@ -53,7 +57,7 @@ export function createMapSearchScene(ctx, mode) {
   baseGeometry.setAttribute('position', new BufferAttribute(positions, 3))
   baseGeometry.setAttribute('color', new BufferAttribute(baseColors, 3))
   const baseMaterial = new LineBasicMaterial({ vertexColors: true })
-  city.add(new LineSegments(baseGeometry, baseMaterial))
+  ground.add(new LineSegments(baseGeometry, baseMaterial))
 
   // Glow layer: RGBA per vertex, invisible (alpha 0) until the street is explored
   const glowColors = new Float32Array(edges.length * 8)
@@ -63,7 +67,7 @@ export function createMapSearchScene(ctx, mode) {
   const glowMaterial = new LineBasicMaterial({ vertexColors: true, transparent: true, depthWrite: false })
   const glow = new LineSegments(glowGeometry, glowMaterial)
   glow.position.y = 0.005
-  city.add(glow)
+  ground.add(glow)
 
   // The route: a tube that draws itself from origin to destination
   const curve = new CurvePath()
@@ -77,14 +81,14 @@ export function createMapSearchScene(ctx, mode) {
   const route = new Mesh(tubeGeometry, routeMaterial)
   const routeIndexCount = tubeGeometry.index.count
   tubeGeometry.setDrawRange(0, 0)
-  city.add(route)
+  ground.add(route)
 
   // Origin and destination
   const pinGeometry = new SphereGeometry(0.12, 24, 16)
   const pin = (n, key) => {
     const mesh = new Mesh(pinGeometry, new MeshStandardMaterial({ color: ctx.palette[key].clone(), roughness: 0.35 }))
     mesh.position.set(xs[n], 0.12, zs[n])
-    city.add(mesh)
+    ground.add(mesh)
     return { mesh, key }
   }
   const pins = [pin(source, 'text'), pin(target, 'current')]
@@ -142,7 +146,7 @@ export function createMapSearchScene(ctx, mode) {
 
       // Reveal explored streets at a steady pace: a smarter search finishes sooner
       const total = result.explored.length
-      budget = still ? total : Math.min(total, budget + EDGES_PER_SECOND * dt)
+      budget = still ? total : Math.min(total, budget + EDGES_PER_SECOND[mode] * dt)
       while (shown < Math.floor(budget)) {
         const { e, side: s } = result.explored[shown]
         side[e] = s

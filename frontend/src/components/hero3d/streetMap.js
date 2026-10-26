@@ -1,7 +1,10 @@
 /*
- * A procedural city for the search scenes: a jittered street grid with missing blocks, a few
- * diagonals, avenues, and a coastline with no streets. Deterministic (fixed hash), so every run
- * draws the same city and the algorithms can be compared on equal ground.
+ * Procedural cities for the search scenes, deterministic (fixed hash) so every run draws the same
+ * map and an algorithm can be compared with plain Dijkstra on equal ground:
+ *
+ *  - 'bay': an irregular, jittered grid with missing blocks and a coastline with no streets.
+ *  - 'plata': a planned city in the style of La Plata: a regular grid, boulevards every six
+ *    blocks and diagonal avenues crossing it.
  *
  * Coordinates are on the XZ plane, centered at the origin. Edge weight = street length.
  */
@@ -17,20 +20,22 @@ function hash(a, b, salt = 0) {
   return ((h ^ (h >>> 16)) >>> 0) / 4294967296
 }
 
-export function buildStreetMap() {
+export function buildStreetMap(variant = 'bay') {
+  const planned = variant === 'plata'
   const width = (COLS - 1) * STEP
   const depth = (ROWS - 1) * STEP
   const index = new Map()
   const xs = []
   const zs = []
+  const jitter = planned ? 0.25 : 0.7
 
   for (let r = 0; r < ROWS; r++) {
     for (let c = 0; c < COLS; c++) {
-      const x = c * STEP - width / 2 + (hash(c, r, 1) - 0.5) * STEP * 0.7
-      const z = r * STEP - depth / 2 + (hash(c, r, 2) - 0.5) * STEP * 0.7
-      // A bay at the top: water, no streets
+      const x = c * STEP - width / 2 + (hash(c, r, planned ? 11 : 1) - 0.5) * STEP * jitter
+      const z = r * STEP - depth / 2 + (hash(c, r, planned ? 12 : 2) - 0.5) * STEP * jitter
+      // The bay city has water at the top, with no streets
       const coast = -depth / 2 + 1.25 + Math.sin(x * 0.75 + 0.6) * 0.75 + Math.cos(x * 1.9) * 0.18
-      if (z < coast) continue
+      if (!planned && z < coast) continue
       index.set(`${c},${r}`, xs.length)
       xs.push(x)
       zs.push(z)
@@ -48,6 +53,14 @@ export function buildStreetMap() {
     for (let c = 0; c < COLS; c++) {
       const here = index.get(`${c},${r}`)
       if (here === undefined) continue
+      if (planned) {
+        // Boulevards every six blocks are always there; a few ordinary blocks are missing
+        const rowBoulevard = r % 6 === 3
+        const colBoulevard = c % 6 === 3
+        if (rowBoulevard || hash(c, r, 13) > 0.1) link(here, index.get(`${c + 1},${r}`), rowBoulevard)
+        if (colBoulevard || hash(c, r, 14) > 0.1) link(here, index.get(`${c},${r + 1}`), colBoulevard)
+        continue
+      }
       const rowAvenue = r % 8 === 4
       const colAvenue = c % 9 === 3
       if (rowAvenue || hash(c, r, 3) > 0.17) link(here, index.get(`${c + 1},${r}`), rowAvenue)
@@ -55,6 +68,18 @@ export function buildStreetMap() {
       if (hash(c, r, 5) > 0.93) link(here, index.get(`${c + 1},${r + 1}`), false)
       if (hash(c, r, 6) > 0.95) link(here, index.get(`${c - 1},${r + 1}`), false)
     }
+  }
+  if (planned) {
+    // Diagonal avenues: the two big ones corner to corner, and two shorter ones across the center
+    const diagonal = (c, r, dc) => {
+      for (; index.has(`${c},${r}`) && index.has(`${c + dc},${r + 1}`); c += dc, r += 1) {
+        link(index.get(`${c},${r}`), index.get(`${c + dc},${r + 1}`), true)
+      }
+    }
+    diagonal(0, 0, 1)
+    diagonal(COLS - 1, 0, -1)
+    diagonal(Math.floor(COLS / 2), 0, 1)
+    diagonal(Math.floor(COLS / 2), 0, -1)
   }
 
   const count = xs.length
@@ -76,8 +101,9 @@ export function buildStreetMap() {
   }
   // Origin and destination inside the city, far from its borders: a search that hits the border
   // stops growing there, which would hide the difference between the algorithms
-  const source = nearest(-1.7, 1.1)
-  const target = nearest(1.7, -0.5)
+  const [source, target] = planned
+    ? [nearest(-2.1, 1.2), nearest(2.1, -1.0)]
+    : [nearest(-1.7, 1.1), nearest(1.7, -0.5)]
 
   return { xs, zs, edges, avenue, adjacency, source, target, radius: Math.hypot(width, depth) / 2 }
 }
