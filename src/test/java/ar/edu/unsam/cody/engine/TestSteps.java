@@ -16,6 +16,6 @@ final class TestSteps {
     }
 
     static Question question(String id) {
-        return new Question(id, "¿Qué nodo se visita ahora?", List.of("A", "B"), "A");
+        return new Question(id, "¿Qué nodo se visita ahora?", List.of("A", "B"), "A", "Porque sí.", Map.of());
     }
 }

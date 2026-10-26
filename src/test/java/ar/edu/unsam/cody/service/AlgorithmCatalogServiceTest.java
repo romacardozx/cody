@@ -31,6 +31,8 @@ class AlgorithmCatalogServiceTest {
 
         assertThat(catalog.get(0).available()).isTrue();
         assertThat(catalog.get(0).pseudocode()).isEqualTo(Bfs.PSEUDOCODE);
+        assertThat(catalog.get(0).javaCode()).isEqualTo(Bfs.JAVA.lines());
+        assertThat(catalog.get(0).javaLines()).hasSize(Bfs.PSEUDOCODE.size());
         assertThat(catalog.get(0).scenarioType()).isEqualTo(ScenarioType.GRAPH);
         assertThat(catalog.get(1).available()).isFalse();
         assertThat(catalog.get(1).pseudocode()).isEmpty();

@@ -45,14 +45,26 @@ public final class TraceRecorder {
     }
 
     /**
+     * Number of steps recorded so far; the next step will have this index.
+     *
+     * @return the current trace length
+     */
+    public int size() {
+        return steps.size();
+    }
+
+    /**
      * Attaches a question to the last recorded step.
      *
-     * @param prompt        question for the user, in Spanish
-     * @param options       possible answers
-     * @param correctAnswer the right option
+     * @param prompt         question for the user, in Spanish
+     * @param options        possible answers
+     * @param correctAnswer  the right option
+     * @param explanation    why the right option is right
+     * @param optionFeedback why each wrong option is wrong
      * @throws IllegalStateException if there is no step yet or the last one already has a question
      */
-    public void askOnLastStep(String prompt, List<String> options, String correctAnswer) {
+    public void askOnLastStep(String prompt, List<String> options, String correctAnswer, String explanation,
+            Map<String, String> optionFeedback) {
         if (steps.isEmpty()) {
             throw new IllegalStateException("Record a step before asking a question");
         }
@@ -61,7 +73,8 @@ public final class TraceRecorder {
             throw new IllegalStateException("Step " + last.index() + " already has a question");
         }
         questionCount++;
-        Question question = new Question("q" + questionCount, prompt, options, correctAnswer);
+        Question question = new Question("q" + questionCount, prompt, options, correctAnswer, explanation,
+                optionFeedback);
         steps.set(last.index(), new Step(last.index(), last.type(), last.codeLine(), last.elementStates(),
                 last.values(), last.highlights(), last.variables(), last.explanation(), question));
     }

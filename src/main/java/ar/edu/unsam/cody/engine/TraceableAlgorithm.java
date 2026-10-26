@@ -36,6 +36,13 @@ public interface TraceableAlgorithm<I extends AlgorithmInput> {
     List<String> pseudocode();
 
     /**
+     * The same algorithm as plain Java (no tracing), mapped line by line to the pseudocode.
+     *
+     * @return the Java listing
+     */
+    JavaListing javaListing();
+
+    /**
      * Runs the algorithm over the given input.
      *
      * @param input the scenario to run on, already validated

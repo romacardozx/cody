@@ -164,7 +164,7 @@ Se desaprueba si:
 | Tests | JUnit 5, Spring Boot Test, MockMvc, JaCoCo |
 | Frontend | React + Vite |
 | Animación | Motion (`motion/react`) |
-| Código resaltado | prism-react-renderer |
+| Código resaltado | Resaltador propio de ~20 líneas (`lib/highlight.js`): pseudocódigo y Java sin cargar una librería |
 
 > **Versión de Spring Boot:** usar la estable que ofrezca start.spring.io con Java 21. Si es 4.x, verificar que la versión de springdoc sea la compatible con esa línea (springdoc tiene líneas distintas para Boot 3 y Boot 4).
 
@@ -367,6 +367,7 @@ public interface TraceableAlgorithm<I extends AlgorithmInput> {
     String code();          // "DIJKSTRA"
     Class<I> inputType();   // GraphInput.class o ArrayInput.class
     List<String> pseudocode(); // líneas a las que apunta Step.codeLine
+    JavaListing javaListing(); // el algoritmo en Java + línea de Java por cada línea de pseudocódigo
     Trace run(I input);     // traza completa
 }
 
@@ -392,10 +393,11 @@ public record Step(
     Question question                         // null si en este paso no se pregunta
 ) {}
 
-public record Question(String id, String prompt, List<String> options, String correctAnswer) {
+public record Question(String id, String prompt, List<String> options, String correctAnswer,
+                       String explanation, Map<String, String> optionFeedback) {
     boolean isCorrect(String answer);
 }
-// correctAnswer queda en el servidor: la API expone un QuestionDto sin ese campo.
+// correctAnswer, explanation y optionFeedback quedan en el servidor hasta que el alumno responde.
 ```
 
 **Decisiones tomadas** (corrigen problemas del borrador original):

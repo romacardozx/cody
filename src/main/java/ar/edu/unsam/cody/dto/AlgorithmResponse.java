@@ -16,6 +16,8 @@ import java.util.List;
  * @param spaceComplexity extra space complexity
  * @param available       {@code true} when the engine already implements it
  * @param pseudocode      lines that trace steps point to; empty when not available
+ * @param javaCode        the algorithm in plain Java; empty when not available
+ * @param javaLines       entry i is the Java line for pseudocode line i + 1; empty when not available
  */
 public record AlgorithmResponse(
         String code,
@@ -26,5 +28,7 @@ public record AlgorithmResponse(
         String timeComplexity,
         String spaceComplexity,
         boolean available,
-        List<String> pseudocode) {
+        List<String> pseudocode,
+        List<String> javaCode,
+        List<Integer> javaLines) {
 }

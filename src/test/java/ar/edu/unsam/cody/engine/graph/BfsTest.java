@@ -107,6 +107,47 @@ class BfsTest {
     }
 
     @Test
+    void questionExplainsFifoAndWhyEachWrongOptionIsWrong() {
+        Trace trace = bfs.run(diamondWithTail());
+
+        Question first = trace.steps().stream().filter(Step::hasQuestion).findFirst().orElseThrow().question();
+        assertThat(first.explanation()).contains("FIFO").contains("paso");
+        assertThat(first.optionFeedback()).containsOnlyKeys("C");
+        assertThat(first.feedbackFor("C")).contains("después");
+    }
+
+    @Test
+    void explanationsNeverRevealTheQueueOrderBeforeAQuestion() {
+        Trace trace = bfs.run(diamondWithTail());
+
+        trace.steps().stream().filter(Step::hasQuestion).forEach(step -> {
+            String others = String.join("|", step.question().options());
+            assertThat(step.explanation()).doesNotContainPattern("(" + others + "), (" + others + ")");
+        });
+    }
+
+    @Test
+    void alreadyDiscoveredNeighborsAreSkippedWithAStep() {
+        Trace trace = bfs.run(diamondWithTail());
+
+        // D is reached from B first; when C looks at D it is already discovered
+        Step skipD = trace.steps().stream()
+                .filter(step -> step.type() == StepType.SKIP && "D".equals(step.variables().get("v")))
+                .findFirst().orElseThrow();
+        assertThat(skipD.variables()).containsEntry("u", "C");
+        assertThat(skipD.explanation()).contains("ya estaba descubierto");
+        // Skipping never enqueues twice: every node is dequeued exactly once
+        assertThat(dequeueOrder(trace)).doesNotHaveDuplicates();
+    }
+
+    @Test
+    void javaListingCoversEveryPseudocodeLine() {
+        assertThat(Bfs.JAVA.lineForPseudocode()).hasSize(Bfs.PSEUDOCODE.size());
+        assertThat(bfs.javaListing().lines().get(Bfs.JAVA.javaLineFor(5) - 1)).contains("queue.poll()");
+        assertThat(bfs.javaListing().lines().get(Bfs.JAVA.javaLineFor(9) - 1)).contains("queue.add(v)");
+    }
+
+    @Test
     void directedGraphOnlyFollowsEdgesForward() {
         GraphInput directed = graph(List.of("A", "B", "C"), List.of(edge("B", "A"), edge("A", "C")), "A", true);
 

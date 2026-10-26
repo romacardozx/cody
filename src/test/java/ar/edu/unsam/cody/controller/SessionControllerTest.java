@@ -60,6 +60,8 @@ class SessionControllerTest {
         mockMvc.perform(post("/api/sessions").contentType(MediaType.APPLICATION_JSON).content(BFS_SESSION))
                 .andExpect(status().isCreated())
                 .andExpect(jsonPath("$.steps[-1].question", not(hasKey("correctAnswer"))))
+                .andExpect(jsonPath("$.steps[-1].question", not(hasKey("explanation"))))
+                .andExpect(jsonPath("$.steps[-1].question", not(hasKey("optionFeedback"))))
                 .andExpect(jsonPath("$.steps[*].question", everyItem(not(hasKey("correctAnswer")))));
     }
 

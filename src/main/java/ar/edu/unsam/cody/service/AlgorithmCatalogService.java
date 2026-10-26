@@ -60,6 +60,8 @@ public class AlgorithmCatalogService {
                 algorithm.getTimeComplexity(),
                 algorithm.getSpaceComplexity(),
                 engine.isPresent(),
-                engine.map(TraceableAlgorithm::pseudocode).orElse(List.of()));
+                engine.map(TraceableAlgorithm::pseudocode).orElse(List.of()),
+                engine.map(e -> e.javaListing().lines()).orElse(List.of()),
+                engine.map(e -> e.javaListing().lineForPseudocode()).orElse(List.of()));
     }
 }

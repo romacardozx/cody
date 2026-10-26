@@ -66,6 +66,7 @@ class SessionServiceTest {
 
         assertThat(response.correct()).isTrue();
         assertThat(response.correctAnswer()).isEqualTo("B");
+        assertThat(response.choiceFeedback()).isNull();
         assertThat(response.finished()).isTrue();
         assertThat(response.steps()).isNotEmpty();
         assertThat(response.correctCount()).isEqualTo(1);
@@ -81,7 +82,8 @@ class SessionServiceTest {
 
         assertThat(response.correct()).isFalse();
         assertThat(response.correctAnswer()).isEqualTo("B");
-        assertThat(response.explanation()).contains("B");
+        assertThat(response.explanation()).contains("FIFO");
+        assertThat(response.choiceFeedback()).contains("C");
         assertThat(response.wrongCount()).isEqualTo(1);
     }
 

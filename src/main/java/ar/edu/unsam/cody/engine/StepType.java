@@ -9,6 +9,8 @@ public enum StepType {
     START,
     /** A node is added to the frontier (queue or priority queue). */
     ENQUEUE,
+    /** A neighbor is looked at but left alone, because it was already discovered. */
+    SKIP,
     /** A node leaves the frontier and becomes the current one. */
     DEQUEUE,
     /** A node is marked as visited. */

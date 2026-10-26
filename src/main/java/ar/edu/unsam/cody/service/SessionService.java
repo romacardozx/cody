@@ -93,11 +93,9 @@ public class SessionService {
         }
 
         List<StepDto> steps = StepDto.fromAll(session.nextSteps());
-        String explanation = correct
-                ? "¡Correcto!"
-                : "No era esa. La respuesta correcta es " + question.correctAnswer() + ".";
-        return new PredictionResponse(correct, question.correctAnswer(), explanation, steps, session.finished(),
-                session.correctCount(), session.wrongCount());
+        String choiceFeedback = correct ? null : question.feedbackFor(request.answer());
+        return new PredictionResponse(correct, question.correctAnswer(), question.explanation(), choiceFeedback, steps,
+                session.finished(), session.correctCount(), session.wrongCount());
     }
 
     /** Converts the scenario into the input the algorithm declares, checking that they fit. */
