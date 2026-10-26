@@ -1,55 +1,109 @@
 .figure {
   margin: 0;
   display: grid;
-  gap: var(--space-3);
+  gap: var(--space-4);
 }
 
 .stage {
   position: relative;
-  aspect-ratio: 1 / 0.92;
   width: 100%;
-  overflow: hidden;
+  aspect-ratio: 1 / 0.86;
 }
 
-/* The canvas fades in once the scene is ready, so the lazy load never pops */
-.stage canvas {
+.canvas {
+  position: absolute;
+  inset: 0;
+  overflow: hidden;
+  opacity: 0;
+}
+
+.canvas canvas {
   display: block;
   width: 100% !important;
   height: 100% !important;
-  opacity: 0;
-  transition: opacity 0.8s var(--ease-out-expo);
 }
 
-.stage[data-ready='true'] canvas {
-  opacity: 1;
-}
-
-.chip {
+/* Labels live in the same box as the canvas and are kept inside it by the scene engine */
+.ask,
+.label {
   position: absolute;
   top: 0;
   left: 0;
   padding: 6px 14px;
   border-radius: 99px;
-  background: var(--accent);
-  color: var(--accent-ink);
   font-family: var(--font-display);
-  font-size: var(--text-md);
   font-weight: 700;
   white-space: nowrap;
   pointer-events: none;
-  box-shadow: 0 10px 24px -10px color-mix(in srgb, var(--accent) 70%, transparent);
   opacity: 0;
   transition: opacity 0.25s var(--ease-out);
   will-change: transform;
 }
 
-.chip[data-visible='true'] {
-  opacity: 1;
+.ask {
+  background: var(--accent);
+  color: var(--accent-ink);
+  font-size: var(--text-md);
+  box-shadow: 0 10px 24px -10px color-mix(in srgb, var(--accent) 70%, transparent);
+}
+
+.label {
+  padding: 3px 10px;
+  background: var(--surface);
+  border: 1px solid var(--border-strong);
+  color: var(--text);
+  font-size: var(--text-sm);
+}
+
+.ask[data-visible='true'],
+.label[data-visible='true'] {
+  opacity: var(--scene-opacity, 1);
 }
 
 .caption {
+  display: grid;
+  justify-items: center;
+  gap: var(--space-2);
+  text-align: center;
+}
+
+.switcher {
   display: flex;
-  justify-content: center;
+  padding: 3px;
+  border-radius: 99px;
+  border: 1px solid var(--border);
+  background: var(--surface);
+}
+
+.sceneButton {
+  min-width: 92px;
+  height: 34px;
+  padding: 0 var(--space-3);
+  border: 0;
+  border-radius: 99px;
+  background: transparent;
+  color: var(--text-3);
+  font-weight: 650;
+  cursor: pointer;
+  transition: background-color 0.2s, color 0.2s;
+}
+
+.sceneButton:hover {
+  color: var(--text);
+}
+
+.sceneButton[aria-pressed='true'] {
+  background: var(--surface-3);
+  color: var(--text);
+}
+
+.sceneCaption {
+  color: var(--text-2);
+  font-size: var(--text-sm);
+}
+
+.legend {
+  display: flex;
   gap: var(--space-4);
   font-size: var(--text-sm);
   color: var(--text-3);
@@ -67,14 +121,14 @@
   border-radius: 50%;
 }
 
-.swFrontier {
+.sw_frontier {
   background: var(--frontier);
 }
 
-.swCurrent {
+.sw_current {
   background: var(--accent);
 }
 
-.swVisited {
+.sw_visited {
   background: var(--visited);
 }

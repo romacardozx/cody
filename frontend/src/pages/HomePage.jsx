@@ -33,7 +33,7 @@ export function HomePage() {
     <main>
       <section className={styles.hero}>
         <div className={styles.heroText}>
-          <h1 className={styles.title}>Predecí cada paso de BFS antes de verlo</h1>
+          <h1 className={styles.title}>Predecí cada paso del algoritmo antes de verlo</h1>
           <p className={styles.lead}>
             Cody corre el algoritmo de verdad, lo frena justo antes de cada decisión y te pregunta qué viene.
             Si acertás, sigue. Si no, te muestra por qué y lo guarda en tu historial para repasarlo.
@@ -47,7 +47,7 @@ export function HomePage() {
                 import('./VisualizerPage.jsx')
               }}
             >
-              Probar con BFS <Icon name="arrow" size={18} />
+              Empezar con BFS <Icon name="arrow" size={18} />
             </Link>
             <a href="#como-funciona" className={styles.secondary}>
               Cómo funciona
