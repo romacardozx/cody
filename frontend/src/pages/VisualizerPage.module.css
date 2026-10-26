@@ -329,7 +329,7 @@
 }
 
 .unavailable > p {
-  max-width: 65ch;
+  max-width: 50ch; /* about 72 characters: ch is the width of "0" */
 }
 
 .unavailable > section {
