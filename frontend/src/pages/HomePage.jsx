@@ -1,15 +1,17 @@
-import { Suspense, use } from 'react'
+import { lazy, Suspense, use } from 'react'
 import { getAlgorithms, prefetchVisualizer } from '../api/cody.js'
 import { AlgorithmCard } from '../components/AlgorithmCard.jsx'
 import { CategoryCard } from '../components/CategoryCard.jsx'
 import { ErrorBoundary } from '../components/ErrorBoundary.jsx'
-import { HeroGraph } from '../components/HeroGraph.jsx'
 import { Icon } from '../components/Icon.jsx'
 import { Link } from '../components/Link.jsx'
 import { FAMILY, FAMILY_ORDER } from '../lib/families.js'
 import { USE_CASES } from '../lib/useCases.js'
 import { useLocation } from '../lib/router.js'
 import styles from './HomePage.module.css'
+
+// Three.js is heavy: the 3D scene loads after the page is on screen and never blocks it
+const Hero3D = lazy(() => import('../components/Hero3D.jsx'))
 
 const STEPS = [
   {
@@ -31,14 +33,10 @@ export function HomePage() {
     <main>
       <section className={styles.hero}>
         <div className={styles.heroText}>
-          <h1 className={styles.title}>
-            No mires el algoritmo.
-            <br />
-            <span className={styles.titleAccent}>Adiviná</span> qué hace.
-          </h1>
+          <h1 className={styles.title}>Predecí cada paso de BFS antes de verlo</h1>
           <p className={styles.lead}>
-            Cody es un visualizador de algoritmos que frena la animación en los momentos clave y te pregunta
-            qué pasa ahora. Si acertás, sigue; si no, te explica por qué. Pensarlo es lo que hace que se entienda.
+            Cody corre el algoritmo de verdad, lo frena justo antes de cada decisión y te pregunta qué viene.
+            Si acertás, sigue. Si no, te muestra por qué y lo guarda en tu historial para repasarlo.
           </p>
           <div className={styles.actions}>
             <Link
@@ -56,7 +54,9 @@ export function HomePage() {
             </a>
           </div>
         </div>
-        <HeroGraph />
+        <Suspense fallback={<div className={styles.heroPlaceholder} aria-hidden="true" />}>
+          <Hero3D />
+        </Suspense>
       </section>
 
       <section id="algoritmos" className={styles.section}>

@@ -9,38 +9,15 @@
   align-items: center;
 }
 
-.eyebrow {
-  font-family: var(--font-mono);
-  font-size: 0.8rem;
-  letter-spacing: 0.04em;
-  color: var(--text-3);
-  margin-bottom: var(--space-4);
-}
-
 .title {
-  font-size: clamp(2.6rem, 5.6vw, 4.4rem);
-  font-weight: 760;
+  font-size: clamp(2.6rem, 5.2vw, 4.6rem);
+  font-weight: 780;
+  letter-spacing: -0.035em;
+  max-width: 13ch;
 }
 
-.titleAccent {
-  color: var(--accent);
-  font-style: italic;
-  font-stretch: 100%;
-  position: relative;
-}
-
-/* Hand-drawn style underline for the key verb */
-.titleAccent::after {
-  content: '';
-  position: absolute;
-  left: 2%;
-  right: 4%;
-  bottom: -0.06em;
-  height: 0.12em;
-  border-radius: 99px;
-  background: var(--accent);
-  opacity: 0.35;
-  transform: rotate(-1.2deg);
+.heroPlaceholder {
+  aspect-ratio: 1 / 0.92;
 }
 
 .lead {

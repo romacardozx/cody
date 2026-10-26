@@ -1,0 +1,80 @@
+.figure {
+  margin: 0;
+  display: grid;
+  gap: var(--space-3);
+}
+
+.stage {
+  position: relative;
+  aspect-ratio: 1 / 0.92;
+  width: 100%;
+  overflow: hidden;
+}
+
+/* The canvas fades in once the scene is ready, so the lazy load never pops */
+.stage canvas {
+  display: block;
+  width: 100% !important;
+  height: 100% !important;
+  opacity: 0;
+  transition: opacity 0.8s var(--ease-out-expo);
+}
+
+.stage[data-ready='true'] canvas {
+  opacity: 1;
+}
+
+.chip {
+  position: absolute;
+  top: 0;
+  left: 0;
+  padding: 6px 14px;
+  border-radius: 99px;
+  background: var(--accent);
+  color: var(--accent-ink);
+  font-family: var(--font-display);
+  font-size: var(--text-md);
+  font-weight: 700;
+  white-space: nowrap;
+  pointer-events: none;
+  box-shadow: 0 10px 24px -10px color-mix(in srgb, var(--accent) 70%, transparent);
+  opacity: 0;
+  transition: opacity 0.25s var(--ease-out);
+  will-change: transform;
+}
+
+.chip[data-visible='true'] {
+  opacity: 1;
+}
+
+.caption {
+  display: flex;
+  justify-content: center;
+  gap: var(--space-4);
+  font-size: var(--text-sm);
+  color: var(--text-3);
+}
+
+.key {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+}
+
+.key i {
+  width: 11px;
+  height: 11px;
+  border-radius: 50%;
+}
+
+.swFrontier {
+  background: var(--frontier);
+}
+
+.swCurrent {
+  background: var(--accent);
+}
+
+.swVisited {
+  background: var(--visited);
+}

@@ -45,7 +45,7 @@ Las fuentes van empaquetadas con `@fontsource` (la demo funciona sin internet).
 
 - Bordes 1px, radios 5/9/14px, sombras suaves. Datos técnicos en mono; títulos de panel en la fuente display, sin mayúsculas forzadas.
 - **Optimista**: toda acción se refleja en el acto (elección bloqueada + spinner) y se revierte si el servidor falla.
-- **Nunca regalar la respuesta**: mientras hay una pregunta pendiente, las listas (cola) se ocultan y las opciones van ordenadas alfabéticamente.
+- **Nunca regalar la respuesta**: mientras hay una pregunta pendiente, las listas (cola) se ocultan y las opciones salen en orden aleatorio por sesión.
 - Accesibilidad: todo usable con teclado (`Espacio`, `←`/`→`, `1`–`9`, `Ctrl K`), foco visible bermellón, `prefers-reduced-motion` respetado, textos en español rioplatense.
 - Rendimiento: el visualizador se carga aparte (code splitting) y se precarga al pasar el mouse por una tarjeta; las lecturas de la API se cachean; sin librerías de resaltado ni de router.
 - Glosario: los términos técnicos de las explicaciones (`lib/glossary.js`) se subrayan y muestran su definición al pasar el mouse, enfocar o tocar.
