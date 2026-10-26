@@ -91,6 +91,36 @@ kbd {
   border: 0;
 }
 
+/* ---------- Page transitions (View Transitions API) ---------- */
+
+::view-transition-old(root) {
+  animation: page-out 0.18s var(--ease-out) both;
+}
+
+::view-transition-new(root) {
+  animation: page-in 0.32s var(--ease-out-expo) both;
+}
+
+/* Shared titles (card -> page) morph between their two positions */
+::view-transition-group(*) {
+  animation-duration: 0.38s;
+  animation-timing-function: var(--ease-out-expo);
+}
+
+@keyframes page-out {
+  to {
+    opacity: 0;
+    transform: translateY(-6px);
+  }
+}
+
+@keyframes page-in {
+  from {
+    opacity: 0;
+    transform: translateY(12px);
+  }
+}
+
 @media (prefers-reduced-motion: reduce) {
   *,
   *::before,

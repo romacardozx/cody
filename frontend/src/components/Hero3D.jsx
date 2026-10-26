@@ -184,6 +184,8 @@ export default function Hero3D() {
     }
 
     const frame = (dt) => {
+      // React clears the refs a moment before this effect is cleaned up: skip that last frame
+      if (!ask.current || !hud.current || !labels.current[0]) return
       const still = reduceMotion
       phaseTime += dt
       if (!still) {

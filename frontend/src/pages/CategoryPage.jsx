@@ -27,7 +27,7 @@ export default function CategoryPage({ slug }) {
       <header className={styles.head}>
         <span className={styles.icon} aria-hidden="true"><Icon name={data.icon} size={40} /></span>
         <div>
-          <h1 className={styles.title}>{data.label}</h1>
+          <h1 className={styles.title} style={{ viewTransitionName: `category-${data.slug}` }}>{data.label}</h1>
           <p className={styles.lead}>{data.description}</p>
         </div>
       </header>

@@ -2,7 +2,6 @@
   max-width: var(--page-max);
   margin: 0 auto;
   padding: var(--space-5) var(--space-6) var(--space-7);
-  animation: rise 0.4s var(--ease-out);
 }
 
 .breadcrumb {

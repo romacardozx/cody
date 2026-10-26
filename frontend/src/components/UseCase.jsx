@@ -1,6 +1,6 @@
 import { USE_CASES } from '../lib/useCases.js'
 import { RichText } from './RichText.jsx'
-import { BfsNetwork, BinaryDictionary, BubbleTable, DijkstraMap } from './UseCaseIllustrations.jsx'
+import { AStarCone, BfsNetwork, BidirectionalCircles, BinaryDictionary, BubbleTable, DijkstraMap } from './UseCaseIllustrations.jsx'
 import styles from './UseCase.module.css'
 
 const ILLUSTRATIONS = {
@@ -8,6 +8,8 @@ const ILLUSTRATIONS = {
   BFS: BfsNetwork,
   BINARY_SEARCH: BinaryDictionary,
   BUBBLE_SORT: BubbleTable,
+  A_STAR: AStarCone,
+  BIDIRECTIONAL_DIJKSTRA: BidirectionalCircles,
 }
 
 /** "In the real world": where the algorithm is used, drawn, and how its concepts translate. */
@@ -16,10 +18,12 @@ export function UseCase({ code }) {
   const Illustration = ILLUSTRATIONS[code]
   if (!useCase) return null
   return (
-    <section className={styles.section} aria-labelledby={`use-case-${code}`}>
-      <figure className={styles.figure}>
-        {Illustration && <Illustration />}
-      </figure>
+    <section className={`${styles.section} ${Illustration ? '' : styles.textOnly}`} aria-labelledby={`use-case-${code}`}>
+      {Illustration && (
+        <figure className={styles.figure}>
+          <Illustration />
+        </figure>
+      )}
       <div className={styles.body}>
         <p className={styles.where}>{useCase.where}</p>
         <h2 id={`use-case-${code}`} className={styles.title}>En el mundo real: {useCase.title.toLowerCase()}</h2>

@@ -61,7 +61,7 @@ function Visualizer({ code }) {
     return (
       <div className={styles.unavailable}>
         <Breadcrumb algorithm={algorithm} />
-        <h1 className={styles.title}>{algorithm.name}</h1>
+        <h1 className={styles.title} style={{ viewTransitionName: `algorithm-${algorithm.code}` }}>{algorithm.name}</h1>
         <p className={styles.description}><RichText>{algorithm.description}</RichText></p>
         <p>Todavía no está disponible para predecir. Mientras tanto, mirá dónde se usa o probá con BFS.</p>
         <Link to="/algorithms/BFS" className={styles.unavailableLink}>Ir a BFS <Icon name="arrow" size={16} /></Link>
@@ -153,7 +153,7 @@ function Player({ algorithm, scenarios }) {
       <Breadcrumb algorithm={algorithm} />
       <header className={styles.head}>
         <div className={styles.headText}>
-          <h1 className={styles.title}>{algorithm.name}</h1>
+          <h1 className={styles.title} style={{ viewTransitionName: `algorithm-${algorithm.code}` }}>{algorithm.name}</h1>
           <p className={styles.description}><RichText>{algorithm.description}</RichText></p>
         </div>
         <div className={styles.headSide}>

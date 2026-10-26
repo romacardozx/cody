@@ -1,13 +1,10 @@
 import { lazy, Suspense, use } from 'react'
 import { getAlgorithms, prefetchVisualizer } from '../api/cody.js'
-import { AlgorithmCard } from '../components/AlgorithmCard.jsx'
 import { CategoryCard } from '../components/CategoryCard.jsx'
 import { ErrorBoundary } from '../components/ErrorBoundary.jsx'
 import { Icon } from '../components/Icon.jsx'
 import { Link } from '../components/Link.jsx'
-import { FAMILY, FAMILY_ORDER } from '../lib/families.js'
-import { USE_CASES } from '../lib/useCases.js'
-import { useLocation } from '../lib/router.js'
+import { FAMILY_ORDER } from '../lib/families.js'
 import styles from './HomePage.module.css'
 
 // Three.js is heavy: the 3D scene loads after the page is on screen and never blocks it
@@ -99,33 +96,7 @@ export function HomePage() {
 
 function Catalog() {
   const algorithms = use(getAlgorithms())
-  const { query } = useLocation()
-  const text = (query.get('q') ?? '').trim().toLowerCase()
-
-  // Searching: show the matching algorithms directly
-  if (text) {
-    const found = algorithms.filter((algorithm) => {
-      const useCase = USE_CASES[algorithm.code]?.short ?? ''
-      const haystack = `${algorithm.name} ${algorithm.code} ${algorithm.description} ${FAMILY[algorithm.family].label} ${useCase}`
-      return haystack.toLowerCase().includes(text)
-    })
-    return (
-      <>
-        <p className={styles.searching}>
-          {found.length === 0 ? 'Ningún algoritmo' : found.length === 1 ? '1 algoritmo' : `${found.length} algoritmos`} para “{query.get('q')}”
-        </p>
-        {found.length > 0 && (
-          <div className={styles.grid}>
-            {found.map((algorithm) => (
-              <AlgorithmCard key={algorithm.code} algorithm={algorithm} index={algorithms.indexOf(algorithm)} />
-            ))}
-          </div>
-        )}
-      </>
-    )
-  }
-
-  // Otherwise: one card per family, so the catalog can grow and stay ordered
+  // One card per family, so the catalog can grow and stay ordered
   return (
     <div className={styles.categories}>
       {FAMILY_ORDER.map((family) => {

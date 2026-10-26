@@ -99,3 +99,49 @@ export function BubbleTable() {
     </svg>
   )
 }
+
+/** Shared map backdrop for the search comparisons: a field of street corners. */
+function CornerField() {
+  return (
+    <>
+      <defs>
+        <pattern id="corners" width="18" height="18" patternUnits="userSpaceOnUse">
+          <circle cx="9" cy="9" r="1.6" className={styles.corner} />
+        </pattern>
+      </defs>
+      <rect width="360" height="250" fill="url(#corners)" />
+    </>
+  )
+}
+
+/** A*: Dijkstra would check the whole dashed circle; A* checks a narrow cone towards the goal. */
+export function AStarCone() {
+  return (
+    <svg viewBox="0 0 360 250" className={styles.svg} role="img" aria-label="Comparación: Dijkstra revisaría un círculo completo alrededor del origen; A* revisa solo una franja angosta que apunta al destino">
+      <CornerField />
+      <circle cx="80" cy="140" r="200" className={styles.dijkstraArea} />
+      <path d="M80 140 L300 92 Q318 112 300 132 L80 152 Z" className={`${styles.searchArea} ${styles.grow}`} style={{ transformOrigin: '80px 140px' }} />
+      <path d="M80 140 L150 128 L210 118 L300 112" className={styles.searchRoute} />
+      <g transform="translate(80 140)" className={styles.pin}><circle r="8" /><text y="26">Origen</text></g>
+      <g transform="translate(300 112)" className={`${styles.pin} ${styles.pinGoal}`}><circle r="8" /><text y="-15">Destino</text></g>
+      <text x="200" y="232" className={styles.note}>Línea punteada: lo que revisaría Dijkstra</text>
+    </svg>
+  )
+}
+
+/** Bidirectional: two small circles that meet instead of one big circle. */
+export function BidirectionalCircles() {
+  return (
+    <svg viewBox="0 0 360 250" className={styles.svg} role="img" aria-label="Comparación: una búsqueda sola revisa un círculo grande; dos búsquedas, desde el origen y desde el destino, revisan dos círculos chicos que se tocan en el medio">
+      <CornerField />
+      <circle cx="90" cy="120" r="180" className={styles.dijkstraArea} />
+      <circle cx="90" cy="120" r="90" className={`${styles.searchArea} ${styles.grow}`} style={{ transformOrigin: '90px 120px' }} />
+      <circle cx="270" cy="120" r="90" className={`${styles.searchAreaBack} ${styles.grow}`} style={{ transformOrigin: '270px 120px' }} />
+      <path d="M90 120 L180 120 L270 120" className={styles.searchRoute} />
+      <circle cx="180" cy="120" r="5" className={styles.meet} />
+      <g transform="translate(90 120)" className={styles.pin}><circle r="8" /><text y="26">Origen</text></g>
+      <g transform="translate(270 120)" className={`${styles.pin} ${styles.pinGoal}`}><circle r="8" /><text y="26">Destino</text></g>
+      <text x="180" y="232" className={styles.note}>Línea punteada: lo que revisaría una sola búsqueda</text>
+    </svg>
+  )
+}

@@ -16,7 +16,7 @@ export function AlgorithmCard({ algorithm, index }) {
         </span>
         <span className={styles.number}>{String(index + 1).padStart(2, '0')}</span>
       </div>
-      <h3 className={styles.name}>{algorithm.name}</h3>
+      <h3 className={styles.name} style={{ viewTransitionName: `algorithm-${algorithm.code}` }}>{algorithm.name}</h3>
       <p className={styles.description}>{algorithm.description}</p>
       {USE_CASES[algorithm.code] && (
         <p className={styles.useCase}>

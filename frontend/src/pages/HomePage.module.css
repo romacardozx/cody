@@ -1,5 +1,4 @@
 .hero {
-  animation: rise 0.5s var(--ease-out);
   max-width: var(--page-max);
   margin: 0 auto;
   padding: var(--space-8) var(--space-6) var(--space-7);
@@ -96,42 +95,6 @@
   max-width: 30rem;
 }
 
-.filters {
-  display: flex;
-  flex-wrap: wrap;
-  align-items: center;
-  gap: var(--space-2);
-  margin-bottom: var(--space-5);
-}
-
-.chip {
-  height: 34px;
-  padding: 0 14px;
-  border-radius: 99px;
-  border: 1px solid var(--border);
-  background: transparent;
-  color: var(--text-2);
-  font-size: 0.9rem;
-  cursor: pointer;
-  transition: background-color 0.15s, color 0.15s, border-color 0.15s;
-}
-
-.chip:hover {
-  border-color: var(--border-strong);
-  color: var(--text);
-}
-
-.chip[aria-pressed='true'] {
-  background: var(--text);
-  border-color: var(--text);
-  color: var(--bg);
-}
-
-.searching {
-  margin-bottom: var(--space-4);
-  color: var(--text-2);
-}
-
 .categories {
   display: grid;
   grid-template-columns: repeat(auto-fit, minmax(340px, 1fr));
@@ -156,14 +119,6 @@
   to {
     background-position: -150% 0;
   }
-}
-
-.empty {
-  padding: var(--space-6);
-  text-align: center;
-  color: var(--text-3);
-  border: 1px dashed var(--border-strong);
-  border-radius: var(--radius-lg);
 }
 
 .steps {

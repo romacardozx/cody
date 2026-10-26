@@ -1,5 +1,6 @@
 package ar.edu.unsam.cody;
 
+import static org.hamcrest.Matchers.contains;
 import static org.hamcrest.Matchers.containsInAnyOrder;
 import static org.hamcrest.Matchers.hasItem;
 import static org.hamcrest.Matchers.hasSize;
@@ -45,10 +46,10 @@ class ScenarioApiIntegrationTest {
     void sampleDataIsLoaded() throws Exception {
         mockMvc.perform(get("/api/algorithms"))
                 .andExpect(status().isOk())
-                .andExpect(jsonPath("$", hasSize(4)))
-                .andExpect(jsonPath("$[2].code").value("BFS"))
-                .andExpect(jsonPath("$[2].available").value(true))
-                .andExpect(jsonPath("$[0].available").value(false));
+                .andExpect(jsonPath("$", hasSize(10)))
+                .andExpect(jsonPath("$[?(@.code == 'BFS')].available", contains(true)))
+                .andExpect(jsonPath("$[?(@.code == 'A_STAR')].family", contains("GRAPH")))
+                .andExpect(jsonPath("$[?(@.code == 'QUICK_SORT')].available", contains(false)));
 
         mockMvc.perform(get("/api/scenarios").param("type", "GRAPH"))
                 .andExpect(status().isOk())

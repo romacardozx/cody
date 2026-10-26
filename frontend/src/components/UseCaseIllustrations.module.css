@@ -305,3 +305,55 @@
   0%, 48% { transform: translateY(40px); }
   60%, 100% { transform: translateY(80px); }
 }
+
+/* ---------- A* and bidirectional: explored area comparisons ---------- */
+.corner {
+  fill: var(--edge);
+}
+
+.dijkstraArea {
+  fill: none;
+  stroke: var(--text-3);
+  stroke-width: 1.5;
+  stroke-dasharray: 5 6;
+}
+
+.searchArea {
+  fill: var(--frontier-soft);
+  stroke: var(--frontier);
+  stroke-width: 2;
+}
+
+.searchAreaBack {
+  fill: var(--visited-soft);
+  stroke: var(--visited);
+  stroke-width: 2;
+}
+
+/* The explored area grows from its origin; the last frame is the full area */
+.grow {
+  transform-box: view-box;
+  animation: growArea 5s var(--ease-out-expo) infinite both;
+}
+
+@keyframes growArea {
+  0% { transform: scale(0.05); }
+  55%, 100% { transform: scale(1); }
+}
+
+.searchRoute {
+  fill: none;
+  stroke: var(--accent);
+  stroke-width: 4;
+  stroke-linecap: round;
+  stroke-linejoin: round;
+}
+
+.meet {
+  fill: var(--accent);
+}
+
+.svg .note {
+  font-size: 12.5px;
+  fill: var(--text-3);
+}

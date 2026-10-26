@@ -15,7 +15,7 @@ export function CategoryCard({ family, algorithms }) {
         <Icon name={data.icon} size={30} />
       </span>
       <span className={styles.body}>
-        <span className={styles.title}>{data.label}</span>
+        <span className={styles.title} style={{ viewTransitionName: `category-${data.slug}` }}>{data.label}</span>
         <span className={styles.description}>{data.description}</span>
         <span className={styles.meta}>
           {algorithms.map((a) => a.name.replace(/ \(.*\)$/, '')).join(' · ')}

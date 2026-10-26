@@ -35,6 +35,32 @@ IF NOT EXISTS (SELECT 1 FROM algorithm WHERE code = 'DIJKSTRA')
     INSERT INTO algorithm (code, name, family, description, time_complexity, space_complexity, display_order)
     VALUES ('DIJKSTRA', 'Dijkstra', 'GRAPH', 'Encuentra el camino más corto desde un nodo a todos los demás cuando los pesos no son negativos. Siempre avanza por el nodo más cercano que todavía no cerró.', 'O((V + E) log V)', 'O(V)', 4);
 
+-- Not implemented yet: shown as "Próximamente" with their real-world use case
+
+IF NOT EXISTS (SELECT 1 FROM algorithm WHERE code = 'INSERTION_SORT')
+    INSERT INTO algorithm (code, name, family, description, time_complexity, space_complexity, display_order)
+    VALUES ('INSERTION_SORT', 'Ordenamiento por inserción', 'SORTING', 'Toma los elementos de a uno y los mete en su lugar dentro de la parte ya ordenada, corriendo a la derecha los más grandes. Como ordenar cartas en la mano.', 'O(n²)', 'O(1)', 5);
+
+IF NOT EXISTS (SELECT 1 FROM algorithm WHERE code = 'SELECTION_SORT')
+    INSERT INTO algorithm (code, name, family, description, time_complexity, space_complexity, display_order)
+    VALUES ('SELECTION_SORT', 'Ordenamiento por selección', 'SORTING', 'En cada pasada busca el menor de lo que queda y lo pone al principio. Hace pocas escrituras: un intercambio por pasada.', 'O(n²)', 'O(1)', 6);
+
+IF NOT EXISTS (SELECT 1 FROM algorithm WHERE code = 'MERGE_SORT')
+    INSERT INTO algorithm (code, name, family, description, time_complexity, space_complexity, display_order)
+    VALUES ('MERGE_SORT', 'Merge sort', 'SORTING', 'Divide el arreglo a la mitad hasta tener pedazos de un elemento y después los mezcla de a pares, siempre en orden. Divide y vencerás.', 'O(n log n)', 'O(n)', 7);
+
+IF NOT EXISTS (SELECT 1 FROM algorithm WHERE code = 'QUICK_SORT')
+    INSERT INTO algorithm (code, name, family, description, time_complexity, space_complexity, display_order)
+    VALUES ('QUICK_SORT', 'Quicksort', 'SORTING', 'Elige un pivote, deja a la izquierda los menores y a la derecha los mayores, y repite en cada lado. En promedio es de los más rápidos en la práctica.', 'O(n log n) promedio', 'O(log n)', 8);
+
+IF NOT EXISTS (SELECT 1 FROM algorithm WHERE code = 'A_STAR')
+    INSERT INTO algorithm (code, name, family, description, time_complexity, space_complexity, display_order)
+    VALUES ('A_STAR', 'A* (A estrella)', 'GRAPH', 'Como Dijkstra, pero suma una estimación de cuánto falta hasta el destino (por ejemplo, la distancia en línea recta). Así explora primero hacia la meta y revisa muchos menos nodos.', 'O(E log V)', 'O(V)', 9);
+
+IF NOT EXISTS (SELECT 1 FROM algorithm WHERE code = 'BIDIRECTIONAL_DIJKSTRA')
+    INSERT INTO algorithm (code, name, family, description, time_complexity, space_complexity, display_order)
+    VALUES ('BIDIRECTIONAL_DIJKSTRA', 'Dijkstra bidireccional', 'GRAPH', 'Lanza dos búsquedas a la vez, una desde el origen y otra desde el destino. Cuando se encuentran a mitad de camino, ya tiene la ruta más corta habiendo explorado mucho menos.', 'O(E log V)', 'O(V)', 10);
+
 -- ---------------------------------------------------------------- graph scenarios
 
 IF NOT EXISTS (SELECT 1 FROM scenario WHERE name = 'Rombo con cola')
