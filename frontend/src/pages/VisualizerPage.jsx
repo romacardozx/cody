@@ -111,6 +111,12 @@ function Player({ algorithm, scenarios }) {
     setScenarioId(id)
   }
 
+  // "Seguir" after a prediction: show the step that reveals the answer and keep playing
+  const continueAfterFeedback = () => {
+    next()
+    setPlaying(true)
+  }
+
   const restart = () => {
     setPlaying(false)
     start(scenarioId)
@@ -214,7 +220,7 @@ function Player({ algorithm, scenarios }) {
                   key={previous.question.id}
                   answer={lastResult}
                   labelOf={labelOf}
-                  onContinue={next}
+                  onContinue={continueAfterFeedback}
                   canContinue={session.canGoNext}
                 />
               )}
