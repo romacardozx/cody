@@ -26,8 +26,8 @@ import java.util.Map;
  *
  * <p>Before each dequeue with two or more nodes waiting, the user is asked which node leaves the
  * queue. The question goes on the previous step so the state shown does not reveal the answer,
- * the options are sorted alphabetically so their order gives nothing away, and explanations never
- * list the queue in order.
+ * and explanations never list the queue in order. Options are kept sorted here (traces must be
+ * deterministic); the API shows them in a random order per session.
  *
  * <p>Complexity: O(V + E) time and O(V) extra space, with V nodes and E edges.
  */

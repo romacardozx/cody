@@ -31,13 +31,20 @@ public record StepDto(
         String explanation,
         QuestionDto question) {
 
-    public static StepDto from(Step step) {
+    /**
+     * Builds the public view of a step.
+     *
+     * @param step the engine step
+     * @param seed per-session seed used to shuffle question options
+     * @return the step without the correct answer
+     */
+    public static StepDto from(Step step, long seed) {
         return new StepDto(step.index(), step.type(), step.codeLine(), step.elementStates(), step.values(),
                 step.highlights(), step.variables(), step.explanation(),
-                step.hasQuestion() ? QuestionDto.from(step.question()) : null);
+                step.hasQuestion() ? QuestionDto.from(step.question(), seed) : null);
     }
 
-    public static List<StepDto> fromAll(List<Step> steps) {
-        return steps.stream().map(StepDto::from).toList();
+    public static List<StepDto> fromAll(List<Step> steps, long seed) {
+        return steps.stream().map(step -> from(step, seed)).toList();
     }
 }

@@ -1,5 +1,6 @@
 package ar.edu.unsam.cody;
 
+import static org.hamcrest.Matchers.containsInAnyOrder;
 import static org.hamcrest.Matchers.hasItem;
 import static org.hamcrest.Matchers.hasSize;
 import static org.hamcrest.Matchers.greaterThanOrEqualTo;
@@ -127,6 +128,6 @@ class ScenarioApiIntegrationTest {
         mockMvc.perform(post("/api/sessions").contentType(MediaType.APPLICATION_JSON)
                         .content("{\"algorithmCode\": \"BFS\", \"scenarioId\": " + treeId + "}"))
                 .andExpect(status().isCreated())
-                .andExpect(jsonPath("$.steps[-1].question.options[0]").value("A"));
+                .andExpect(jsonPath("$.steps[-1].question.options", containsInAnyOrder("A", "B")));
     }
 }

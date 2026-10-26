@@ -74,7 +74,7 @@ public class SessionService {
 
         ActiveSession session = new ActiveSession(UUID.randomUUID(), scenario.getId(), trace, labelsOf(scenario));
         activeSessions.save(session);
-        List<StepDto> steps = StepDto.fromAll(session.nextSteps());
+        List<StepDto> steps = StepDto.fromAll(session.nextSteps(), shuffleSeed(session));
 
         LearningSession record = new LearningSession();
         record.setId(session.id());
@@ -121,7 +121,7 @@ public class SessionService {
             correct = session.answer(request.answer());
         }
 
-        List<StepDto> steps = StepDto.fromAll(session.nextSteps());
+        List<StepDto> steps = StepDto.fromAll(session.nextSteps(), shuffleSeed(session));
         String choiceFeedback = correct ? null : question.feedbackFor(request.answer());
         record(session, question, request.answer(), correct, choiceFeedback);
         return new PredictionResponse(correct, question.correctAnswer(), question.explanation(), choiceFeedback, steps,
@@ -156,6 +156,11 @@ public class SessionService {
         return history.findWithPredictionsById(sessionId)
                 .map(SessionDetailDto::from)
                 .orElseThrow(() -> new ResourceNotFoundException("No existe la sesión " + sessionId + "."));
+    }
+
+    /** Each session shows question options in its own random order (see QuestionDto). */
+    private static long shuffleSeed(ActiveSession session) {
+        return session.id().getLeastSignificantBits();
     }
 
     /** Stores an answered question; texts use labels so the history reads well on its own. */

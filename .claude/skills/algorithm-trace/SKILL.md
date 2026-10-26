@@ -26,6 +26,7 @@ description: Usar al implementar o modificar un algoritmo del paquete engine, o 
 - Bubble sort (`BUBBLE_SORT`): ¿se intercambian estos dos? (opciones: "Sí" / "No")
 - Binary search (`BINARY_SEARCH`): ¿izquierda o derecha?
 - BFS (`BFS`): ¿qué nodo sale de la cola? (opciones: nodos de la frontera)
+- En el engine las opciones van en orden fijo (ordenadas); `QuestionDto` las mezcla con una semilla por sesión, así la correcta no queda siempre en el mismo lugar.
 - Dijkstra (`DIJKSTRA`): ¿qué nodo de la frontera se visita? (opciones: nodos de la frontera)
 
 # Cómo testear (TDD)

@@ -1,5 +1,6 @@
 package ar.edu.unsam.cody.controller;
 
+import static org.hamcrest.Matchers.containsInAnyOrder;
 import static org.hamcrest.Matchers.everyItem;
 import static org.hamcrest.Matchers.hasKey;
 import static org.hamcrest.Matchers.not;
@@ -56,7 +57,7 @@ class SessionControllerTest {
                 .andExpect(jsonPath("$.algorithmCode").value("BFS"))
                 .andExpect(jsonPath("$.scenarioId").value(1))
                 .andExpect(jsonPath("$.finished").value(false))
-                .andExpect(jsonPath("$.steps[-1].question.options[0]").value("B"));
+                .andExpect(jsonPath("$.steps[-1].question.options", containsInAnyOrder("B", "C")));
     }
 
     @Test
