@@ -1,0 +1,33 @@
+-- Datos de ejemplo para la demo (punto 6 del enunciado).
+--
+-- Este script corre en CADA arranque (spring.sql.init.mode=always), así que todo
+-- INSERT tiene que ser idempotente: solo inserta si la fila todavía no existe.
+--
+-- Reglas:
+--   1. Una sentencia por línea lógica, terminada en ';'. Spring separa el script
+--      por ';', así que no usar bloques BEGIN ... END con varias sentencias adentro.
+--   2. Buscar por una clave natural (codigo, nombre), nunca por el id autogenerado.
+--   3. No insertar ids a mano: SQL Server los genera (IDENTITY) y forzarlos
+--      requiere SET IDENTITY_INSERT.
+--   4. Solo referenciar tablas que ya existan como entidad JPA: SQL Server valida
+--      la sentencia entera antes de ejecutarla, aunque esté dentro de un IF.
+--
+-- Patrón:
+--   IF NOT EXISTS (SELECT 1 FROM tabla WHERE clave = 'X') INSERT INTO tabla (clave, ...) VALUES ('X', ...);
+--
+-- TODO (Persona 1): descomentar cuando exista la entidad Algoritmo y ajustar las columnas.
+-- Después sumar el pseudocódigo y los escenarios precargados.
+
+SELECT 1;
+
+-- IF NOT EXISTS (SELECT 1 FROM algoritmo WHERE codigo = 'BURBUJA')
+--     INSERT INTO algoritmo (codigo, nombre, familia, descripcion) VALUES ('BURBUJA', 'Ordenamiento burbuja', 'ARREGLOS', 'Compara pares adyacentes y los intercambia si están desordenados. O(n^2).');
+--
+-- IF NOT EXISTS (SELECT 1 FROM algoritmo WHERE codigo = 'BUSQUEDA_BINARIA')
+--     INSERT INTO algoritmo (codigo, nombre, familia, descripcion) VALUES ('BUSQUEDA_BINARIA', 'Búsqueda binaria', 'ARREGLOS', 'Divide a la mitad un arreglo ordenado en cada paso. O(log n).');
+--
+-- IF NOT EXISTS (SELECT 1 FROM algoritmo WHERE codigo = 'BFS')
+--     INSERT INTO algoritmo (codigo, nombre, familia, descripcion) VALUES ('BFS', 'Búsqueda en anchura (BFS)', 'GRAFOS', 'Recorre el grafo por niveles usando una cola. O(V + E).');
+--
+-- IF NOT EXISTS (SELECT 1 FROM algoritmo WHERE codigo = 'DIJKSTRA')
+--     INSERT INTO algoritmo (codigo, nombre, familia, descripcion) VALUES ('DIJKSTRA', 'Dijkstra', 'GRAFOS', 'Camino mínimo desde un origen con pesos no negativos. O((V + E) log V) con cola de prioridad.');

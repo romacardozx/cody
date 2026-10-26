@@ -1,0 +1,23 @@
+{
+  "version": 1,
+  "skills": {
+    "motion": {
+      "source": "secondsky/claude-skills",
+      "sourceType": "github",
+      "skillPath": "plugins/motion/skills/motion/SKILL.md",
+      "computedHash": "7b293f2fd97c563bbe9835ba0010ef6771aa0493493fb9c31cfa704a556da8aa"
+    },
+    "spring-boot-patterns": {
+      "source": "decebals/claude-code-java",
+      "sourceType": "github",
+      "skillPath": "skills/spring-boot-patterns/SKILL.md",
+      "computedHash": "fed46286fcef135ef1ce5fe691cb481bf4301a74bbd1494dcf040a0575f126e6"
+    },
+    "webapp-testing": {
+      "source": "anthropics/skills",
+      "sourceType": "github",
+      "skillPath": "skills/webapp-testing/SKILL.md",
+      "computedHash": "ad5b1fc52807e9afa4635e59218a026b164dc58b6c3f41b0f7c644dcd6ccf572"
+    }
+  }
+}
