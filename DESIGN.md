@@ -52,7 +52,7 @@ Las fuentes van empaquetadas con `@fontsource` (la demo funciona sin internet).
 - Catálogo por **categorías** (`lib/families.js`): la home muestra una tarjeta por familia (ícono al costado, nunca en un cuadradito arriba) y cada una tiene su página `/categories/{slug}`. Un algoritmo nuevo aparece solo en su sector.
 - Cada algoritmo tiene un **caso de uso real** (`lib/useCases.js` + una ilustración animada en `UseCaseIllustrations.jsx`) con la tabla "en el algoritmo / en la vida real". La animación termina en el cuadro completo, así con movimiento reducido se ve el resultado.
 - Las opciones de una pregunta se muestran en **orden aleatorio por sesión** (lo hace el backend).
-- "Cómo funciona" (`WatchVsPredict.jsx`) **muestra en vez de explicar**: la misma animación de BFS dos veces, una que corre sola (atenuada, más angosta) y otra que se frena antes de la decisión y espera una respuesta real. Nada de pasos numerados con un verbo cada uno: es la plantilla de "cómo funciona" que hace cualquier IA.
+- "Cómo funciona" (`EngagementLadder.jsx`) es la **taxonomía de compromiso de Naps et al. (ITiCSE 2002)**: Mirar → Responder → Cambiar, cada nivel con una demo viva de un algoritmo distinto (burbuja que corre sola, búsqueda binaria que pregunta, un arreglo editable). El ojo de Cody recorre el riel entre niveles (se estira al moverse, mira hacia donde va, parpadea al llegar) y se queda en "Responder". El bermellón solo aparece en la pregunta. Nada de pasos numerados con un verbo cada uno.
 - El feedback de una predicción **no desaparece solo**: queda hasta "Seguir" y además va al historial.
 - Animación: easing exponencial (`--ease-out-expo`) o resortes de motion; nada de rebotes con overshoot en cubic-bezier.
 

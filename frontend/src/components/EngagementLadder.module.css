@@ -1,0 +1,490 @@
+.ladder {
+  position: relative;
+  --expo: cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+.levels {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  display: grid;
+  /* Cody's level gets more room: it is the one you can play */
+  grid-template-columns: minmax(0, 1fr) minmax(0, 1.3fr) minmax(0, 1fr);
+  gap: var(--space-7);
+}
+
+.level {
+  display: grid;
+  gap: var(--space-3);
+  align-content: start;
+}
+
+.head {
+  display: grid;
+  justify-items: start;
+  gap: var(--space-2);
+}
+
+/* The stations sit on the rail, in a row of their own above the names */
+.station {
+  width: 12px;
+  height: 12px;
+  margin: 16px 0;
+  border-radius: 50%;
+  background: var(--bg);
+  border: 2px solid var(--border-strong);
+  position: relative;
+  z-index: 1;
+}
+
+.level[data-cody] .station {
+  border-color: var(--accent);
+}
+
+.rail {
+  position: absolute;
+  margin: -1px 0 0 -1px;
+  background: var(--border-strong);
+  border-radius: 2px;
+}
+
+.eyeHolder {
+  position: absolute;
+  top: 0;
+  left: 0;
+  z-index: 2;
+  transition: transform 0.82s var(--expo);
+  pointer-events: none;
+}
+
+.eye {
+  display: block;
+  width: 46px;
+  height: 46px;
+  translate: -50% -50%;
+  overflow: visible;
+  color: var(--text);
+  transition: scale 0.35s var(--expo);
+}
+
+/* Squash and stretch while travelling */
+.eye[data-moving] {
+  scale: 1.16 0.88;
+}
+
+.eyeWhite {
+  fill: var(--bg);
+  stroke: currentColor;
+  stroke-width: 2.2;
+}
+
+.pupilGroup {
+  transition: transform 0.4s var(--expo);
+}
+
+.pupil {
+  fill: var(--accent);
+}
+
+.shine {
+  fill: var(--bg);
+  opacity: 0.85;
+}
+
+.lid {
+  transform-box: fill-box;
+  transform-origin: center;
+  transition: transform 0.12s ease-in;
+}
+
+.eye[data-blinking] .lid {
+  transform: scaleY(0.08);
+}
+
+.name {
+  font-size: 1.5rem;
+  font-weight: 720;
+  line-height: 1.1;
+}
+
+.level:first-child .name {
+  color: var(--text-2);
+}
+
+.tag {
+  font-size: var(--text-sm);
+  color: var(--text-2);
+  padding: 2px 10px;
+  border-radius: 99px;
+  border: 1px solid var(--border-strong);
+}
+
+.level[data-cody] .tag {
+  color: var(--accent-strong);
+  border-color: color-mix(in srgb, var(--accent) 55%, transparent);
+}
+
+.line {
+  color: var(--text-2);
+  max-width: 44ch;
+}
+
+.level:first-child .line {
+  color: var(--text-3);
+}
+
+.source {
+  margin-top: var(--space-6);
+  max-width: 50ch;
+  color: var(--text-3);
+  font-size: var(--text-sm);
+}
+
+/* ------------------------------------------------------------ demos */
+
+.demo {
+  display: grid;
+  gap: var(--space-3);
+  margin-top: var(--space-2);
+}
+
+/* Bars: each one slides to its slot */
+.bars {
+  position: relative;
+  height: 128px;
+}
+
+.bar {
+  position: absolute;
+  bottom: 0;
+  left: 0;
+  height: 100%;
+  padding: 0 3px;
+  border: 0;
+  background: none;
+  display: flex;
+  flex-direction: column;
+  justify-content: flex-end;
+  align-items: stretch;
+  gap: 4px;
+  font: inherit;
+  color: inherit;
+  transition: transform 0.5s var(--expo);
+}
+
+button.bar {
+  cursor: pointer;
+}
+
+.barFill {
+  display: block;
+  border-radius: 5px 5px 2px 2px;
+  background: var(--surface-3);
+  border: 1px solid var(--node-stroke);
+  transition: height 0.45s var(--expo), background 0.25s, border-color 0.25s;
+}
+
+button.bar:hover .barFill {
+  border-color: var(--text-2);
+}
+
+button.bar:focus-visible {
+  outline: 2px solid var(--accent);
+  outline-offset: 2px;
+  border-radius: 6px;
+}
+
+.barValue {
+  font-family: var(--font-mono);
+  font-size: var(--text-sm);
+  text-align: center;
+  color: var(--text-2);
+}
+
+.bar[data-state='comparing'] .barFill {
+  background: var(--frontier-soft);
+  border-color: var(--frontier);
+}
+
+/* Swaps in amber: vermillion is kept for the one moment Cody asks */
+.bar[data-state='swapping'] .barFill {
+  background: var(--frontier);
+  border-color: var(--frontier);
+}
+
+.bar[data-state='sorted'] .barFill {
+  background: var(--visited-soft);
+  border-color: var(--visited);
+}
+
+/* The watching level is the quiet one */
+.level:first-child .bars {
+  opacity: 0.8;
+}
+
+.progress {
+  display: flex;
+  align-items: center;
+  gap: var(--space-3);
+}
+
+.track {
+  flex: 1;
+  height: 4px;
+  border-radius: 99px;
+  background: var(--surface-3);
+  overflow: hidden;
+}
+
+.fill {
+  display: block;
+  height: 100%;
+  background: var(--text-3);
+  transform-origin: left;
+  transition: transform 0.6s var(--expo);
+}
+
+.count {
+  display: inline-flex;
+  align-items: center;
+  gap: 5px;
+  font-family: var(--font-mono);
+  font-size: var(--text-xs);
+  color: var(--text-3);
+  font-variant-numeric: tabular-nums;
+}
+
+.progress[data-paused] .fill {
+  background: var(--accent);
+}
+
+.progress[data-paused] .count {
+  color: var(--accent-strong);
+}
+
+/* Binary search: a row of numbers over a band that marks what is still possible */
+.list {
+  position: relative;
+  display: grid;
+  grid-template-columns: repeat(9, minmax(0, 1fr));
+  gap: 4px;
+  padding-bottom: 12px;
+}
+
+.range {
+  position: absolute;
+  bottom: 0;
+  height: 4px;
+  border-radius: 99px;
+  background: var(--frontier);
+  transition: left 0.7s var(--expo), width 0.7s var(--expo);
+}
+
+.cell {
+  display: grid;
+  place-items: center;
+  aspect-ratio: 1 / 1.15;
+  border-radius: var(--radius-sm);
+  border: 1px solid var(--node-stroke);
+  background: var(--node-fill);
+  font-family: var(--font-mono);
+  font-size: var(--text-sm);
+  font-weight: 700;
+  color: var(--text);
+  transition: opacity 0.5s var(--expo), filter 0.5s var(--expo), transform 0.5s var(--expo), background 0.25s, border-color 0.25s;
+}
+
+/* Discarded half: it sinks, blurs and fades, without leaving the row */
+.cell[data-out] {
+  opacity: 0.28;
+  filter: blur(1.5px);
+  transform: translateY(6px) scale(0.92);
+}
+
+.cell[data-mid] {
+  border-color: var(--frontier);
+  background: var(--frontier-soft);
+  transform: translateY(-4px);
+}
+
+.cell[data-asking] {
+  border: 1px dashed var(--accent);
+  background: var(--accent-soft);
+  animation: ask 1.4s var(--ease-out) infinite;
+}
+
+.cell[data-found] {
+  border-color: var(--visited);
+  background: var(--visited-soft);
+  animation: found 0.7s var(--expo);
+}
+
+@keyframes ask {
+  50% {
+    box-shadow: 0 6px 18px -8px var(--accent);
+    transform: translateY(-6px);
+  }
+}
+
+@keyframes found {
+  40% {
+    transform: translateY(-8px) scale(1.12);
+  }
+}
+
+.decision {
+  display: grid;
+  gap: var(--space-3);
+  justify-items: start;
+  min-height: 7.5rem;
+  align-content: start;
+}
+
+.prompt {
+  font-family: var(--font-display);
+  font-size: 1.15rem;
+  font-weight: 700;
+  color: var(--text);
+}
+
+.options {
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--space-3);
+}
+
+.option {
+  display: inline-flex;
+  align-items: center;
+  gap: var(--space-2);
+  padding: var(--space-2) var(--space-4);
+  border: 1px dashed var(--accent);
+  border-radius: var(--radius);
+  background: var(--accent-soft);
+  color: var(--text);
+  font: inherit;
+  font-weight: 700;
+  cursor: pointer;
+  transition: background 0.15s, transform 0.15s;
+}
+
+.option:hover {
+  background: color-mix(in srgb, var(--accent) 24%, transparent);
+}
+
+.option:active {
+  transform: scale(0.96);
+}
+
+.feedback {
+  display: flex;
+  gap: var(--space-2);
+  align-items: flex-start;
+  padding: var(--space-3) var(--space-4);
+  border-radius: var(--radius);
+  color: var(--text);
+  animation: rise 0.5s var(--expo);
+}
+
+.feedback svg {
+  flex: none;
+  margin-top: 3px;
+}
+
+.feedback[data-correct='true'] {
+  background: var(--ok-soft);
+}
+
+.feedback[data-correct='true'] svg {
+  color: var(--ok);
+}
+
+.feedback[data-correct='false'] {
+  background: var(--bad-soft);
+}
+
+.feedback[data-correct='false'] svg {
+  color: var(--bad);
+}
+
+@keyframes rise {
+  from {
+    opacity: 0;
+    transform: translateY(6px);
+  }
+}
+
+.note {
+  color: var(--text-2);
+}
+
+.again {
+  display: inline-flex;
+  align-items: center;
+  gap: var(--space-2);
+  padding: var(--space-2) var(--space-4);
+  border: 1px solid var(--border-strong);
+  border-radius: var(--radius);
+  background: var(--surface);
+  color: var(--text);
+  font: inherit;
+  cursor: pointer;
+}
+
+.again:hover:not(:disabled) {
+  background: var(--surface-2);
+}
+
+.again:disabled {
+  color: var(--text-3);
+  cursor: default;
+}
+
+.changeRow {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: var(--space-3);
+}
+
+.hint {
+  color: var(--text-3);
+  font-size: var(--text-sm);
+}
+
+/* Phones: the levels stack and the rail turns vertical, down the left edge */
+@media (max-width: 900px) {
+  .levels {
+    grid-template-columns: 1fr;
+    gap: var(--space-7);
+  }
+
+  .level {
+    position: relative;
+    padding-left: 52px;
+  }
+
+  .station {
+    position: absolute;
+    left: 17px;
+    top: 0;
+    margin: 6px 0 0;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .eyeHolder,
+  .eye,
+  .pupilGroup,
+  .bar,
+  .cell,
+  .range {
+    transition: none;
+  }
+
+  .cell[data-asking],
+  .cell[data-found],
+  .feedback {
+    animation: none;
+  }
+}

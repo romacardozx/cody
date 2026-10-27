@@ -4,7 +4,7 @@ import { CategoryCard } from '../components/CategoryCard.jsx'
 import { ErrorBoundary } from '../components/ErrorBoundary.jsx'
 import { Icon } from '../components/Icon.jsx'
 import { Link } from '../components/Link.jsx'
-import { WatchVsPredict } from '../components/WatchVsPredict.jsx'
+import { EngagementLadder } from '../components/EngagementLadder.jsx'
 import { FAMILY_ORDER } from '../lib/families.js'
 import styles from './HomePage.module.css'
 
@@ -46,9 +46,9 @@ export function HomePage() {
       <section id="como-funciona" className={styles.section}>
         <div className={styles.sectionHead}>
           <h2 className={styles.sectionTitle}>Cómo funciona</h2>
-          <p className={styles.sectionLead}>La misma animación, dos maneras de verla. La diferencia es quién decide el próximo paso.</p>
+          <p className={styles.sectionLead}>Mirar no alcanza: cuanto más hacés con una animación, más aprendés. Cody te sube un escalón.</p>
         </div>
-        <WatchVsPredict />
+        <EngagementLadder />
       </section>
       <section id="algoritmos" className={styles.section}>
         <div className={styles.sectionHead}>
