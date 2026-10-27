@@ -47,6 +47,7 @@ const PATHS = {
     </>
   ),
   bars: <path d="M5 20V13M10 20V8M15 20v-5M20 20V4" />,
+  layers: <path d="M12 3l9 4.5-9 4.5-9-4.5zM3 12l9 4.5 9-4.5M3 16.5l9 4.5 9-4.5" />,
   target: (
     <>
       <circle cx="12" cy="12" r="8" />

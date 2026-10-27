@@ -121,4 +121,148 @@ export const USE_CASES = {
       ['Encuentro', 'La esquina donde las dos se tocan'],
     ],
   },
+  LINEAR_SEARCH: {
+    short: 'Buscar una foto en el carrete',
+    title: 'Revisar uno por uno',
+    where: 'El carrete del celular, un chat sin buscador',
+    text:
+      'Cuando buscás una foto en el carrete, la revisás una por una hasta encontrarla. Eso es la búsqueda lineal: no necesita que nada esté ordenado, pero si la foto está al final (o no está) termina mirando todas.',
+    mapping: [
+      ['Lista', 'Las fotos del carrete'],
+      ['Valor buscado', 'La foto que querés'],
+      ['Comparación', 'Mirar una foto y decidir si es esa'],
+    ],
+  },
+  STACK: {
+    short: 'El botón de deshacer',
+    title: 'Deshacer el último cambio',
+    where: 'Editores de texto, de imágenes y de código',
+    text:
+      'Cada cambio que hacés se apila. Ctrl+Z saca el de arriba, que es siempre el último: por eso deshacer va hacia atrás en el tiempo, de a un paso.',
+    mapping: [
+      ['Apilar', 'Hacer un cambio'],
+      ['Desapilar', 'Ctrl+Z'],
+      ['Tope', 'El último cambio que hiciste'],
+    ],
+  },
+  QUEUE: {
+    short: 'La cola de impresión',
+    title: 'Por orden de llegada',
+    where: 'Impresoras, turnos, mensajes en espera',
+    text:
+      'Los documentos que mandás a imprimir esperan en una cola: la impresora toma siempre el que llegó primero. Nadie se cuela, y el último en llegar espera a que salgan todos los anteriores.',
+    mapping: [
+      ['Encolar', 'Mandar un documento a imprimir'],
+      ['Desencolar', 'La impresora toma el siguiente'],
+      ['Frente', 'El documento que se imprime ahora'],
+    ],
+  },
+  LINKED_LIST: {
+    short: 'La lista de reproducción',
+    title: 'Cada canción sabe cuál sigue',
+    where: 'Reproductores de música',
+    text:
+      'En una lista de reproducción, cada canción sabe cuál viene después. Meter una canción en el medio no obliga a mover las demás: alcanza con cambiar a cuál apunta la anterior.',
+    mapping: [
+      ['Nodo', 'Una canción'],
+      ['Puntero', 'Cuál sigue'],
+      ['Insertar', 'Agregar una canción entre dos'],
+    ],
+  },
+  DOUBLY_LINKED_LIST: {
+    short: 'Atrás y adelante en el navegador',
+    title: 'Ir y volver',
+    where: 'Navegadores web',
+    text:
+      'Cada página que visitás recuerda la anterior y la siguiente. Los botones de atrás y adelante solo siguen esos punteros, en un sentido o en el otro.',
+    mapping: [
+      ['Nodo', 'Una página visitada'],
+      ['Puntero anterior', 'El botón de atrás'],
+      ['Puntero siguiente', 'El botón de adelante'],
+    ],
+  },
+  HASH_TABLE: {
+    short: '¿Ese usuario ya existe?',
+    title: 'Saber al instante si algo está',
+    where: 'Registro en cualquier sitio',
+    text:
+      'Cuando elegís un nombre de usuario, el sitio te dice al instante si está tomado, aunque tenga millones. No recorre la lista: la función hash le dice en qué casillero mirar.',
+    mapping: [
+      ['Clave', 'El nombre de usuario'],
+      ['Función hash', 'La cuenta que da el número de casillero'],
+      ['Colisión', 'Dos nombres que caen en el mismo casillero'],
+    ],
+  },
+  HASH_MAP: {
+    short: 'La agenda del celular',
+    title: 'De la clave al valor',
+    where: 'Contactos, diccionarios, cachés',
+    text:
+      'En la agenda escribís un nombre y aparece el número. Cada nombre (la clave) guarda su número (el valor), y encontrarlo no depende de cuántos contactos tengas.',
+    mapping: [
+      ['Clave', 'El nombre del contacto'],
+      ['Valor', 'Su número'],
+      ['Buscar', 'Escribir el nombre y obtener el número'],
+    ],
+  },
+  BINARY_TREE: {
+    short: 'La llave de un torneo',
+    title: 'Partidos de a dos',
+    where: 'Torneos eliminatorios',
+    text:
+      'La llave de un torneo eliminatorio es un árbol binario: cada partido recibe a los ganadores de dos partidos anteriores, hasta llegar a la final.',
+    mapping: [
+      ['Nodo', 'Un partido'],
+      ['Hijos', 'Los dos partidos que lo alimentan'],
+      ['Raíz', 'La final'],
+    ],
+  },
+  BINARY_SEARCH_TREE: {
+    short: 'Índices de una base de datos',
+    title: 'Bajar comparando',
+    where: 'Bases de datos',
+    text:
+      'Para encontrar un DNI entre millones, la base no los revisa todos: baja por un índice preguntando en cada paso si el que busca es menor o mayor, y descarta la mitad del resto.',
+    mapping: [
+      ['Nodo', 'Un DNI guardado'],
+      ['Izquierda o derecha', 'Menor o mayor'],
+      ['Buscar', 'Bajar comparando hasta encontrarlo'],
+    ],
+  },
+  AVL_TREE: {
+    short: 'Que el índice no se degrade',
+    title: 'Mantenerse balanceado',
+    where: 'Bases de datos y sistemas de archivos',
+    text:
+      'Si los datos llegan ya ordenados, un árbol de búsqueda común queda como una lista larga y buscar se vuelve lento. El AVL lo detecta y rota ramas para que ninguna crezca de más.',
+    mapping: [
+      ['Rotación', 'Reacomodar sin perder el orden'],
+      ['Factor de balance', 'Cuánto más alta es una rama que la otra'],
+      ['Altura', 'Cuántas comparaciones cuesta buscar'],
+    ],
+  },
+  HEAP: {
+    short: 'La guardia de un hospital',
+    title: 'Primero el más urgente',
+    where: 'Guardias, planificadores de tareas',
+    text:
+      'En una guardia no se atiende por orden de llegada sino por urgencia. Cada paciente nuevo se ubica según su gravedad, y el más urgente siempre está primero.',
+    mapping: [
+      ['Prioridad', 'La urgencia'],
+      ['Raíz', 'El próximo paciente'],
+      ['Insertar', 'Llega un paciente nuevo'],
+    ],
+  },
+  TRIE: {
+    short: 'El autocompletar del teclado',
+    title: 'Palabras que comparten comienzo',
+    where: 'Teclados del celular, buscadores',
+    text:
+      'Cuando escribís «cas», el teclado sugiere casa, casco y castillo. Todas comparten el camino c-a-s, así que encontrar las sugerencias cuesta lo que mide lo que escribiste.',
+    mapping: [
+      ['Nodo', 'Una letra'],
+      ['Camino', 'Un prefijo'],
+      ['Fin de palabra', 'Una palabra completa'],
+    ],
+  },
 }

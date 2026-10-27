@@ -9,7 +9,7 @@ import java.util.List;
  *
  * @param code            algorithm code
  * @param name            display name
- * @param family          SORTING, SEARCHING or GRAPH
+ * @param family          SORTING, SEARCHING, GRAPH or DATA_STRUCTURE
  * @param scenarioType    kind of scenario it runs on
  * @param description     what it does
  * @param timeComplexity  time complexity, e.g. {@code "O(V + E)"}

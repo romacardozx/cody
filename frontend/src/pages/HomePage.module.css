@@ -97,7 +97,8 @@
 
 .categories {
   display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(340px, 1fr));
+  /* Four families: two per row on wide screens, one on phones */
+  grid-template-columns: repeat(auto-fit, minmax(min(100%, 440px), 1fr));
   gap: var(--space-4);
 }
 

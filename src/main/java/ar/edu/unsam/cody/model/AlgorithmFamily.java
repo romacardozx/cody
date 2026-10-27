@@ -4,7 +4,9 @@ package ar.edu.unsam.cody.model;
 public enum AlgorithmFamily {
     SORTING(ScenarioType.ARRAY),
     SEARCHING(ScenarioType.ARRAY),
-    GRAPH(ScenarioType.GRAPH);
+    GRAPH(ScenarioType.GRAPH),
+    /** Stacks, lists, hash tables, trees: built by inserting the values of an array, one by one. */
+    DATA_STRUCTURE(ScenarioType.ARRAY);
 
     private final ScenarioType scenarioType;
 

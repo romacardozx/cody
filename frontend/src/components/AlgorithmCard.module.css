@@ -110,7 +110,8 @@ a.card:active {
 .complexity {
   font-family: var(--font-mono);
   font-size: var(--text-xs);
-  padding: 3px 8px;
+  /* Long complexities wrap to two lines; this keeps air around them */
+  padding: 5px 8px;
   border-radius: var(--radius-sm);
   background: var(--surface-2);
   color: var(--text);

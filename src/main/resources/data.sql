@@ -61,6 +61,64 @@ IF NOT EXISTS (SELECT 1 FROM algorithm WHERE code = 'BIDIRECTIONAL_DIJKSTRA')
     INSERT INTO algorithm (code, name, family, description, time_complexity, space_complexity, display_order)
     VALUES ('BIDIRECTIONAL_DIJKSTRA', 'Dijkstra bidireccional', 'GRAPH', 'Lanza dos búsquedas a la vez, una desde el origen y otra desde el destino. Cuando se encuentran a mitad de camino, ya tiene la ruta más corta habiendo explorado mucho menos.', 'O(E log V)', 'O(V)', 10);
 
+-- Hibernate creates algorithm.family with a CHECK listing the enum values, and ddl-auto=update
+-- never changes it. Databases created before DATA_STRUCTURE existed drop that CHECK here (the
+-- enum in Java already restricts the values). Dynamic SQL because the constraint name is generated.
+IF EXISTS (SELECT 1 FROM sys.check_constraints WHERE parent_object_id = OBJECT_ID('algorithm') AND definition LIKE '%family%' AND definition NOT LIKE '%DATA_STRUCTURE%')
+    EXEC (N'DECLARE @ck sysname = (SELECT TOP 1 name FROM sys.check_constraints WHERE parent_object_id = OBJECT_ID(''algorithm'') AND definition LIKE ''%family%'') EXEC (N''ALTER TABLE algorithm DROP CONSTRAINT '' + @ck)');
+
+IF NOT EXISTS (SELECT 1 FROM algorithm WHERE code = 'LINEAR_SEARCH')
+    INSERT INTO algorithm (code, name, family, description, time_complexity, space_complexity, display_order)
+    VALUES ('LINEAR_SEARCH', 'Búsqueda lineal', 'SEARCHING', 'Mira los elementos uno por uno, de izquierda a derecha, hasta encontrar el valor o llegar al final. Es la más simple y funciona aunque la lista no esté ordenada.', 'O(n)', 'O(1)', 2);
+
+
+-- Linear search is taught before binary search. Plain UPDATEs are idempotent (same value every time).
+UPDATE algorithm SET display_order = 2 WHERE code = 'LINEAR_SEARCH' AND display_order <> 2;
+UPDATE algorithm SET display_order = 11 WHERE code = 'BINARY_SEARCH' AND display_order <> 11;
+IF NOT EXISTS (SELECT 1 FROM algorithm WHERE code = 'STACK')
+    INSERT INTO algorithm (code, name, family, description, time_complexity, space_complexity, display_order)
+    VALUES ('STACK', 'Pila', 'DATA_STRUCTURE', 'Se apila y se desapila por el mismo extremo: el último en entrar es el primero en salir (LIFO). Así funciona el botón de deshacer.', 'O(1) apilar y desapilar', 'O(n)', 12);
+
+IF NOT EXISTS (SELECT 1 FROM algorithm WHERE code = 'QUEUE')
+    INSERT INTO algorithm (code, name, family, description, time_complexity, space_complexity, display_order)
+    VALUES ('QUEUE', 'Cola', 'DATA_STRUCTURE', 'Se encola por atrás y se desencola por adelante: el primero en entrar es el primero en salir (FIFO). Es la que usa BFS para recorrer por niveles.', 'O(1) encolar y desencolar', 'O(n)', 13);
+
+IF NOT EXISTS (SELECT 1 FROM algorithm WHERE code = 'LINKED_LIST')
+    INSERT INTO algorithm (code, name, family, description, time_complexity, space_complexity, display_order)
+    VALUES ('LINKED_LIST', 'Lista enlazada', 'DATA_STRUCTURE', 'Nodos que apuntan cada uno al siguiente. Insertar es mover un par de punteros; buscar, en cambio, obliga a recorrerla desde el principio.', 'O(n) buscar, O(1) insertar al inicio', 'O(n)', 14);
+
+IF NOT EXISTS (SELECT 1 FROM algorithm WHERE code = 'DOUBLY_LINKED_LIST')
+    INSERT INTO algorithm (code, name, family, description, time_complexity, space_complexity, display_order)
+    VALUES ('DOUBLY_LINKED_LIST', 'Lista doblemente enlazada', 'DATA_STRUCTURE', 'Cada nodo apunta al siguiente y al anterior: se recorre en los dos sentidos y se puede sacar un nodo sin buscar al que está antes.', 'O(n) buscar, O(1) sacar un nodo dado', 'O(n)', 15);
+
+IF NOT EXISTS (SELECT 1 FROM algorithm WHERE code = 'HASH_TABLE')
+    INSERT INTO algorithm (code, name, family, description, time_complexity, space_complexity, display_order)
+    VALUES ('HASH_TABLE', 'Tabla hash', 'DATA_STRUCTURE', 'Una función hash convierte cada clave en el número de un casillero. Si dos claves caen en el mismo, se encadenan en una lista.', 'O(1) promedio', 'O(n)', 16);
+
+IF NOT EXISTS (SELECT 1 FROM algorithm WHERE code = 'HASH_MAP')
+    INSERT INTO algorithm (code, name, family, description, time_complexity, space_complexity, display_order)
+    VALUES ('HASH_MAP', 'Mapa hash (clave y valor)', 'DATA_STRUCTURE', 'Como la tabla hash, pero cada clave guarda un valor asociado: se busca por la clave y se obtiene el valor sin recorrer nada.', 'O(1) promedio', 'O(n)', 17);
+
+IF NOT EXISTS (SELECT 1 FROM algorithm WHERE code = 'BINARY_TREE')
+    INSERT INTO algorithm (code, name, family, description, time_complexity, space_complexity, display_order)
+    VALUES ('BINARY_TREE', 'Árbol binario', 'DATA_STRUCTURE', 'Cada nodo tiene hasta dos hijos. Se llena nivel por nivel y después se recorre en preorden, inorden y postorden.', 'O(n) recorrer', 'O(n)', 18);
+
+IF NOT EXISTS (SELECT 1 FROM algorithm WHERE code = 'BINARY_SEARCH_TREE')
+    INSERT INTO algorithm (code, name, family, description, time_complexity, space_complexity, display_order)
+    VALUES ('BINARY_SEARCH_TREE', 'Árbol binario de búsqueda', 'DATA_STRUCTURE', 'Cada valor va a la izquierda si es menor y a la derecha si es mayor. Buscar es bajar comparando, sin mirar todo el árbol.', 'O(log n) promedio, O(n) peor caso', 'O(n)', 19);
+
+IF NOT EXISTS (SELECT 1 FROM algorithm WHERE code = 'AVL_TREE')
+    INSERT INTO algorithm (code, name, family, description, time_complexity, space_complexity, display_order)
+    VALUES ('AVL_TREE', 'Árbol AVL', 'DATA_STRUCTURE', 'Un árbol de búsqueda que se rebalancea solo, con rotaciones, cuando una rama crece de más. Así buscar es siempre O(log n).', 'O(log n)', 'O(n)', 20);
+
+IF NOT EXISTS (SELECT 1 FROM algorithm WHERE code = 'HEAP')
+    INSERT INTO algorithm (code, name, family, description, time_complexity, space_complexity, display_order)
+    VALUES ('HEAP', 'Heap (cola de prioridad)', 'DATA_STRUCTURE', 'Un árbol donde cada padre es menor que sus hijos, así el mínimo queda arriba. Cada valor nuevo sube comparándose con su padre hasta su lugar.', 'O(log n) insertar y sacar el mínimo', 'O(n)', 21);
+
+IF NOT EXISTS (SELECT 1 FROM algorithm WHERE code = 'TRIE')
+    INSERT INTO algorithm (code, name, family, description, time_complexity, space_complexity, display_order)
+    VALUES ('TRIE', 'Trie (árbol de prefijos)', 'DATA_STRUCTURE', 'Guarda palabras letra por letra: las que empiezan igual comparten el camino. Buscar una palabra cuesta lo que mide la palabra, no cuántas hay guardadas.', 'O(L) por palabra de largo L', 'O(total de letras)', 22);
+
 -- ---------------------------------------------------------------- graph scenarios
 
 IF NOT EXISTS (SELECT 1 FROM scenario WHERE name = 'Rombo con cola')

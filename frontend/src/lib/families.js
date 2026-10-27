@@ -21,9 +21,15 @@ export const FAMILY = {
     icon: 'graph',
     description: 'Recorrer nodos conectados por aristas: por niveles, por el camino más corto o por el más barato.',
   },
+  DATA_STRUCTURE: {
+    slug: 'data-structures',
+    label: 'Estructuras de datos',
+    icon: 'layers',
+    description: 'Cómo se guardan y reorganizan los datos: pilas, colas, listas, tablas hash y árboles, operación por operación.',
+  },
 }
 
-export const FAMILY_ORDER = ['SORTING', 'SEARCHING', 'GRAPH']
+export const FAMILY_ORDER = ['SORTING', 'SEARCHING', 'GRAPH', 'DATA_STRUCTURE']
 
 export function familyBySlug(slug) {
   return FAMILY_ORDER.find((key) => FAMILY[key].slug === slug) ?? null
