@@ -1,4 +1,4 @@
-import { useEffect, useLayoutEffect, useRef, useState } from 'react'
+import { useEffect, useId, useLayoutEffect, useRef, useState } from 'react'
 import { useReducedMotion } from '../lib/useReducedMotion.js'
 import { Icon } from './Icon.jsx'
 import styles from './CodyTour.module.css'
@@ -114,6 +114,7 @@ function Cursor({ cursorRef, pressed }) {
 }
 
 function Eye({ look, mood, blinking }) {
+  const clip = useId()
   return (
     <svg className={styles.eye} data-mood={mood} data-blinking={blinking || undefined} viewBox="0 0 24 24" aria-hidden="true">
       <g className={styles.lid}>
@@ -123,8 +124,18 @@ function Eye({ look, mood, blinking }) {
           <circle cx="13.4" cy="10.6" r="1.05" className={styles.shine} />
         </g>
       </g>
-      {/* The upper lid that drops when Cody gets bored */}
-      <path className={styles.sleepyLid} d="M2.8 12a9.2 9.2 0 0 1 18.4 0z" />
+      {/* The upper lid that drops when Cody gets bored. It slides inside the eye, clipped to its
+          circle, so when open it is hidden above it instead of leaving an edge behind */}
+      <clipPath id={clip}>
+        <circle cx="12" cy="12" r="9.2" />
+      </clipPath>
+      <g clipPath={`url(#${clip})`}>
+        <g className={styles.sleepyLid}>
+          <rect x="2" y="2" width="20" height="10.4" className={styles.sleepyLidSkin} />
+          <line x1="2" y1="12.4" x2="22" y2="12.4" className={styles.sleepyLidEdge} />
+        </g>
+      </g>
+      <circle cx="12" cy="12" r="9.2" className={styles.eyeRing} />
     </svg>
   )
 }

@@ -149,20 +149,31 @@
   transform: scaleY(0.08);
 }
 
-/* Bored: the upper lid comes down over half the eye */
+/* Bored: the upper lid slides down over half the eye. Open, it waits above the eye, outside
+   the clip, so nothing of it shows */
 .sleepyLid {
-  fill: var(--surface-3);
-  stroke: currentColor;
-  stroke-width: 1.6;
-  stroke-linejoin: round;
-  transform-box: fill-box;
-  transform-origin: top;
-  transform: scaleY(0);
+  transform: translateY(-11px);
   transition: transform 0.9s var(--expo);
 }
 
 .eye[data-mood='sleepy'] .sleepyLid {
-  transform: scaleY(1);
+  transform: translateY(0);
+}
+
+.sleepyLidSkin {
+  fill: var(--surface-3);
+}
+
+.sleepyLidEdge {
+  stroke: currentColor;
+  stroke-width: 1.6;
+}
+
+/* The ring is drawn again on top, so the lid never covers its edge */
+.eyeRing {
+  fill: none;
+  stroke: currentColor;
+  stroke-width: 1.6;
 }
 
 /* Speech bubble with a tail pointing up at the eye */
