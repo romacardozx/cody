@@ -1,11 +1,10 @@
 import { lazy, Suspense, use } from 'react'
 import { getAlgorithms, prefetchVisualizer } from '../api/cody.js'
-import { CategoryCard } from '../components/CategoryCard.jsx'
+import { CategoryIndex } from '../components/CategoryIndex.jsx'
 import { ErrorBoundary } from '../components/ErrorBoundary.jsx'
 import { Icon } from '../components/Icon.jsx'
 import { Link } from '../components/Link.jsx'
 import { CodyTour } from '../components/CodyTour.jsx'
-import { FAMILY_ORDER } from '../lib/families.js'
 import styles from './HomePage.module.css'
 
 // Three.js is heavy: the 3D scene loads after the page is on screen and never blocks it
@@ -53,7 +52,7 @@ export function HomePage() {
       <section id="algoritmos" className={styles.section}>
         <div className={styles.sectionHead}>
           <h2 className={styles.sectionTitle}>Algoritmos</h2>
-          <p className={styles.sectionLead}>Ordenados por tipo. Elegí una categoría y recorré sus algoritmos prediciendo cada paso.</p>
+          <p className={styles.sectionLead}>Ordenados por tipo, empezando por los conceptos que usan todos. Elegí uno y recorrelo prediciendo cada paso.</p>
         </div>
         <ErrorBoundary title="No pudimos cargar el catálogo">
           <Suspense fallback={<CatalogSkeleton />}>
@@ -67,22 +66,14 @@ export function HomePage() {
 }
 
 function Catalog() {
-  const algorithms = use(getAlgorithms())
-  // One card per family, so the catalog can grow and stay ordered
-  return (
-    <div className={styles.categories}>
-      {FAMILY_ORDER.map((family) => {
-        const inFamily = algorithms.filter((algorithm) => algorithm.family === family)
-        return inFamily.length > 0 && <CategoryCard key={family} family={family} algorithms={inFamily} />
-      })}
-    </div>
-  )
+  // One row per family, so the catalog can grow and stay ordered
+  return <CategoryIndex algorithms={use(getAlgorithms())} />
 }
 
 function CatalogSkeleton() {
   return (
-    <div className={styles.grid} aria-busy="true" aria-label="Cargando algoritmos">
-      {[0, 1, 2, 3].map((i) => (
+    <div className={styles.skeletons} aria-busy="true" aria-label="Cargando algoritmos">
+      {[0, 1, 2, 3, 4].map((i) => (
         <div key={i} className={styles.skeleton} />
       ))}
     </div>

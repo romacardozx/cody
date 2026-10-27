@@ -4,7 +4,8 @@ import { AlgorithmCard } from '../components/AlgorithmCard.jsx'
 import { ErrorBoundary } from '../components/ErrorBoundary.jsx'
 import { Icon } from '../components/Icon.jsx'
 import { Link } from '../components/Link.jsx'
-import { FAMILY, familyBySlug } from '../lib/families.js'
+import { FamilyGlyph } from '../components/CategoryIndex.jsx'
+import { countLabel, FAMILY, familyBySlug } from '../lib/families.js'
 import styles from './CategoryPage.module.css'
 
 /** Every algorithm of one family, so the catalog can grow and stay ordered. */
@@ -25,7 +26,7 @@ export default function CategoryPage({ slug }) {
         <Link to="/#algoritmos" className={styles.back}><Icon name="back" size={16} /> Categorías</Link>
       </nav>
       <header className={styles.head}>
-        <span className={styles.icon} aria-hidden="true"><Icon name={data.icon} size={40} /></span>
+        <span className={styles.icon}><FamilyGlyph family={family} /></span>
         <div>
           <h1 className={styles.title} style={{ viewTransitionName: `category-${data.slug}` }}>{data.label}</h1>
           <p className={styles.lead}>{data.description}</p>
@@ -50,7 +51,7 @@ function FamilyAlgorithms({ family }) {
   return (
     <>
       <h2 className={styles.count}>
-        {algorithms.length} {algorithms.length === 1 ? 'algoritmo' : 'algoritmos'}
+        {countLabel(family, algorithms.length)}
         {ready > 0 && <span className={styles.ready}> · {ready} para predecir</span>}
       </h2>
       <div className={styles.grid}>

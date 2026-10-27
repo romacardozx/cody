@@ -3,6 +3,13 @@
  * AlgorithmFamily in the backend; `slug` is the URL segment (/categories/graph).
  */
 export const FAMILY = {
+  CONCEPT: {
+    slug: 'concepts',
+    label: 'Conceptos',
+    icon: 'spark',
+    noun: ['concepto', 'conceptos'],
+    description: 'Las ideas que usan todos los algoritmos: cómo medir lo que cuestan, la recursión y técnicas como dos punteros o ventana deslizante.',
+  },
   SORTING: {
     slug: 'sorting',
     label: 'Ordenamiento',
@@ -24,12 +31,20 @@ export const FAMILY = {
   DATA_STRUCTURE: {
     slug: 'data-structures',
     label: 'Estructuras de datos',
+    noun: ['estructura', 'estructuras'],
     icon: 'layers',
     description: 'Cómo se guardan y reorganizan los datos: pilas, colas, listas, tablas hash y árboles, operación por operación.',
   },
 }
 
-export const FAMILY_ORDER = ['SORTING', 'SEARCHING', 'GRAPH', 'DATA_STRUCTURE']
+// Concepts first: they are what every other family builds on
+export const FAMILY_ORDER = ['CONCEPT', 'SORTING', 'SEARCHING', 'GRAPH', 'DATA_STRUCTURE']
+
+/** "1 algoritmo", "5 estructuras", "8 conceptos". */
+export function countLabel(family, count) {
+  const [one, many] = FAMILY[family]?.noun ?? ['algoritmo', 'algoritmos']
+  return `${count} ${count === 1 ? one : many}`
+}
 
 export function familyBySlug(slug) {
   return FAMILY_ORDER.find((key) => FAMILY[key].slug === slug) ?? null

@@ -6,7 +6,9 @@ public enum AlgorithmFamily {
     SEARCHING(ScenarioType.ARRAY),
     GRAPH(ScenarioType.GRAPH),
     /** Stacks, lists, hash tables, trees: built by inserting the values of an array, one by one. */
-    DATA_STRUCTURE(ScenarioType.ARRAY);
+    DATA_STRUCTURE(ScenarioType.ARRAY),
+    /** Ideas behind every algorithm (Big O, recursion, two pointers...); techniques run on an array. */
+    CONCEPT(ScenarioType.ARRAY);
 
     private final ScenarioType scenarioType;
 

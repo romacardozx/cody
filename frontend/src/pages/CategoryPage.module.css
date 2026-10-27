@@ -30,8 +30,8 @@
 }
 
 .icon {
-  color: var(--accent);
-  padding-top: 6px;
+  color: var(--text-2);
+  padding-top: 10px;
 }
 
 .title {

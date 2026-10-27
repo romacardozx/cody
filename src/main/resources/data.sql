@@ -62,9 +62,10 @@ IF NOT EXISTS (SELECT 1 FROM algorithm WHERE code = 'BIDIRECTIONAL_DIJKSTRA')
     VALUES ('BIDIRECTIONAL_DIJKSTRA', 'Dijkstra bidireccional', 'GRAPH', 'Lanza dos búsquedas a la vez, una desde el origen y otra desde el destino. Cuando se encuentran a mitad de camino, ya tiene la ruta más corta habiendo explorado mucho menos.', 'O(E log V)', 'O(V)', 10);
 
 -- Hibernate creates algorithm.family with a CHECK listing the enum values, and ddl-auto=update
--- never changes it. Databases created before DATA_STRUCTURE existed drop that CHECK here (the
--- enum in Java already restricts the values). Dynamic SQL because the constraint name is generated.
-IF EXISTS (SELECT 1 FROM sys.check_constraints WHERE parent_object_id = OBJECT_ID('algorithm') AND definition LIKE '%family%' AND definition NOT LIKE '%DATA_STRUCTURE%')
+-- never changes it, so every new family would be rejected on an existing database. The CHECK is
+-- dropped whenever it is there (the enum in Java already restricts the values). Dynamic SQL
+-- because the constraint name is generated.
+IF EXISTS (SELECT 1 FROM sys.check_constraints WHERE parent_object_id = OBJECT_ID('algorithm') AND definition LIKE '%family%')
     EXEC (N'DECLARE @ck sysname = (SELECT TOP 1 name FROM sys.check_constraints WHERE parent_object_id = OBJECT_ID(''algorithm'') AND definition LIKE ''%family%'') EXEC (N''ALTER TABLE algorithm DROP CONSTRAINT '' + @ck)');
 
 IF NOT EXISTS (SELECT 1 FROM algorithm WHERE code = 'LINEAR_SEARCH')
@@ -118,6 +119,38 @@ IF NOT EXISTS (SELECT 1 FROM algorithm WHERE code = 'HEAP')
 IF NOT EXISTS (SELECT 1 FROM algorithm WHERE code = 'TRIE')
     INSERT INTO algorithm (code, name, family, description, time_complexity, space_complexity, display_order)
     VALUES ('TRIE', 'Trie (árbol de prefijos)', 'DATA_STRUCTURE', 'Guarda palabras letra por letra: las que empiezan igual comparten el camino. Buscar una palabra cuesta lo que mide la palabra, no cuántas hay guardadas.', 'O(L) por palabra de largo L', 'O(total de letras)', 22);
+
+IF NOT EXISTS (SELECT 1 FROM algorithm WHERE code = 'BIG_O')
+    INSERT INTO algorithm (code, name, family, description, time_complexity, space_complexity, display_order)
+    VALUES ('BIG_O', 'Notación Big O', 'CONCEPT', 'Cómo crece el trabajo de un algoritmo cuando crecen los datos: O(1), O(log n), O(n), O(n²). Sirve para comparar algoritmos sin cronómetro.', '—', '—', 23);
+
+IF NOT EXISTS (SELECT 1 FROM algorithm WHERE code = 'SPACE_COMPLEXITY')
+    INSERT INTO algorithm (code, name, family, description, time_complexity, space_complexity, display_order)
+    VALUES ('SPACE_COMPLEXITY', 'Complejidad espacial', 'CONCEPT', 'Cuánta memoria extra usa un algoritmo además de sus datos, y cómo crece con ellos. A veces se gana tiempo gastando memoria, y al revés.', '—', '—', 24);
+
+IF NOT EXISTS (SELECT 1 FROM algorithm WHERE code = 'RECURSION')
+    INSERT INTO algorithm (code, name, family, description, time_complexity, space_complexity, display_order)
+    VALUES ('RECURSION', 'Recursión', 'CONCEPT', 'Una función que se llama a sí misma con un problema más chico, hasta llegar a un caso tan simple que se resuelve directo.', '—', '—', 25);
+
+IF NOT EXISTS (SELECT 1 FROM algorithm WHERE code = 'TWO_POINTERS')
+    INSERT INTO algorithm (code, name, family, description, time_complexity, space_complexity, display_order)
+    VALUES ('TWO_POINTERS', 'Dos punteros', 'CONCEPT', 'Dos índices que recorren el arreglo, desde las puntas o a distinta velocidad, y resuelven en una pasada lo que con dos bucles anidados costaría O(n²).', 'O(n)', 'O(1)', 26);
+
+IF NOT EXISTS (SELECT 1 FROM algorithm WHERE code = 'SLIDING_WINDOW')
+    INSERT INTO algorithm (code, name, family, description, time_complexity, space_complexity, display_order)
+    VALUES ('SLIDING_WINDOW', 'Ventana deslizante', 'CONCEPT', 'Una ventana de elementos seguidos que avanza de a uno: suma el que entra, resta el que sale y nunca recalcula todo de nuevo.', 'O(n)', 'O(1)', 27);
+
+IF NOT EXISTS (SELECT 1 FROM algorithm WHERE code = 'PREFIX_SUM')
+    INSERT INTO algorithm (code, name, family, description, time_complexity, space_complexity, display_order)
+    VALUES ('PREFIX_SUM', 'Sumas prefijas', 'CONCEPT', 'Se calcula una vez la suma acumulada del arreglo, y después la suma de cualquier tramo sale con una sola resta.', 'O(n) armar, O(1) consultar', 'O(n)', 28);
+
+IF NOT EXISTS (SELECT 1 FROM algorithm WHERE code = 'MEMOIZATION')
+    INSERT INTO algorithm (code, name, family, description, time_complexity, space_complexity, display_order)
+    VALUES ('MEMOIZATION', 'Memoización', 'CONCEPT', 'Guardar el resultado de cada cálculo para no repetirlo. Con eso, Fibonacci recursivo pasa de tardar una eternidad a ser instantáneo.', 'O(n) para Fibonacci', 'O(n)', 29);
+
+IF NOT EXISTS (SELECT 1 FROM algorithm WHERE code = 'GREEDY_VS_DP')
+    INSERT INTO algorithm (code, name, family, description, time_complexity, space_complexity, display_order)
+    VALUES ('GREEDY_VS_DP', 'Greedy vs. programación dinámica', 'CONCEPT', 'Greedy elige lo mejor de cada paso sin volver atrás; programación dinámica considera todas las opciones guardando subresultados. Cuándo alcanza una y cuándo hace falta la otra.', '—', '—', 30);
 
 -- ---------------------------------------------------------------- graph scenarios
 

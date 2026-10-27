@@ -46,11 +46,12 @@ class ScenarioApiIntegrationTest {
     void sampleDataIsLoaded() throws Exception {
         mockMvc.perform(get("/api/algorithms"))
                 .andExpect(status().isOk())
-                .andExpect(jsonPath("$", hasSize(22)))
+                .andExpect(jsonPath("$", hasSize(30)))
                 .andExpect(jsonPath("$[?(@.code == 'BFS')].available", contains(true)))
                 .andExpect(jsonPath("$[?(@.code == 'A_STAR')].family", contains("GRAPH")))
                 .andExpect(jsonPath("$[?(@.code == 'LINEAR_SEARCH')].family", contains("SEARCHING")))
                 .andExpect(jsonPath("$[?(@.code == 'AVL_TREE')].family", contains("DATA_STRUCTURE")))
+                .andExpect(jsonPath("$[?(@.code == 'SLIDING_WINDOW')].family", contains("CONCEPT")))
                 .andExpect(jsonPath("$[?(@.code == 'QUICK_SORT')].available", contains(false)));
 
         mockMvc.perform(get("/api/scenarios").param("type", "GRAPH"))

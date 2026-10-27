@@ -265,4 +265,100 @@ export const USE_CASES = {
       ['Fin de palabra', 'Una palabra completa'],
     ],
   },
+  BIG_O: {
+    short: 'Saber si una app va a aguantar',
+    title: 'Cuánto crece el trabajo',
+    where: 'Cualquier sistema que tenga que escalar',
+    text:
+      'Una búsqueda que tarda un instante con 100 usuarios puede tardar horas con un millón. Big O dice cómo crece el trabajo antes de que pase: si es O(n²), duplicar los datos cuadruplica el tiempo.',
+    mapping: [
+      ['O(1)', 'Lo mismo con 10 o con un millón'],
+      ['O(n)', 'El doble de datos, el doble de trabajo'],
+      ['O(n²)', 'El doble de datos, cuatro veces más trabajo'],
+    ],
+  },
+  SPACE_COMPLEXITY: {
+    short: 'Apps que entran en un celular viejo',
+    title: 'Cuánta memoria hace falta',
+    where: 'Celulares, dispositivos chicos, servidores',
+    text:
+      'Un algoritmo puede ser rapidísimo y aun así no entrar en la memoria de un celular viejo. La complejidad espacial mide esa memoria extra, y muchas veces es lo que se negocia a cambio de velocidad.',
+    mapping: [
+      ['Memoria extra', 'Lo que usa además de los datos'],
+      ['O(1)', 'Unas pocas variables, sin importar el tamaño'],
+      ['O(n)', 'Una copia o una tabla del tamaño de los datos'],
+    ],
+  },
+  RECURSION: {
+    short: 'Carpetas dentro de carpetas',
+    title: 'Un problema dentro de otro igual',
+    where: 'Exploradores de archivos',
+    text:
+      'Para contar todos los archivos de una carpeta, contás los de adentro y, por cada subcarpeta, hacés lo mismo. Es el mismo problema, cada vez más chico, hasta llegar a una carpeta sin subcarpetas.',
+    mapping: [
+      ['Llamada recursiva', 'Revisar una subcarpeta'],
+      ['Caso base', 'Una carpeta sin subcarpetas'],
+      ['Pila de llamadas', 'Las carpetas abiertas en el camino'],
+    ],
+  },
+  TWO_POINTERS: {
+    short: '¿Es un palíndromo?',
+    title: 'Desde las dos puntas',
+    where: 'Validaciones de texto',
+    text:
+      'Para saber si «reconocer» se lee igual al revés, comparás la primera letra con la última y vas cerrando hacia el medio. Una sola pasada, sin dar vuelta la palabra.',
+    mapping: [
+      ['Puntero izquierdo', 'La letra desde el principio'],
+      ['Puntero derecho', 'La letra desde el final'],
+      ['Se cruzan', 'Ya se comparó todo'],
+    ],
+  },
+  SLIDING_WINDOW: {
+    short: 'Promedio de los últimos 7 días',
+    title: 'Una ventana que avanza',
+    where: 'Gráficos de casos, de ventas, de temperatura',
+    text:
+      'El promedio de casos de los últimos 7 días se actualiza cada día sumando el día nuevo y restando el que sale, sin volver a sumar la semana entera.',
+    mapping: [
+      ['Ventana', 'Los últimos 7 días'],
+      ['Entra', 'El día de hoy'],
+      ['Sale', 'El día de hace una semana'],
+    ],
+  },
+  PREFIX_SUM: {
+    short: 'Ventas entre dos fechas',
+    title: 'La suma de cualquier tramo, al instante',
+    where: 'Reportes y tableros',
+    text:
+      'Si guardás cuánto se vendió en total hasta cada día, las ventas entre el 3 y el 20 son el total al 20 menos el total al 2. Una resta, en vez de sumar día por día.',
+    mapping: [
+      ['Suma prefija', 'Lo vendido hasta cada día'],
+      ['Consulta', 'Ventas entre dos fechas'],
+      ['Resta', 'Total al final menos total al principio'],
+    ],
+  },
+  MEMOIZATION: {
+    short: 'No volver a calcular lo mismo',
+    title: 'Recordar resultados',
+    where: 'Cachés de sitios y apps',
+    text:
+      'Un sitio que ya armó la página de un producto la guarda y, al próximo que la pide, se la da al instante. La memoización hace lo mismo con cada cálculo que ya hizo.',
+    mapping: [
+      ['Caché', 'Lo que ya se calculó'],
+      ['Acierto', 'El resultado estaba guardado'],
+      ['Fallo', 'Hay que calcularlo y guardarlo'],
+    ],
+  },
+  GREEDY_VS_DP: {
+    short: 'Dar el vuelto',
+    title: 'Lo mejor ahora o lo mejor al final',
+    where: 'Cajas, rutas, planificación',
+    text:
+      'Para dar el vuelto con pesos argentinos alcanza con elegir siempre el billete más grande que entra: greedy funciona. Con otros valores de billetes puede fallar, y ahí hace falta programación dinámica.',
+    mapping: [
+      ['Greedy', 'Elegir lo mejor de cada paso'],
+      ['Programación dinámica', 'Probar todo, guardando subresultados'],
+      ['Contraejemplo', 'Cuando lo mejor de cada paso no es lo mejor al final'],
+    ],
+  },
 }

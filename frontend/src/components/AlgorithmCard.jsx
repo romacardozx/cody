@@ -24,12 +24,17 @@ export function AlgorithmCard({ algorithm, index }) {
         </p>
       )}
       <div className={styles.footer}>
-        <span className={styles.complexity} title="Complejidad temporal">
-          <span className={styles.metric}>tiempo</span> {algorithm.timeComplexity}
-        </span>
-        <span className={styles.complexity} title="Espacio extra">
-          <span className={styles.metric}>espacio</span> {algorithm.spaceComplexity}
-        </span>
+        {/* Concepts like Big O have no cost of their own: the catalog stores "—" and it is not shown */}
+        {algorithm.timeComplexity !== '—' && (
+          <span className={styles.complexity} title="Complejidad temporal">
+            <span className={styles.metric}>tiempo</span> {algorithm.timeComplexity}
+          </span>
+        )}
+        {algorithm.spaceComplexity !== '—' && (
+          <span className={styles.complexity} title="Espacio extra">
+            <span className={styles.metric}>espacio</span> {algorithm.spaceComplexity}
+          </span>
+        )}
         {algorithm.available ? (
           <span className={styles.cta}>
             Predecir <Icon name="arrow" size={16} />
