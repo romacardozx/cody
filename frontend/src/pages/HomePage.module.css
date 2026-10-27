@@ -164,14 +164,6 @@
   color: var(--text-2);
 }
 
-.access {
-  margin-top: var(--space-5);
-  color: var(--text-3);
-  font-size: 0.92rem;
-  max-width: 52rem;
-  line-height: 1.8;
-}
-
 @media (max-width: 900px) {
   .hero {
     grid-template-columns: 1fr;

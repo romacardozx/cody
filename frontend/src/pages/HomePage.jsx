@@ -72,11 +72,6 @@ export function HomePage() {
             </li>
           ))}
         </ol>
-        <p className={styles.access}>
-          Pensado con Diseño Universal para el Aprendizaje: el mismo paso se ve como animación, pseudocódigo,
-          variables y texto; la velocidad se regula; todo se maneja con teclado
-          (<kbd>Espacio</kbd> <kbd>←</kbd> <kbd>→</kbd> <kbd>1</kbd>–<kbd>9</kbd>) y hay tema claro y oscuro.
-        </p>
       </section>
       <section id="algoritmos" className={styles.section}>
         <div className={styles.sectionHead}>
