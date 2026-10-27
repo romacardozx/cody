@@ -6,12 +6,11 @@ Este repo NO tiene relación con tdl ni con el "Training Companion" de ~/CLAUDE.
 Java 21 · Spring Boot 4 · JPA/Hibernate · Lombok · SQL Server (Docker) · Maven · React+Vite · Motion
 
 ## Comandos
-Atajos en el Makefile (`make help`): make setup · make dev · make test · make build · make zip SHIFT=.. TEAM=..
-- Base de datos: docker compose up -d (requiere .env, copiar de .env.example)
-- Backend: ./mvnw spring-boot:run -Dskip.yarn -Dskip.installnodeyarn
-- Frontend dev: cd frontend && yarn dev (usar yarn, no npm)
-- Tests + cobertura: ./mvnw verify
-- Build completo: ./mvnw clean package
+Todo pasa por el Makefile (`make` lista los comandos con su explicación):
+- Levantar todo (base + app, muestra URLs y credenciales): make up · apagar: make down · estado: make status
+- Programar con recarga en vivo: make dev (frontend en :5173, backend en :8080)
+- Tests + cobertura: make test · build: make build (target/cody.jar, solo si cambió el código)
+- Frontend: usar yarn, no npm. Sin make: ./mvnw spring-boot:run -Dskip.yarn -Dskip.installnodeyarn
 
 ## Git
 - Se trabaja en `develop`; `main` solo recibe merges estables.

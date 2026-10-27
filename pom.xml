@@ -88,6 +88,8 @@
 	</dependencies>
 
 	<build>
+		<!-- Fixed name (target/cody.jar) so scripts and the Makefile always find it -->
+		<finalName>cody</finalName>
 		<plugins>
 			<plugin>
 				<groupId>org.springframework.boot</groupId>

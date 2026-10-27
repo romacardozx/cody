@@ -257,9 +257,10 @@ En el `pom.xml`, `frontend-maven-plugin` instala Node y Yarn, corre `yarn instal
 
 | Momento | Comando |
 |---|---|
-| Desarrollo backend | `./mvnw spring-boot:run -Dskip.yarn -Dskip.installnodeyarn` → `localhost:8080` (sin recompilar el React) |
-| Desarrollo frontend | `cd frontend && yarn dev` → `localhost:5173` (proxy a 8080) |
-| Demo / entrega | `./mvnw clean package` y `java -jar target/cody-*.jar` → todo en 8080 |
+| Levantar todo (demo) | `make up` → base + `target/cody.jar` en `localhost:8080`, muestra URLs y credenciales. `make down` apaga |
+| Desarrollo | `make dev` → backend en `localhost:8080` + Vite en `localhost:5173` (proxy a 8080, recarga en vivo) |
+| Solo backend / solo frontend | `make backend` / `make frontend` |
+| Ver todos los comandos | `make` |
 
 ---
 
