@@ -1,32 +1,11 @@
 .hero {
   max-width: var(--page-max);
   margin: 0 auto;
-  /* One screen of its own: the 3D scene never shares the view with the next section */
-  min-height: calc(100svh - var(--header-h));
-  padding: var(--space-7) var(--space-6);
+  padding: var(--space-8) var(--space-6) var(--space-7);
   display: grid;
   grid-template-columns: 1.1fr 0.9fr;
   gap: var(--space-7);
   align-items: center;
-}
-
-/* Leaving: it shrinks, blurs and fades with the scroll instead of being cut off */
-@supports (animation-timeline: view()) {
-  @media (prefers-reduced-motion: no-preference) {
-    .hero {
-      animation: hero-exit linear both;
-      animation-timeline: view();
-      animation-range: exit 0% exit 85%;
-    }
-  }
-}
-
-@keyframes hero-exit {
-  to {
-    opacity: 0;
-    transform: scale(0.94) translateY(-6%);
-    filter: blur(6px);
-  }
 }
 
 .title {

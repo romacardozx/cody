@@ -24,12 +24,6 @@ export function scrollToElement(element) {
   else element.scrollIntoView()
 }
 
-/** Glides to an absolute scroll position, in pixels from the top of the page. */
-export function scrollToY(y) {
-  if (lenis) lenis.scrollTo(y)
-  else window.scrollTo({ top: y, behavior: 'smooth' })
-}
-
 /** Jumps to the top at once (used on page changes, where gliding would look wrong). */
 export function scrollToTop() {
   if (lenis) lenis.scrollTo(0, { immediate: true, force: true })

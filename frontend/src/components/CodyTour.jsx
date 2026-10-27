@@ -1,5 +1,4 @@
 import { useEffect, useId, useLayoutEffect, useRef, useState } from 'react'
-import { scrollToY } from '../lib/smoothScroll.js'
 import { useReducedMotion } from '../lib/useReducedMotion.js'
 import { Icon } from './Icon.jsx'
 import styles from './CodyTour.module.css'
@@ -10,10 +9,8 @@ import styles from './CodyTour.module.css'
  * the eye gets bored; responding, where the scene stops at a decision and a cursor answers; and
  * changing, where the data changes and runs again. The eye talks in a speech bubble.
  *
- * The scroll drives the chapters: the scene stays pinned (sticky) while the page scrolls through a
- * tall track, one third per chapter. Inside a chapter the beats play by time and then wait for the
- * reader to scroll on. With reduced motion there is no track and nothing plays: each chapter shows
- * its key frame and its lines at once, picked with the chapter buttons.
+ * Plays only while on screen; it can be paused or jumped by chapter. With reduced motion nothing
+ * plays: each chapter shows its key frame and its lines at once.
  */
 
 const TICK_MS = 100
@@ -145,10 +142,9 @@ function Eye({ look, mood, blinking }) {
 
 // ------------------------------------------------------------------ the tour
 
-export function CodyTour({ head }) {
+export function CodyTour() {
   const reduce = useReducedMotion()
   const root = useRef(null)
-  const track = useRef(null)
   const stage = useRef(null)
   const rightButton = useRef(null)
   const editedBar = useRef(null)
@@ -173,53 +169,22 @@ export function CodyTour({ head }) {
     }
   }, [])
 
-  // The clock: advances the beats of the current chapter, then holds on its last one until the
-  // scroll moves on to the next chapter
+  // The clock: advances the beat when its time is up, and loops at the end
   useEffect(() => {
     if (!playing) return
     const timer = window.setInterval(() => {
       setClock((c) => {
-        const last = c.beat === LAST_OF[BEATS[c.beat].chapter]
-        if (c.elapsed + TICK_MS < BEATS[c.beat].ms || last) {
-          return { ...c, elapsed: Math.min(c.elapsed + TICK_MS, BEATS[c.beat].ms), chapterElapsed: c.chapterElapsed + TICK_MS }
-        }
-        return { beat: c.beat + 1, elapsed: 0, chapterElapsed: c.chapterElapsed + TICK_MS }
+        if (c.elapsed + TICK_MS < BEATS[c.beat].ms) return { ...c, elapsed: c.elapsed + TICK_MS, chapterElapsed: c.chapterElapsed + TICK_MS }
+        const next = (c.beat + 1) % BEATS.length
+        const sameChapter = BEATS[next].chapter === BEATS[c.beat].chapter
+        return { beat: next, elapsed: 0, chapterElapsed: sameChapter ? c.chapterElapsed + TICK_MS : 0 }
       })
     }, TICK_MS)
     return () => window.clearInterval(timer)
   }, [playing])
 
-  // The scroll picks the chapter: how far the page went through the track, in thirds
-  useEffect(() => {
-    if (reduce) return
-    let frame = 0
-    const onScroll = () => {
-      cancelAnimationFrame(frame)
-      frame = requestAnimationFrame(() => {
-        const box = track.current?.getBoundingClientRect()
-        if (!box) return
-        const progress = Math.min(1, Math.max(0, -box.top / Math.max(1, box.height - window.innerHeight)))
-        const chapter = Math.min(CHAPTERS.length - 1, Math.floor(progress * CHAPTERS.length))
-        setClock((c) => (BEATS[c.beat].chapter === chapter ? c : { beat: FIRST_OF[chapter], elapsed: 0, chapterElapsed: 0 }))
-      })
-    }
-    onScroll()
-    window.addEventListener('scroll', onScroll, { passive: true })
-    return () => {
-      window.removeEventListener('scroll', onScroll)
-      cancelAnimationFrame(frame)
-    }
-  }, [reduce])
-
   const jump = (chapter) => {
-    if (reduce) {
-      setClock({ beat: LAST_OF[chapter], elapsed: 1e6, chapterElapsed: 1e6 })
-      return
-    }
-    // Scroll to the middle of that chapter's stretch of the track; the scroll handler does the rest
-    const box = track.current.getBoundingClientRect()
-    const room = box.height - window.innerHeight
-    scrollToY(window.scrollY + box.top + room * ((chapter + 0.5) / CHAPTERS.length))
+    setClock(reduce ? { beat: LAST_OF[chapter], elapsed: 1e6, chapterElapsed: 1e6 } : { beat: FIRST_OF[chapter], elapsed: 0, chapterElapsed: 0 })
   }
 
   const current = BEATS[beat]
@@ -269,101 +234,92 @@ export function CodyTour({ head }) {
   if (current.mood === 'sleepy') look = { x: look.x * 0.6, y: REACH * 0.6 }
   if (reduce) sortFrame = SORT_FRAMES[SORT_FRAMES.length - 1]
 
-  const waitingForScroll = !reduce && beat === LAST_OF[current.chapter] && elapsed >= current.ms && current.chapter < CHAPTERS.length - 1
   return (
-    <div ref={track} className={styles.track} data-pinned={!reduce || undefined}>
-      <div ref={root} className={styles.tour}>
-        {head}
-        <div className={styles.chapters}>
-          {CHAPTERS.map((name, c) => {
-            const progress = c < current.chapter ? 1 : c > current.chapter ? 0 : Math.min(1, chapterElapsed / CHAPTER_MS[c])
-            return (
-              <button key={name} type="button" className={styles.chapter} aria-current={c === current.chapter || undefined} onClick={() => jump(c)}>
-                <span className={styles.chapterBar}>
-                  <span className={styles.chapterFill} style={{ transform: `scaleX(${reduce && c === current.chapter ? 1 : progress})` }} />
-                </span>
-                {name}
-              </button>
-            )
-          })}
-          {!reduce && (
-            <button type="button" className={styles.pause} onClick={() => setPaused((p) => !p)} aria-label={paused ? 'Reproducir' : 'Pausar'}>
-              <Icon name={paused ? 'play' : 'pause'} size={16} />
+    <div ref={root} className={styles.tour}>
+      <div className={styles.chapters}>
+        {CHAPTERS.map((name, c) => {
+          const progress = c < current.chapter ? 1 : c > current.chapter ? 0 : Math.min(1, chapterElapsed / CHAPTER_MS[c])
+          return (
+            <button key={name} type="button" className={styles.chapter} aria-current={c === current.chapter || undefined} onClick={() => jump(c)}>
+              <span className={styles.chapterBar}>
+                <span className={styles.chapterFill} style={{ transform: `scaleX(${reduce && c === current.chapter ? 1 : progress})` }} />
+              </span>
+              {name}
             </button>
+          )
+        })}
+        {!reduce && (
+          <button type="button" className={styles.pause} onClick={() => setPaused((p) => !p)} aria-label={paused ? 'Reproducir' : 'Pausar'}>
+            <Icon name={paused ? 'play' : 'pause'} size={16} />
+          </button>
+        )}
+      </div>
+
+      <div className={styles.body}>
+        <div className={styles.narrator}>
+          <Eye look={look} mood={current.mood} blinking={blinking} />
+          <p className={styles.bubble} aria-hidden="true">
+            {current.say.slice(0, chars)}
+            <span className={styles.ghost}>{current.say.slice(chars)}</span>
+          </p>
+        </div>
+
+        <div ref={stage} className={styles.stage} data-scene={current.scene} aria-hidden="true">
+          {current.scene === 'sort' && (
+            <div className={styles.scene} key="sort">
+              <Bars values={SORT_VALUES} frame={sortFrame} />
+            </div>
           )}
-        </div>
 
-        <div className={styles.body}>
-          <div className={styles.narrator}>
-            <Eye look={look} mood={current.mood} blinking={blinking} />
-            <p className={styles.bubble} aria-hidden="true">
-              {current.say.slice(0, chars)}
-              <span className={styles.ghost}>{current.say.slice(chars)}</span>
-            </p>
-          </div>
-
-          <div ref={stage} className={styles.stage} data-scene={current.scene} aria-hidden="true">
-            {current.scene === 'sort' && (
-              <div className={styles.scene} key="sort">
-                <Bars values={SORT_VALUES} frame={sortFrame} />
-              </div>
-            )}
-
-            {current.scene === 'search' && (
-              <div className={styles.scene} key="search">
-                <div className={styles.list}>
-                  <span className={styles.range} style={{ left: `${(search.lo / LIST.length) * 100}%`, width: `${((search.hi - search.lo + 1) / LIST.length) * 100}%` }} />
-                  {LIST.map((value, i) => (
-                    <span
-                      key={value}
-                      className={styles.cell}
-                      data-out={i < search.lo || i > search.hi || undefined}
-                      data-mid={i === search.mid || undefined}
-                      data-asking={(i === search.mid && asking) || undefined}
-                      data-found={(i === search.mid && search.found) || undefined}
-                    >
-                      {value}
-                    </span>
-                  ))}
-                </div>
-                <div className={styles.options} data-visible={asking || current.answered || undefined}>
-                  <span className={styles.option} data-dim={current.answered || undefined}>
-                    <Icon name="back" size={16} /> Izquierda
+          {current.scene === 'search' && (
+            <div className={styles.scene} key="search">
+              <div className={styles.list}>
+                <span className={styles.range} style={{ left: `${(search.lo / LIST.length) * 100}%`, width: `${((search.hi - search.lo + 1) / LIST.length) * 100}%` }} />
+                {LIST.map((value, i) => (
+                  <span
+                    key={value}
+                    className={styles.cell}
+                    data-out={i < search.lo || i > search.hi || undefined}
+                    data-mid={i === search.mid || undefined}
+                    data-asking={(i === search.mid && asking) || undefined}
+                    data-found={(i === search.mid && search.found) || undefined}
+                  >
+                    {value}
                   </span>
-                  <span ref={rightButton} className={styles.option} data-chosen={current.answered || pressed || undefined}>
-                    Derecha <Icon name="arrow" size={16} />
-                  </span>
-                </div>
+                ))}
               </div>
-            )}
-
-            {current.scene === 'change' && (
-              <div className={styles.scene} key="change">
-                <Bars values={changeValues} frame={changeFrame} highlight={2} barRef={editedBar} />
+              <div className={styles.options} data-visible={asking || current.answered || undefined}>
+                <span className={styles.option} data-dim={current.answered || undefined}>
+                  <Icon name="back" size={16} /> Izquierda
+                </span>
+                <span ref={rightButton} className={styles.option} data-chosen={current.answered || pressed || undefined}>
+                  Derecha <Icon name="arrow" size={16} />
+                </span>
               </div>
-            )}
+            </div>
+          )}
 
-            {cursorTarget && <Cursor cursorRef={cursor} pressed={cursorPressed} />}
-          </div>
-        </div>
+          {current.scene === 'change' && (
+            <div className={styles.scene} key="change">
+              <Bars values={changeValues} frame={changeFrame} highlight={2} barRef={editedBar} />
+            </div>
+          )}
 
-        {/* Everything Cody says, for screen readers, without the animation */}
-        <ol className={styles.srOnly}>
-          {BEATS.map((b) => (
-            <li key={b.say}>{b.say}</li>
-          ))}
-        </ol>
-
-        <div className={styles.foot}>
-          <p className={styles.source}>
-            Los tres niveles vienen de la taxonomía de compromiso de Naps y otros (ITiCSE, 2002), que estudió cómo se
-            aprende con visualizaciones de algoritmos.
-          </p>
-          <p className={styles.scrollHint} data-visible={waitingForScroll || undefined} aria-hidden="true">
-            Seguí bajando <Icon name="arrow" size={16} />
-          </p>
+          {cursorTarget && <Cursor cursorRef={cursor} pressed={cursorPressed} />}
         </div>
       </div>
+
+      {/* Everything Cody says, for screen readers, without the animation */}
+      <ol className={styles.srOnly}>
+        {BEATS.map((b) => (
+          <li key={b.say}>{b.say}</li>
+        ))}
+      </ol>
+
+      <p className={styles.source}>
+        Los tres niveles vienen de la taxonomía de compromiso de Naps y otros (ITiCSE, 2002), que estudió cómo se aprende
+        con visualizaciones de algoritmos.
+      </p>
     </div>
   )
 }

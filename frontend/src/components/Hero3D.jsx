@@ -279,8 +279,7 @@ export default function Hero3D() {
     resize()
 
     let visible = true
-    // Only one scene moves at a time: the 3D stops once most of it has scrolled away
-    const seen = new IntersectionObserver(([entry]) => (visible = entry.intersectionRatio >= 0.35), { threshold: [0, 0.35, 1] })
+    const seen = new IntersectionObserver(([entry]) => (visible = entry.isIntersecting))
     seen.observe(container)
 
     const themeObserver = new MutationObserver(() => {

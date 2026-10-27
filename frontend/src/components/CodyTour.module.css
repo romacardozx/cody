@@ -1,21 +1,7 @@
-/* The scroll drives the chapters: a tall track, and the scene pinned below the header while the
-   page scrolls through it (a screen and a bit per chapter) */
-.track[data-pinned] {
-  height: 330svh;
-}
-
 .tour {
   --expo: cubic-bezier(0.16, 1, 0.3, 1);
   display: grid;
   gap: var(--space-5);
-}
-
-.track[data-pinned] .tour {
-  position: sticky;
-  top: var(--header-h);
-  min-height: calc(100svh - var(--header-h));
-  align-content: center;
-  padding: var(--space-5) 0;
 }
 
 /* ------------------------------------------------------------ chapters, like stories */
@@ -438,43 +424,9 @@
 
 /* ------------------------------------------------------------ the rest */
 
-.foot {
-  display: flex;
-  flex-wrap: wrap;
-  justify-content: space-between;
-  align-items: center;
-  gap: var(--space-3) var(--space-6);
-}
-
 .source {
   max-width: 60ch;
   color: var(--text-3);
-}
-
-/* When a chapter is over, a quiet nudge to keep scrolling */
-.scrollHint {
-  display: inline-flex;
-  align-items: center;
-  gap: var(--space-2);
-  color: var(--text-2);
-  font-weight: 700;
-  opacity: 0;
-  transition: opacity 0.4s var(--expo);
-}
-
-.scrollHint svg {
-  rotate: 90deg;
-  animation: nudge 1.6s ease-in-out infinite;
-}
-
-.scrollHint[data-visible] {
-  opacity: 1;
-}
-
-@keyframes nudge {
-  50% {
-    translate: 0 4px;
-  }
 }
 
 .srOnly {
@@ -519,20 +471,6 @@
     padding: var(--space-4);
   }
 
-  /* Pinned on a phone, everything has to fit one screen */
-  .track[data-pinned] .tour {
-    gap: var(--space-4);
-    padding: var(--space-3) 0;
-  }
-
-  .track[data-pinned] .stage {
-    min-height: 200px;
-  }
-
-  .track[data-pinned] .bars {
-    height: 120px;
-  }
-
   .bars {
     height: 150px;
   }
@@ -551,10 +489,6 @@
 }
 
 @media (prefers-reduced-motion: reduce) {
-  .scrollHint svg {
-    animation: none;
-  }
-
   .eye,
   .scene,
   .cursor,
