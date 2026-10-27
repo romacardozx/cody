@@ -18,13 +18,12 @@
 .footer {
   max-width: var(--page-max);
   margin: 0 auto;
+  margin-top: clamp(var(--space-8), 10vw, 136px);
   padding: var(--space-6);
   display: flex;
   flex-wrap: wrap;
   justify-content: space-between;
   gap: var(--space-2);
-  border-top: 1px solid var(--border);
-  font-size: 0.85rem;
   color: var(--text-3);
 }
 

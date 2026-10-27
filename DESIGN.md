@@ -43,6 +43,7 @@ Las fuentes van empaquetadas con `@fontsource` (la demo funciona sin internet).
 
 ## Componentes y reglas
 
+- **Secciones sin líneas divisorias**: se separan por espacio (clamp de 72 a 136px) y por títulos grandes. Las líneas finas quedan solo para separar filas de una misma lista (el índice del catálogo). Nada funcional en `--text-sm` o menos en la home: el tamaño base es el mínimo para texto que se lee.
 - Bordes 1px, radios 5/9/14px, sombras suaves. Datos técnicos en mono; títulos de panel en la fuente display, sin mayúsculas forzadas.
 - **Optimista**: toda acción se refleja en el acto (elección bloqueada + spinner) y se revierte si el servidor falla.
 - **Nunca regalar la respuesta**: mientras hay una pregunta pendiente, las listas (cola) se ocultan y las opciones salen en orden aleatorio por sesión.

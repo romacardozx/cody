@@ -3,9 +3,8 @@
   grid-template-columns: minmax(0, 1fr) minmax(0, 1fr);
   gap: var(--space-6);
   align-items: center;
-  margin-top: var(--space-8);
-  padding-top: var(--space-6);
-  border-top: 1px solid var(--border);
+  /* Set apart by room, not by a rule (DESIGN.md) */
+  margin-top: clamp(var(--space-8), 8vw, 112px);
 }
 
 .textOnly {

@@ -76,13 +76,11 @@
 
 .count {
   font-family: var(--font-mono);
-  font-size: var(--text-sm);
   color: var(--text-2);
   font-variant-numeric: tabular-nums;
 }
 
 .status {
-  font-size: var(--text-sm);
   color: var(--text-3);
 }
 

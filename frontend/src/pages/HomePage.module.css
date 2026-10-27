@@ -72,8 +72,8 @@
 .section {
   max-width: var(--page-max);
   margin: 0 auto;
-  padding: var(--space-7) var(--space-6);
-  border-top: 1px solid var(--border);
+  /* Sections are told apart by room and by their headings, not by rules between them */
+  padding: clamp(var(--space-8), 10vw, 136px) var(--space-6) 0;
 }
 
 .sectionHead {
@@ -82,16 +82,19 @@
   align-items: baseline;
   justify-content: space-between;
   gap: var(--space-3) var(--space-6);
-  margin-bottom: var(--space-5);
+  margin-bottom: var(--space-7);
 }
 
 .sectionTitle {
-  font-size: clamp(1.8rem, 3vw, 2.4rem);
-  font-weight: 720;
+  font-size: clamp(2.2rem, 4.2vw, 3.4rem);
+  font-weight: 760;
+  letter-spacing: -0.03em;
+  line-height: 1;
 }
 
 .sectionLead {
-  color: var(--text-3);
+  color: var(--text-2);
+  font-size: var(--text-lg);
   max-width: 30rem;
 }
 

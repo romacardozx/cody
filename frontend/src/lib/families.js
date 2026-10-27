@@ -37,8 +37,10 @@ export const FAMILY = {
   },
 }
 
-// Concepts first: they are what every other family builds on
-export const FAMILY_ORDER = ['CONCEPT', 'SORTING', 'SEARCHING', 'GRAPH', 'DATA_STRUCTURE']
+// By importance, the way a course builds them up: concepts are the language to analyse anything;
+// data structures are what algorithms work on; searching is the first real algorithm; sorting
+// adds recursion; graphs combine all of it (a queue in BFS, a heap in Dijkstra)
+export const FAMILY_ORDER = ['CONCEPT', 'DATA_STRUCTURE', 'SEARCHING', 'SORTING', 'GRAPH']
 
 /** "1 algoritmo", "5 estructuras", "8 conceptos". */
 export function countLabel(family, count) {

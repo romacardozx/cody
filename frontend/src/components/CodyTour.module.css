@@ -427,7 +427,6 @@
 .source {
   max-width: 60ch;
   color: var(--text-3);
-  font-size: var(--text-sm);
 }
 
 .srOnly {

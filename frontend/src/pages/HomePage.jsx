@@ -52,7 +52,7 @@ export function HomePage() {
       <section id="algoritmos" className={styles.section}>
         <div className={styles.sectionHead}>
           <h2 className={styles.sectionTitle}>Algoritmos</h2>
-          <p className={styles.sectionLead}>Ordenados por tipo, empezando por los conceptos que usan todos. Elegí uno y recorrelo prediciendo cada paso.</p>
+          <p className={styles.sectionLead}>De lo básico a lo que combina todo: primero los conceptos y las estructuras, después los algoritmos que las usan.</p>
         </div>
         <ErrorBoundary title="No pudimos cargar el catálogo">
           <Suspense fallback={<CatalogSkeleton />}>

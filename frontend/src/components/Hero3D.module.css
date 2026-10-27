@@ -164,14 +164,12 @@
 
 .sceneCaption {
   color: var(--text-2);
-  font-size: var(--text-sm);
 }
 
 .legend {
   display: flex;
   gap: var(--space-4);
-  font-size: var(--text-sm);
-  color: var(--text-3);
+  color: var(--text-2);
 }
 
 .key {
