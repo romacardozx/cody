@@ -56,7 +56,9 @@ export function createRouteScene(ctx) {
 
   const object = new Group()
   const ground = new Group()
-  ground.rotation.x = 0.6 // flatter than the city scenes: the province's outline should read at a glance
+  // Almost facing the camera (π/2 would be flat on): a plane at a low angle is seen edge-on and
+  // squashed (only sin(angle) of its height shows), and the province's outline must read at a glance
+  ground.rotation.x = 1.25
   object.add(ground)
 
   // Land: a flat silhouette of the province; the shore drawn over it, land borders fainter
@@ -170,7 +172,7 @@ export function createRouteScene(ctx) {
 
       if (!still) {
         sway += dt
-        object.rotation.y = Math.sin(sway * 0.3) * 0.16
+        object.rotation.y = Math.sin(sway * 0.3) * 0.07 // a facing map squashes sideways if it turns more
       }
 
       // Light up explored roads at a steady pace; each one flares, then cools to amber
