@@ -45,13 +45,6 @@ export function HomePage() {
         </Suspense>
       </section>
 
-      <section id="como-funciona" className={styles.section}>
-        <div className={styles.sectionHead} data-reveal="">
-          <h2 className={styles.sectionTitle}>Cómo funciona</h2>
-          <p className={styles.sectionLead}>Mirar no alcanza: cuanto más hacés con una animación, más aprendés. Cody te sube un escalón.</p>
-        </div>
-        <CodyTour />
-      </section>
       <section id="algoritmos" className={styles.section}>
         <div className={styles.sectionHead} data-reveal="">
           <h2 className={styles.sectionTitle}>Algoritmos</h2>
@@ -62,6 +55,13 @@ export function HomePage() {
             <Catalog />
           </Suspense>
         </ErrorBoundary>
+      </section>
+      <section id="como-funciona" className={styles.section}>
+        <div className={styles.sectionHead} data-reveal="">
+          <h2 className={styles.sectionTitle}>Cómo funciona</h2>
+          <p className={styles.sectionLead}>Mirar no alcanza: cuanto más hacés con una animación, más aprendés. Cody te sube un escalón.</p>
+        </div>
+        <CodyTour />
       </section>
     </main>
   )

@@ -1,4 +1,5 @@
 import { useEffect, useId, useLayoutEffect, useRef, useState } from 'react'
+import { useMotionFocus } from '../lib/motionFocus.js'
 import { useReducedMotion } from '../lib/useReducedMotion.js'
 import { Icon } from './Icon.jsx'
 import styles from './CodyTour.module.css'
@@ -151,20 +152,17 @@ export function CodyTour() {
   // beat: which one plays; elapsed: ms into it; chapterElapsed: ms into its chapter
   const [clock, setClock] = useState(() => (reduce ? { beat: LAST_OF[1], elapsed: 1e6, chapterElapsed: 1e6 } : { beat: 0, elapsed: 0, chapterElapsed: 0 }))
   const { beat, elapsed, chapterElapsed } = clock
-  const [visible, setVisible] = useState(false)
+  const visible = useMotionFocus('tour', root) // only plays while it is the most visible scene
   const [paused, setPaused] = useState(false)
   const cursor = useRef(null)
   const [narrow, setNarrow] = useState(() => window.matchMedia('(max-width: 900px)').matches)
   const playing = visible && !paused && !reduce
 
   useEffect(() => {
-    const observer = new IntersectionObserver(([entry]) => setVisible(entry.isIntersecting), { threshold: 0.3 })
-    observer.observe(root.current)
     const media = window.matchMedia('(max-width: 900px)')
     const onMedia = () => setNarrow(media.matches)
     media.addEventListener('change', onMedia)
     return () => {
-      observer.disconnect()
       media.removeEventListener('change', onMedia)
     }
   }, [])

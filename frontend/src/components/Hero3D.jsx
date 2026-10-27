@@ -1,5 +1,6 @@
 import { useEffect, useRef, useState } from 'react'
 import { Color, DirectionalLight, Group, HemisphereLight, Mesh, MeshBasicMaterial, PerspectiveCamera, RingGeometry, Scene, Vector3, WebGLRenderer } from 'three'
+import { useMotionFocus } from '../lib/motionFocus.js'
 import { useReducedMotion } from '../lib/useReducedMotion.js'
 import { createBfsScene } from './hero3d/bfsScene.js'
 import { createBubbleScene } from './hero3d/bubbleScene.js'
@@ -8,6 +9,7 @@ import { createMapSearchScene } from './hero3d/mapSearchScene.js'
 import { createRouteScene } from './hero3d/routeScene.js'
 import { ease } from './hero3d/timeline.js'
 import { HeroGraph } from './HeroGraph.jsx'
+import { Icon } from './Icon.jsx'
 import styles from './Hero3D.module.css'
 
 /*
@@ -98,6 +100,13 @@ export default function Hero3D() {
   const reduceMotion = useReducedMotion()
   const [webgl] = useState(supportsWebGL)
   const [active, setActive] = useState(0)
+  // It moves only while it is the most visible scene on the page and nobody paused it
+  const focused = useMotionFocus('hero', mount)
+  const [paused, setPaused] = useState(false)
+  const running = useRef(false)
+  useEffect(() => {
+    running.current = focused && !paused
+  }, [focused, paused])
 
   useEffect(() => {
     if (!webgl) return
@@ -278,10 +287,6 @@ export default function Hero3D() {
     sizeObserver.observe(stage)
     resize()
 
-    let visible = true
-    const seen = new IntersectionObserver(([entry]) => (visible = entry.isIntersecting))
-    seen.observe(container)
-
     const themeObserver = new MutationObserver(() => {
       ctx.palette = readPalette()
       applyLights()
@@ -295,7 +300,7 @@ export default function Hero3D() {
       raf = requestAnimationFrame(loop)
       const dt = Math.min(0.05, (now - last) / 1000)
       last = now
-      if (visible && !document.hidden) frame(dt)
+      if (running.current && !document.hidden) frame(dt)
     }
     if (reduceMotion) frame(1)
     else raf = requestAnimationFrame(loop)
@@ -304,7 +309,6 @@ export default function Hero3D() {
       cancelAnimationFrame(raf)
       window.removeEventListener('pointermove', onPointer)
       sizeObserver.disconnect()
-      seen.disconnect()
       themeObserver.disconnect()
       current?.dispose()
       ring.geometry.dispose()
@@ -336,18 +340,25 @@ export default function Hero3D() {
         ))}
       </div>
       <figcaption className={styles.caption}>
-        <div className={styles.switcher} role="group" aria-label="Elegir algoritmo de la animación">
-          {SCENES.map((s, i) => (
-            <button
-              key={s.key}
-              type="button"
-              className={styles.sceneButton}
-              aria-pressed={i === active}
-              onClick={() => selectScene.current(i)}
-            >
-              {s.name}
+        <div className={styles.controls}>
+          <div className={styles.switcher} role="group" aria-label="Elegir algoritmo de la animación">
+            {SCENES.map((s, i) => (
+              <button
+                key={s.key}
+                type="button"
+                className={styles.sceneButton}
+                aria-pressed={i === active}
+                onClick={() => selectScene.current(i)}
+              >
+                {s.name}
+              </button>
+            ))}
+          </div>
+          {!reduceMotion && (
+            <button type="button" className={styles.pause} onClick={() => setPaused((p) => !p)} aria-label={paused ? 'Reproducir la animación' : 'Pausar la animación'}>
+              <Icon name={paused ? 'play' : 'pause'} size={16} />
             </button>
-          ))}
+          )}
         </div>
         <p className={styles.sceneCaption}>{scene.caption}</p>
         <div className={styles.legend}>
