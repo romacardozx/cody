@@ -1,3 +1,20 @@
+/* The hero is a sector of its own: an inset rounded panel that fills the screen and, as the page
+   scrolls, grows to the full width (--hero-p goes 0 -> 1, set by useHeroExpansion) */
+.heroPanel {
+  --inset: calc((1 - var(--hero-p, 0)) * var(--space-4));
+  margin: var(--inset) var(--inset) 0;
+  border-radius: calc((1 - var(--hero-p, 0)) * 28px);
+  min-height: calc(100svh - var(--header-h) - var(--space-4));
+  display: grid;
+  align-items: center;
+  background-color: var(--surface);
+  background-image:
+    radial-gradient(ellipse 60% 70% at 78% 40%, var(--surface-2), transparent 70%),
+    radial-gradient(var(--bg-grid) 1px, transparent 1px);
+  background-size: auto, 22px 22px;
+  border: 1px solid var(--border);
+}
+
 .hero {
   max-width: var(--page-max);
   margin: 0 auto;
@@ -95,6 +112,20 @@
   margin: 0 auto;
   /* Sections are told apart by room and by their headings, not by rules between them */
   padding: clamp(var(--space-8), 10vw, 136px) var(--space-6) 0;
+}
+
+/* "Cómo funciona" on a full-width band in the opposite theme (data-theme on the band): the tokens
+   inside switch palette, so the change of sector reads at a glance without any rule */
+.band {
+  /* Edge to edge, like a change of paper: a sector, not a card around the tour */
+  margin-top: clamp(var(--space-8), 10vw, 136px);
+  background: var(--bg);
+  color: var(--text);
+}
+
+.band .section {
+  padding-top: clamp(var(--space-7), 7vw, 104px);
+  padding-bottom: clamp(var(--space-7), 7vw, 104px);
 }
 
 .sectionHead {

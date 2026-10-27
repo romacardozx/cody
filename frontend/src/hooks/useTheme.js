@@ -1,4 +1,4 @@
-import { useCallback, useState } from 'react'
+import { useCallback, useState, useSyncExternalStore } from 'react'
 
 /** Dark/light theme. index.html applies it before the first paint; this keeps it in sync. */
 export function useTheme() {
@@ -19,4 +19,15 @@ export function useTheme() {
   }, [])
 
   return { theme, toggle }
+}
+
+function subscribeToTheme(callback) {
+  const observer = new MutationObserver(callback)
+  observer.observe(document.documentElement, { attributes: true, attributeFilter: ['data-theme'] })
+  return () => observer.disconnect()
+}
+
+/** The theme in use right now, following changes made anywhere (the header's toggle). */
+export function useCurrentTheme() {
+  return useSyncExternalStore(subscribeToTheme, () => document.documentElement.dataset.theme || 'dark')
 }

@@ -81,10 +81,6 @@
 }
 
 .status {
-  color: var(--text-3);
-}
-
-.status[data-ready] {
   color: var(--visited);
 }
 

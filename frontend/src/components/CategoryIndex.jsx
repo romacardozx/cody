@@ -94,7 +94,7 @@ export function CategoryIndex({ algorithms }) {
               <FamilyGlyph family={family} />
               <span className={styles.lead}>
                 <span className={styles.name} style={{ viewTransitionName: `category-${data.slug}` }}>{data.label}</span>
-                <span className={styles.description}>{data.description}</span>
+                <span className={styles.description}>{data.short}</span>
               </span>
               <span className={styles.members}>
                 {inFamily.map((a) => (
@@ -105,9 +105,7 @@ export function CategoryIndex({ algorithms }) {
               </span>
               <span className={styles.meta}>
                 <span className={styles.count}>{countLabel(family, inFamily.length)}</span>
-                <span className={styles.status} data-ready={available.length > 0 || undefined}>
-                  {available.length === 0 ? 'próximamente' : `${available.length} para predecir`}
-                </span>
+                {available.length > 0 && <span className={styles.status}>{available.length} para predecir</span>}
                 <Icon name="arrow" size={20} className={styles.arrow} />
               </span>
             </Link>
