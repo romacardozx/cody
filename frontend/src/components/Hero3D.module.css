@@ -87,9 +87,11 @@
   transition: opacity 0.3s var(--ease-out);
 }
 
-.hud[data-side='right'] {
+.hud[data-side='bottom-right'] {
+  top: auto;
   left: auto;
   right: var(--space-3);
+  bottom: var(--space-3);
 }
 
 .hud[data-visible='true'] {
@@ -211,5 +213,28 @@
 
   .label[data-minor='true'] {
     display: none;
+  }
+
+  /* The province map fills the frame: its panel moves to a strip under the canvas */
+  .stage[data-hud='bottom-right'] .canvas {
+    bottom: 76px;
+  }
+
+  .hud[data-side='bottom-right'] {
+    left: 0;
+    right: 0;
+    bottom: 0;
+    display: flex;
+    flex-wrap: wrap;
+    column-gap: var(--space-4);
+    row-gap: 2px;
+  }
+
+  .hud[data-side='bottom-right'] .hudTitle {
+    display: none;
+  }
+
+  .hud[data-side='bottom-right'] .hudRow {
+    gap: var(--space-2);
   }
 }

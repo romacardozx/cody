@@ -20,11 +20,11 @@ import {
   TubeGeometry,
   Vector3,
 } from 'three'
-import { buildProvinceMap, COAST, KM_PER_UNIT, TOWNS, project } from './provinceMap.js'
+import { buildProvinceMap, KM_PER_UNIT, LAND_OUTLINE, OUTLINE, TOWNS } from './provinceMap.js'
 import { search } from './streetMap.js'
 
 /*
- * A* from Mar del Plata to CABA on a map of Buenos Aires province: land and coastline, main
+ * A* from Mar del Plata to CABA on a map of the whole Buenos Aires province: its outline, main
  * routes as solid roads, rural roads dashed. The search lights up the roads it explores (pulled
  * north, towards the destination), then the route draws itself with a car at its tip. The HUD
  * compares it with plain Dijkstra and gives the trip's length and time.
@@ -56,21 +56,24 @@ export function createRouteScene(ctx) {
 
   const object = new Group()
   const ground = new Group()
-  ground.rotation.x = 0.78
+  ground.rotation.x = 0.6 // flatter than the city scenes: the province's outline should read at a glance
   object.add(ground)
 
-  // Land: a flat silhouette of the province, and the coastline drawn over it
+  // Land: a flat silhouette of the province; the shore drawn over it, land borders fainter
   const shape = new Shape()
-  const land = [...COAST, project([-58.3, -38.42]), project([-60.0, -38.42]), project([-60.0, -34.38])]
-  land.forEach(([x, z], i) => (i ? shape.lineTo(x, z) : shape.moveTo(x, z)))
+  LAND_OUTLINE.forEach(([x, z], i) => (i ? shape.lineTo(x, z) : shape.moveTo(x, z)))
   const landGeometry = new ShapeGeometry(shape)
   landGeometry.rotateX(Math.PI / 2)
   const landMaterial = new MeshBasicMaterial({ side: DoubleSide, transparent: true, depthWrite: false })
   ground.add(new Mesh(landGeometry, landMaterial))
 
-  const coastGeometry = new BufferGeometry().setFromPoints(COAST.map(([x, z]) => new Vector3(x, LIFT, z)))
+  const toLine = (points) => new BufferGeometry().setFromPoints(points.map(([x, z]) => new Vector3(x, LIFT, z)))
+  const coastGeometry = toLine(OUTLINE.shore)
   const coastMaterial = new LineBasicMaterial()
   ground.add(new Line(coastGeometry, coastMaterial))
+  const borderGeometries = OUTLINE.borders.map(toLine)
+  const borderMaterial = new LineBasicMaterial()
+  borderGeometries.forEach((geometry) => ground.add(new Line(geometry, borderMaterial)))
 
   // Rural roads: dashed lines
   const rural = edges.map((_, e) => e).filter((e) => !avenue[e])
@@ -109,7 +112,7 @@ export function createRouteScene(ctx) {
   const labelled = []
   for (const [key, t] of Object.entries(TOWNS)) {
     const dot = new Mesh(townGeometry, townMaterial)
-    dot.scale.setScalar(t.label ? 0.05 : 0.03)
+    dot.scale.setScalar(t.label ? 0.045 : 0.025)
     dot.position.set(xs[town[key]], 0.03, zs[town[key]])
     ground.add(dot)
     if (t.label && key !== 'mdp' && key !== 'caba') labelled.push({ dot, text: t.name })
@@ -149,12 +152,13 @@ export function createRouteScene(ctx) {
     radius: map.radius * 0.9,
     tilt: 0.02,
     hold: 5,
-    hudSide: 'right', // north-east is open water: the panel covers no roads there
+    hudSide: 'bottom-right', // the open Atlantic: the panel covers no land there
     update(dt, still) {
       const palette = ctx.palette
       landMaterial.color.copy(palette.building)
       landMaterial.opacity = palette.light ? 0.55 : 0.4
-      coastMaterial.color.copy(palette.edge).lerp(palette.text, 0.35)
+      coastMaterial.color.copy(palette.edge).lerp(palette.text, 0.45)
+      borderMaterial.color.copy(palette.edge).lerp(palette.text, 0.2)
       ruralLines.material.color.copy(palette.edge).lerp(palette.text, palette.light ? 0.05 : 0.12)
       roadMaterial.color.copy(palette.edge).lerp(palette.text, 0.4)
       townMaterial.color.copy(palette.text)
@@ -216,7 +220,7 @@ export function createRouteScene(ctx) {
       }
     },
     dispose() {
-      ;[landGeometry, coastGeometry, ruralGeometry, glowGeometry, routeGeometry, townGeometry, pinGeometry, car.geometry, ...roadGeometries].forEach((g) => g.dispose())
+      ;[landGeometry, coastGeometry, ...borderGeometries, ruralGeometry, glowGeometry, routeGeometry, townGeometry, pinGeometry, car.geometry, ...roadGeometries].forEach((g) => g.dispose())
       object.traverse((o) => o.material?.dispose?.())
     },
   }

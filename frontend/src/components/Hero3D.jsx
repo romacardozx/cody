@@ -161,6 +161,7 @@ export default function Hero3D() {
       fit()
       setActive(i)
       if (hud.current) hud.current.dataset.side = current.hudSide ?? 'left'
+      container.dataset.hud = current.hudSide ?? 'left'
       phase = 'in'
       phaseTime = 0
     }
@@ -330,7 +331,7 @@ export default function Hero3D() {
             </span>
           ))}
         </div>
-        {[0, 1, 2, 3, 4].map((i) => (
+        {[0, 1, 2, 3, 4, 5].map((i) => (
           <span key={i} ref={(element) => (labels.current[i] = element)} className={styles.label} data-visible="false" aria-hidden="true" />
         ))}
       </div>
