@@ -59,6 +59,15 @@
 .label[data-visible='true'] {
   opacity: var(--scene-opacity, 1);
 }
+/* Towns along the way: quieter than origin and destination */
+.label[data-minor='true'] {
+  padding: 1px 8px;
+  border-color: transparent;
+  background: color-mix(in srgb, var(--surface) 72%, transparent);
+  color: var(--text-2);
+  font-family: var(--font-body);
+  font-weight: 600;
+}
 
 /* Data panel for the map scenes */
 .hud {
@@ -76,6 +85,11 @@
   pointer-events: none;
   opacity: 0;
   transition: opacity 0.3s var(--ease-out);
+}
+
+.hud[data-side='right'] {
+  left: auto;
+  right: var(--space-3);
 }
 
 .hud[data-visible='true'] {
@@ -180,4 +194,22 @@
 
 .sw_visited {
   background: var(--visited);
+}
+
+/* Narrow frames: a smaller data panel, and only origin and destination are labelled */
+@media (max-width: 600px) {
+  .hud {
+    min-width: 0;
+    padding: var(--space-2) var(--space-3);
+    gap: 2px;
+  }
+
+  .hudTitle {
+    font-size: var(--text-md);
+    margin-bottom: 0;
+  }
+
+  .label[data-minor='true'] {
+    display: none;
+  }
 }

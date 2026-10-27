@@ -166,7 +166,8 @@
 					<execution>
 						<id>yarn-install</id>
 						<goals><goal>yarn</goal></goals>
-						<configuration><arguments>install --frozen-lockfile</arguments></configuration>
+						<!-- silent: yarn warns about a stray "workspaces" field inside a dependency, and Maven prints it as [ERROR] -->
+						<configuration><arguments>install --frozen-lockfile --silent</arguments></configuration>
 					</execution>
 					<execution>
 						<id>yarn-build</id>

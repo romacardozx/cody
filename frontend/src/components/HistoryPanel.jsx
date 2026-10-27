@@ -31,7 +31,7 @@ export function HistoryPanel({ score, history, labelOf, onGo }) {
       {history.length === 0 ? (
         <p className={styles.muted}>Cuando respondas, cada predicción queda acá con su explicación para repasarla.</p>
       ) : (
-        <ol className={styles.history}>
+        <ol className={styles.history} data-lenis-prevent>
           <AnimatePresence initial={false}>
             {history.map((entry) => (
               <motion.li

@@ -1,10 +1,8 @@
 /*
- * Procedural cities for the search scenes, deterministic (fixed hash) so every run draws the same
- * map and an algorithm can be compared with plain Dijkstra on equal ground:
- *
- *  - 'bay': an irregular, jittered grid with missing blocks and a coastline with no streets.
- *  - 'plata': a planned city in the style of La Plata: a regular grid, boulevards every six
- *    blocks and diagonal avenues crossing it.
+ * A procedural city by a bay for the bidirectional scene: an irregular, jittered grid with
+ * missing blocks and a coastline with no streets. Deterministic (fixed hash), so every run draws
+ * the same map and the search can be compared with plain Dijkstra on equal ground. Also holds the
+ * searches (Dijkstra, A*, bidirectional) shared with the province map.
  *
  * Coordinates are on the XZ plane, centered at the origin. Edge weight = street length.
  */
@@ -20,22 +18,21 @@ function hash(a, b, salt = 0) {
   return ((h ^ (h >>> 16)) >>> 0) / 4294967296
 }
 
-export function buildStreetMap(variant = 'bay') {
-  const planned = variant === 'plata'
+export function buildStreetMap() {
   const width = (COLS - 1) * STEP
   const depth = (ROWS - 1) * STEP
   const index = new Map()
   const xs = []
   const zs = []
-  const jitter = planned ? 0.25 : 0.7
+  const jitter = 0.7
 
   for (let r = 0; r < ROWS; r++) {
     for (let c = 0; c < COLS; c++) {
-      const x = c * STEP - width / 2 + (hash(c, r, planned ? 11 : 1) - 0.5) * STEP * jitter
-      const z = r * STEP - depth / 2 + (hash(c, r, planned ? 12 : 2) - 0.5) * STEP * jitter
-      // The bay city has water at the top, with no streets
+      const x = c * STEP - width / 2 + (hash(c, r, 1) - 0.5) * STEP * jitter
+      const z = r * STEP - depth / 2 + (hash(c, r, 2) - 0.5) * STEP * jitter
+      // Water at the top, with no streets
       const coast = -depth / 2 + 1.25 + Math.sin(x * 0.75 + 0.6) * 0.75 + Math.cos(x * 1.9) * 0.18
-      if (!planned && z < coast) continue
+      if (z < coast) continue
       index.set(`${c},${r}`, xs.length)
       xs.push(x)
       zs.push(z)
@@ -53,14 +50,6 @@ export function buildStreetMap(variant = 'bay') {
     for (let c = 0; c < COLS; c++) {
       const here = index.get(`${c},${r}`)
       if (here === undefined) continue
-      if (planned) {
-        // Boulevards every six blocks are always there; a few ordinary blocks are missing
-        const rowBoulevard = r % 6 === 3
-        const colBoulevard = c % 6 === 3
-        if (rowBoulevard || hash(c, r, 13) > 0.1) link(here, index.get(`${c + 1},${r}`), rowBoulevard)
-        if (colBoulevard || hash(c, r, 14) > 0.1) link(here, index.get(`${c},${r + 1}`), colBoulevard)
-        continue
-      }
       const rowAvenue = r % 8 === 4
       const colAvenue = c % 9 === 3
       if (rowAvenue || hash(c, r, 3) > 0.17) link(here, index.get(`${c + 1},${r}`), rowAvenue)
@@ -69,19 +58,6 @@ export function buildStreetMap(variant = 'bay') {
       if (hash(c, r, 6) > 0.95) link(here, index.get(`${c - 1},${r + 1}`), false)
     }
   }
-  if (planned) {
-    // Diagonal avenues: the two big ones corner to corner, and two shorter ones across the center
-    const diagonal = (c, r, dc) => {
-      for (; index.has(`${c},${r}`) && index.has(`${c + dc},${r + 1}`); c += dc, r += 1) {
-        link(index.get(`${c},${r}`), index.get(`${c + dc},${r + 1}`), true)
-      }
-    }
-    diagonal(0, 0, 1)
-    diagonal(COLS - 1, 0, -1)
-    diagonal(Math.floor(COLS / 2), 0, 1)
-    diagonal(Math.floor(COLS / 2), 0, -1)
-  }
-
   const count = xs.length
   const adjacency = Array.from({ length: count }, () => [])
   edges.forEach(([a, b], e) => {
@@ -101,9 +77,7 @@ export function buildStreetMap(variant = 'bay') {
   }
   // Origin and destination inside the city, far from its borders: a search that hits the border
   // stops growing there, which would hide the difference between the algorithms
-  const [source, target] = planned
-    ? [nearest(-2.1, 1.2), nearest(2.1, -1.0)]
-    : [nearest(-1.7, 1.1), nearest(1.7, -0.5)]
+  const [source, target] = [nearest(-1.7, 1.1), nearest(1.7, -0.5)]
 
   return { xs, zs, edges, avenue, adjacency, source, target, radius: Math.hypot(width, depth) / 2 }
 }
@@ -165,7 +139,10 @@ function pathFrom(previous, from, to) {
  */
 export function search(map, { heuristic = false } = {}) {
   const { xs, zs, adjacency, source, target } = map
-  const h = (n) => (heuristic ? Math.hypot(xs[n] - xs[target], zs[n] - zs[target]) : 0)
+  // Maps whose weights are not lengths (times, for example) give the factor that turns a
+  // straight-line length into a lower bound of the weight
+  const scale = map.heuristicScale ?? 1
+  const h = (n) => (heuristic ? Math.hypot(xs[n] - xs[target], zs[n] - zs[target]) * scale : 0)
   const dist = new Float64Array(xs.length).fill(Infinity)
   const previous = new Int32Array(xs.length).fill(-1)
   const closed = new Uint8Array(xs.length)

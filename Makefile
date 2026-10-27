@@ -60,6 +60,12 @@ help: ## Muestra esta ayuda
 # already newer than the code, app already answering on port 8080).
 up: doctor env db $(JAR) ## Levanta TODO (base + app) y muestra URLs y credenciales
 	@mkdir -p $(RUN_DIR)
+	@# Running from an older build (code changed since): stop it so the new one starts below
+	@if [ -f $(PID_FILE) ] && kill -0 $$(cat $(PID_FILE)) 2>/dev/null && [ $(JAR) -nt $(RUN_JAR) ]; then \
+	  printf "$(Y)Hay una versión nueva compilada: reiniciando la app...$(N)\n"; \
+	  kill $$(cat $(PID_FILE)); \
+	  while curl -fs -o /dev/null $(APP_URL)/api/algorithms; do sleep 0.5; done; \
+	fi
 	@if curl -fs -o /dev/null $(APP_URL)/api/algorithms; then \
 	  printf "$(Y)La app ya estaba corriendo.$(N)\n"; \
 	else \

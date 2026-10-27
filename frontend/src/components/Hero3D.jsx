@@ -5,6 +5,7 @@ import { createBfsScene } from './hero3d/bfsScene.js'
 import { createBubbleScene } from './hero3d/bubbleScene.js'
 import { createDijkstraScene } from './hero3d/dijkstraScene.js'
 import { createMapSearchScene } from './hero3d/mapSearchScene.js'
+import { createRouteScene } from './hero3d/routeScene.js'
 import { ease } from './hero3d/timeline.js'
 import { HeroGraph } from './HeroGraph.jsx'
 import styles from './Hero3D.module.css'
@@ -33,16 +34,16 @@ const SCENES = [
   {
     key: 'astar',
     name: 'A*',
-    caption: 'Dijkstra con brújula: mira hacia el destino y explora mucho menos',
+    caption: 'De Mar del Plata a CABA: Dijkstra con brújula, mira hacia el destino y explora mucho menos',
     legend: [['frontier', 'explorado'], ['current', 'ruta']],
-    create: (ctx) => createMapSearchScene(ctx, 'astar'),
+    create: createRouteScene,
   },
   {
     key: 'bidirectional',
     name: 'Bidireccional',
     caption: 'Dos búsquedas, desde el origen y desde el destino, que se encuentran a mitad de camino',
     legend: [['frontier', 'desde el origen'], ['visited', 'desde el destino'], ['current', 'ruta']],
-    create: (ctx) => createMapSearchScene(ctx, 'bidirectional'),
+    create: createMapSearchScene,
   },
   {
     key: 'bubble',
@@ -121,7 +122,8 @@ export default function Hero3D() {
     // Everything turns around the origin; scenes are built centered inside a known radius
     const pivot = new Group()
     scene.add(pivot)
-    const ring = new Mesh(new RingGeometry(0.42, 0.5, 48), new MeshBasicMaterial({ transparent: true, opacity: 0 }))
+    // depthWrite off: even when faded out, the ring must not hide transparent layers behind it
+    const ring = new Mesh(new RingGeometry(0.42, 0.5, 48), new MeshBasicMaterial({ transparent: true, opacity: 0, depthWrite: false }))
     scene.add(ring)
 
     const ctx = { palette: readPalette() }
@@ -158,6 +160,7 @@ export default function Hero3D() {
       pivot.add(current.object)
       fit()
       setActive(i)
+      if (hud.current) hud.current.dataset.side = current.hudSide ?? 'left'
       phase = 'in'
       phaseTime = 0
     }
@@ -240,6 +243,7 @@ export default function Hero3D() {
         const label = result.labels[i]
         if (!element) return
         element.dataset.visible = label ? 'true' : 'false'
+        element.dataset.minor = label?.minor ? 'true' : 'false'
         if (label) {
           element.textContent = label.text
           place(element, label.position, 18)
@@ -326,7 +330,7 @@ export default function Hero3D() {
             </span>
           ))}
         </div>
-        {[0, 1].map((i) => (
+        {[0, 1, 2, 3, 4].map((i) => (
           <span key={i} ref={(element) => (labels.current[i] = element)} className={styles.label} data-visible="false" aria-hidden="true" />
         ))}
       </div>

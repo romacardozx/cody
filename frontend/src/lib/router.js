@@ -1,5 +1,6 @@
 import { useSyncExternalStore } from 'react'
 import { flushSync } from 'react-dom'
+import { scrollToElement, scrollToTop } from './smoothScroll.js'
 
 // Minimal client-side router: a handful of pages do not justify a routing library.
 // The server forwards these routes to index.html (SpaForwardController).
@@ -19,9 +20,10 @@ function withTransition(update) {
   const reduce = window.matchMedia('(prefers-reduced-motion: reduce)').matches
   if (!document.startViewTransition || reduce) {
     update()
-    return
+    return Promise.resolve()
   }
-  document.startViewTransition(() => flushSync(update))
+  // Resolves once the new page is in the DOM
+  return document.startViewTransition(() => flushSync(update)).updateCallbackDone
 }
 
 // Back and forward buttons get the same transition
@@ -40,16 +42,24 @@ export function navigate(to, { replace = false, scroll = true } = {}) {
   const hash = to.split('#')[1]
   if (to === snapshot()) {
     // Same URL: only an anchor needs work (scroll to it again)
-    if (hash) document.getElementById(hash)?.scrollIntoView()
+    if (hash) scrollToElement(document.getElementById(hash))
     return
   }
+  const samePage = to.split('#')[0] === window.location.pathname + window.location.search
   window.history[replace ? 'replaceState' : 'pushState'](null, '', to)
+  if (samePage && hash) {
+    // Only the anchor changed: glide there, without a page transition
+    notify()
+    scrollToElement(document.getElementById(hash))
+    return
+  }
   withTransition(() => {
     notify()
-    if (!hash && scroll) window.scrollTo({ top: 0, behavior: 'instant' })
+    if (!hash && scroll) scrollToTop()
+  }).then(() => {
+    // Anchors: the new page is rendered now, go there
+    if (hash) requestAnimationFrame(() => scrollToElement(document.getElementById(hash)))
   })
-  // Anchors: wait for the new page to render, then go there
-  if (hash) requestAnimationFrame(() => document.getElementById(hash)?.scrollIntoView())
 }
 
 /** Current pathname and query params; re-renders on navigation. */

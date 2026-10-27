@@ -17,31 +17,26 @@ import {
 import { bidirectional, buildStreetMap, search } from './streetMap.js'
 
 /*
- * A night map where the search lights up street by street, like a heat front: each explored
- * street flares and then cools down. A* (amber, pulled towards the destination) or bidirectional
- * Dijkstra (amber from the origin, mint from the destination, meeting halfway). Then the shortest
- * route draws itself in vermillion. A HUD counts explored streets against plain Dijkstra.
+ * Bidirectional Dijkstra on a night map of a city by the bay: the search lights up street by
+ * street, like a heat front (amber from the origin, mint from the destination, meeting halfway);
+ * each explored street flares and then cools down. Then the shortest route draws itself in
+ * vermillion. A HUD counts explored streets against plain Dijkstra.
  */
 
-// Streets lit per second. A* explores so few that it goes slower, so the cone can be seen growing
-const EDGES_PER_SECOND = { astar: 55, bidirectional: 130 }
-// Each algorithm runs on its own city: A* on a planned grid with diagonals, bidirectional on the bay
-const CITY = { astar: 'plata', bidirectional: 'bay' }
+const EDGES_PER_SECOND = 130
 const PATH_SECONDS = 1.3
 const COOL_PER_SECOND = 1.1
 
-const cache = {} // per city: the map and plain Dijkstra on it, computed once
+let cache = null // the map and plain Dijkstra on it, computed once
 
 const kilometers = (units) => `${(units * 1.2).toFixed(1).replace('.', ',')} km`
 
-export function createMapSearchScene(ctx, mode) {
-  const city = CITY[mode]
-  if (!cache[city]) {
-    const map = buildStreetMap(city)
-    cache[city] = { map, dijkstra: search(map) }
+export function createMapSearchScene(ctx) {
+  if (!cache) {
+    const map = buildStreetMap()
+    cache = { map, dijkstra: search(map), result: bidirectional(map) }
   }
-  const { map, dijkstra } = cache[city]
-  const result = mode === 'astar' ? search(map, { heuristic: true }) : bidirectional(map)
+  const { map, dijkstra, result } = cache
   const { xs, zs, edges, avenue, source, target } = map
 
   const object = new Group()
@@ -146,7 +141,7 @@ export function createMapSearchScene(ctx, mode) {
 
       // Reveal explored streets at a steady pace: a smarter search finishes sooner
       const total = result.explored.length
-      budget = still ? total : Math.min(total, budget + EDGES_PER_SECOND[mode] * dt)
+      budget = still ? total : Math.min(total, budget + EDGES_PER_SECOND * dt)
       while (shown < Math.floor(budget)) {
         const { e, side: s } = result.explored[shown]
         side[e] = s
@@ -178,7 +173,7 @@ export function createMapSearchScene(ctx, mode) {
           { position: local(pins[1].mesh), text: 'Destino' },
         ],
         hud: {
-          title: mode === 'astar' ? 'A*' : 'Dijkstra bidireccional',
+          title: 'Dijkstra bidireccional',
           rows: [
             ['Calles exploradas', String(shown)],
             ['Dijkstra común', String(dijkstra.explored.length)],

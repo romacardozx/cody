@@ -46,26 +46,14 @@ export function HomePage() {
             >
               Empezar con BFS <Icon name="arrow" size={18} />
             </Link>
-            <a href="#como-funciona" className={styles.secondary}>
+            <Link to="/#como-funciona" className={styles.secondary}>
               Cómo funciona
-            </a>
+            </Link>
           </div>
         </div>
         <Suspense fallback={<div className={styles.heroPlaceholder} aria-hidden="true" />}>
           <Hero3D />
         </Suspense>
-      </section>
-
-      <section id="algoritmos" className={styles.section}>
-        <div className={styles.sectionHead}>
-          <h2 className={styles.sectionTitle}>Algoritmos</h2>
-          <p className={styles.sectionLead}>Ordenados por tipo. Elegí una categoría y recorré sus algoritmos prediciendo cada paso.</p>
-        </div>
-        <ErrorBoundary title="No pudimos cargar el catálogo">
-          <Suspense fallback={<CatalogSkeleton />}>
-            <Catalog />
-          </Suspense>
-        </ErrorBoundary>
       </section>
 
       <section id="como-funciona" className={styles.section}>
@@ -90,6 +78,18 @@ export function HomePage() {
           (<kbd>Espacio</kbd> <kbd>←</kbd> <kbd>→</kbd> <kbd>1</kbd>–<kbd>9</kbd>) y hay tema claro y oscuro.
         </p>
       </section>
+      <section id="algoritmos" className={styles.section}>
+        <div className={styles.sectionHead}>
+          <h2 className={styles.sectionTitle}>Algoritmos</h2>
+          <p className={styles.sectionLead}>Ordenados por tipo. Elegí una categoría y recorré sus algoritmos prediciendo cada paso.</p>
+        </div>
+        <ErrorBoundary title="No pudimos cargar el catálogo">
+          <Suspense fallback={<CatalogSkeleton />}>
+            <Catalog />
+          </Suspense>
+        </ErrorBoundary>
+      </section>
+
     </main>
   )
 }
