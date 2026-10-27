@@ -43,11 +43,14 @@ export function HomePage() {
       </section>
 
       <section id="como-funciona" className={styles.section}>
-        <div className={styles.sectionHead}>
-          <h2 className={styles.sectionTitle}>Cómo funciona</h2>
-          <p className={styles.sectionLead}>Mirar no alcanza: cuanto más hacés con una animación, más aprendés. Cody te sube un escalón.</p>
-        </div>
-        <CodyTour />
+        <CodyTour
+          head={
+            <div className={styles.sectionHead}>
+              <h2 className={styles.sectionTitle}>Cómo funciona</h2>
+              <p className={styles.sectionLead}>Mirar no alcanza: cuanto más hacés con una animación, más aprendés. Cody te sube un escalón.</p>
+            </div>
+          }
+        />
       </section>
       <section id="algoritmos" className={styles.section}>
         <div className={styles.sectionHead}>
