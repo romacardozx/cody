@@ -4,7 +4,7 @@ import { CategoryCard } from '../components/CategoryCard.jsx'
 import { ErrorBoundary } from '../components/ErrorBoundary.jsx'
 import { Icon } from '../components/Icon.jsx'
 import { Link } from '../components/Link.jsx'
-import { EngagementLadder } from '../components/EngagementLadder.jsx'
+import { CodyTour } from '../components/CodyTour.jsx'
 import { FAMILY_ORDER } from '../lib/families.js'
 import styles from './HomePage.module.css'
 
@@ -48,7 +48,7 @@ export function HomePage() {
           <h2 className={styles.sectionTitle}>Cómo funciona</h2>
           <p className={styles.sectionLead}>Mirar no alcanza: cuanto más hacés con una animación, más aprendés. Cody te sube un escalón.</p>
         </div>
-        <EngagementLadder />
+        <CodyTour />
       </section>
       <section id="algoritmos" className={styles.section}>
         <div className={styles.sectionHead}>
