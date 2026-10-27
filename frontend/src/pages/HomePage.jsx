@@ -1,10 +1,11 @@
-import { lazy, Suspense, use } from 'react'
+import { lazy, Suspense, use, useRef } from 'react'
 import { getAlgorithms, prefetchVisualizer } from '../api/cody.js'
 import { CategoryIndex } from '../components/CategoryIndex.jsx'
 import { ErrorBoundary } from '../components/ErrorBoundary.jsx'
 import { Icon } from '../components/Icon.jsx'
 import { Link } from '../components/Link.jsx'
 import { CodyTour } from '../components/CodyTour.jsx'
+import { useReveal } from '../lib/useReveal.js'
 import styles from './HomePage.module.css'
 
 // Three.js is heavy: the 3D scene loads after the page is on screen and never blocks it
@@ -12,8 +13,10 @@ const Hero3D = lazy(() => import('../components/Hero3D.jsx'))
 
 
 export function HomePage() {
+  const page = useRef(null)
+  useReveal(page)
   return (
-    <main>
+    <main ref={page}>
       <section className={styles.hero}>
         <div className={styles.heroText}>
           <h1 className={styles.title}>Predecí cada paso del algoritmo antes de verlo</h1>
@@ -43,14 +46,14 @@ export function HomePage() {
       </section>
 
       <section id="como-funciona" className={styles.section}>
-        <div className={styles.sectionHead}>
+        <div className={styles.sectionHead} data-reveal="">
           <h2 className={styles.sectionTitle}>Cómo funciona</h2>
           <p className={styles.sectionLead}>Mirar no alcanza: cuanto más hacés con una animación, más aprendés. Cody te sube un escalón.</p>
         </div>
         <CodyTour />
       </section>
       <section id="algoritmos" className={styles.section}>
-        <div className={styles.sectionHead}>
+        <div className={styles.sectionHead} data-reveal="">
           <h2 className={styles.sectionTitle}>Algoritmos</h2>
           <p className={styles.sectionLead}>De lo básico a lo que combina todo: primero los conceptos y las estructuras, después los algoritmos que las usan.</p>
         </div>
@@ -60,7 +63,6 @@ export function HomePage() {
           </Suspense>
         </ErrorBoundary>
       </section>
-
     </main>
   )
 }

@@ -89,7 +89,7 @@ export function CategoryIndex({ algorithms }) {
         const available = inFamily.filter((a) => a.available)
         const warm = () => available.forEach(prefetchVisualizer)
         return (
-          <li key={family}>
+          <li key={family} data-reveal="">
             <Link to={`/categories/${data.slug}`} className={styles.row} onMouseEnter={warm} onFocus={warm}>
               <FamilyGlyph family={family} />
               <span className={styles.lead}>

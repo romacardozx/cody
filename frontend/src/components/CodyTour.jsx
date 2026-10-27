@@ -236,7 +236,7 @@ export function CodyTour() {
 
   return (
     <div ref={root} className={styles.tour}>
-      <div className={styles.chapters}>
+      <div className={styles.chapters} data-reveal="">
         {CHAPTERS.map((name, c) => {
           const progress = c < current.chapter ? 1 : c > current.chapter ? 0 : Math.min(1, chapterElapsed / CHAPTER_MS[c])
           return (
@@ -255,7 +255,7 @@ export function CodyTour() {
         )}
       </div>
 
-      <div className={styles.body}>
+      <div className={styles.body} data-reveal="">
         <div className={styles.narrator}>
           <Eye look={look} mood={current.mood} blinking={blinking} />
           <p className={styles.bubble} aria-hidden="true">
@@ -316,7 +316,7 @@ export function CodyTour() {
         ))}
       </ol>
 
-      <p className={styles.source}>
+      <p className={styles.source} data-reveal="">
         Los tres niveles vienen de la taxonomía de compromiso de Naps y otros (ITiCSE, 2002), que estudió cómo se aprende
         con visualizaciones de algoritmos.
       </p>
