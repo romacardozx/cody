@@ -48,9 +48,9 @@ export const LAND_OUTLINE = LAND
 export const TOWNS = {
   caba: { name: 'CABA', at: [-58.38, -34.6], label: true },
   laPlata: { name: 'La Plata', at: [-57.95, -34.92] },
-  chascomus: { name: 'Chascomús', at: [-58.01, -35.57], label: true },
+  chascomus: { name: 'Chascomús', at: [-58.01, -35.57] },
   castelli: { name: 'Castelli', at: [-57.8, -36.09] },
-  dolores: { name: 'Dolores', at: [-57.68, -36.31] },
+  dolores: { name: 'Dolores', at: [-57.68, -36.31], label: true }, // halfway on RN 2, clear of CABA's pin
   maipu: { name: 'Maipú', at: [-57.88, -36.86] },
   mdp: { name: 'Mar del Plata', at: [-57.56, -37.99], label: true },
   balcarce: { name: 'Balcarce', at: [-58.25, -37.85] },
