@@ -4,26 +4,13 @@ import { CategoryCard } from '../components/CategoryCard.jsx'
 import { ErrorBoundary } from '../components/ErrorBoundary.jsx'
 import { Icon } from '../components/Icon.jsx'
 import { Link } from '../components/Link.jsx'
+import { WatchVsPredict } from '../components/WatchVsPredict.jsx'
 import { FAMILY_ORDER } from '../lib/families.js'
 import styles from './HomePage.module.css'
 
 // Three.js is heavy: the 3D scene loads after the page is on screen and never blocks it
 const Hero3D = lazy(() => import('../components/Hero3D.jsx'))
 
-const STEPS = [
-  {
-    title: 'Mirá',
-    text: 'El algoritmo corre de verdad en Java y la animación muestra cada paso: el estado completo, la línea de pseudocódigo y las variables.',
-  },
-  {
-    title: 'Predecí',
-    text: 'En los momentos clave se frena y te pregunta qué pasa ahora. Respondés con un clic en la opción o directamente sobre el grafo.',
-  },
-  {
-    title: 'Entendé',
-    text: 'Si acertás, sigue. Si no, te muestra la respuesta y por qué, y todo queda en tu historial para repasarlo. Las palabras técnicas tienen su definición a un clic.',
-  },
-]
 
 export function HomePage() {
   return (
@@ -59,19 +46,9 @@ export function HomePage() {
       <section id="como-funciona" className={styles.section}>
         <div className={styles.sectionHead}>
           <h2 className={styles.sectionTitle}>Cómo funciona</h2>
-          <p className={styles.sectionLead}>Tres verbos, en este orden. El segundo es el que importa.</p>
+          <p className={styles.sectionLead}>La misma animación, dos maneras de verla. La diferencia es quién decide el próximo paso.</p>
         </div>
-        <ol className={styles.steps}>
-          {STEPS.map((step, i) => (
-            <li key={step.title} className={`${styles.step} ${i === 1 ? styles.stepKey : ''}`}>
-              <span className={styles.stepNumber} aria-hidden="true">{i + 1}</span>
-              <div>
-                <h3 className={styles.stepTitle}>{step.title}</h3>
-                <p className={styles.stepText}>{step.text}</p>
-              </div>
-            </li>
-          ))}
-        </ol>
+        <WatchVsPredict />
       </section>
       <section id="algoritmos" className={styles.section}>
         <div className={styles.sectionHead}>
