@@ -20,17 +20,40 @@
   justify-items: start;
 }
 
-/* The official UNSAM logo as a mask, painted with the theme's text color: one color, both themes */
+/* The official UNSAM logo, split in two masks: the book in the university's own light blue,
+   the name in the theme's text color, so it reads on both themes */
 .unsam {
+  --unsam-blue: #7aa0c3;
+  --logo-h: 58px;
+  display: flex;
+  align-items: center;
+  gap: calc(var(--logo-h) * 0.12);
+}
+
+.unsamBook,
+.unsamName {
   display: block;
-  width: 150px;
-  aspect-ratio: 480 / 151;
-  background: var(--text-2);
-  mask: url('/unsam-logo.png') no-repeat left center / contain;
+  height: var(--logo-h);
+  mask-repeat: no-repeat;
+  mask-position: center;
+  mask-size: contain;
+}
+
+.unsamBook {
+  aspect-ratio: 211 / 189;
+  background: var(--unsam-blue);
+  mask-image: url('/unsam-book.png');
+}
+
+.unsamName {
+  aspect-ratio: 366 / 189;
+  background: var(--text);
+  mask-image: url('/unsam-name.png');
 }
 
 .course {
   color: var(--text-3);
+  font-size: var(--text-sm);
 }
 
 .links {
@@ -46,6 +69,7 @@
   color: var(--text);
   text-decoration: none;
   font-family: var(--font-display);
+  font-size: var(--text-sm);
   font-weight: 560;
 }
 
@@ -61,10 +85,38 @@
 
 .tagline {
   grid-column: 1;
-  margin-top: var(--space-4);
+  margin-top: var(--space-2);
   font-family: var(--font-display);
+  font-size: var(--text-sm);
   font-weight: 500;
   color: var(--text-3);
+}
+
+/* Wide screens: every block in its own column (spanning rows reorders auto-placement), and the
+   links span both rows to center on the curves */
+@media (min-width: 1241px) {
+  .institution {
+    grid-column: 1;
+    grid-row: 1;
+  }
+
+  .explore,
+  .project {
+    grid-row: 1 / span 2;
+    align-self: center;
+  }
+
+  .explore {
+    grid-column: 3;
+  }
+
+  .project {
+    grid-column: 4;
+  }
+
+  .tagline {
+    grid-row: 2;
+  }
 }
 
 /* Below this width the curves would have to shrink their labels under the minimum text size:

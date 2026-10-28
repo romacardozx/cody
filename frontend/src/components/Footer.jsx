@@ -13,7 +13,10 @@ export function Footer() {
     <footer className={styles.footer}>
       <div className={styles.inner}>
         <div className={styles.institution}>
-          <span role="img" aria-label="Universidad Nacional de San Martín" className={styles.unsam} />
+          <span role="img" aria-label="Universidad Nacional de San Martín" className={styles.unsam}>
+            <span className={styles.unsamBook} />
+            <span className={styles.unsamName} />
+          </span>
           <p className={styles.course}>
             Trabajo Práctico Integrador · Programación III
             <br />
@@ -23,13 +26,13 @@ export function Footer() {
 
         <ComplexityCurves />
 
-        <nav className={styles.links} aria-label="Explorar">
+        <nav className={`${styles.links} ${styles.explore}`} aria-label="Explorar">
           <Link to="/#algoritmos" className={styles.link}>Algoritmos</Link>
           <Link to="/#como-funciona" className={styles.link}>Cómo funciona</Link>
           <Link to="/history" className={styles.link}>Historial</Link>
         </nav>
 
-        <nav className={styles.links} aria-label="El proyecto">
+        <nav className={`${styles.links} ${styles.project}`} aria-label="El proyecto">
           <a href={REPOSITORY_URL} className={styles.link} target="_blank" rel="noreferrer">
             <Icon name="github" size={15} /> GitHub <Icon name="external" size={14} className={styles.out} />
           </a>
