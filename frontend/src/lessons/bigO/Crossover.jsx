@@ -1,13 +1,13 @@
 import { useState } from 'react'
 import lesson from '../../components/lesson/Lesson.module.css'
 import styles from './BigO.module.css'
+import { formatNumber } from './format.js'
 
 /*
  * Why Big O drops constants: 100·n against n². With small n the "worse" one wins; slide past 100
  * and the order takes over for good. Big O describes that trend, for large n.
  */
 
-const number = new Intl.NumberFormat('es-AR')
 const linear = (n) => 100 * n
 const square = (n) => n * n
 
@@ -18,7 +18,7 @@ export function Crossover() {
   const top = Math.max(a, b)
   const verdict =
     a === b
-      ? `Con n = 100 empatan: los dos hacen ${number.format(a)} operaciones.`
+      ? `Con n = 100 empatan: los dos hacen ${formatNumber(a)} operaciones.`
       : b < a
         ? `Con n = ${n}, n² hace menos operaciones. Con datos chicos, la constante 100 pesa más que el orden.`
         : `Con n = ${n}, 100·n ya hace menos operaciones, y la diferencia solo crece. Esto es lo que mide Big O.`
@@ -49,7 +49,7 @@ export function Crossover() {
             <span className={styles.raceTrack}>
               <span className={styles.raceBar} data-steep={row.steep || undefined} style={{ width: `${(row.ops / top) * 100}%` }} />
             </span>
-            <span className={styles.ops}>{number.format(row.ops)}</span>
+            <span className={styles.ops}>{formatNumber(row.ops)}</span>
           </div>
         ))}
       </div>

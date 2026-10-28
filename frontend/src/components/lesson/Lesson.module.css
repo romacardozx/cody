@@ -1,6 +1,7 @@
 /* Shared look of every concept lesson: short prose blocks, each with something to play with */
 
 .lesson {
+  position: relative;
   display: grid;
   grid-template-columns: minmax(0, 1fr);
   gap: clamp(var(--space-7), 6vw, 88px);
@@ -112,4 +113,90 @@
     grid-column: 1 / -1;
     grid-row: 2;
   }
+}
+
+.chapterNumber {
+  font-family: var(--font-mono);
+  font-size: 0.6em;
+  font-weight: 600;
+  color: var(--text-3);
+  vertical-align: 0.35em;
+  margin-right: 0.2em;
+}
+
+/* The index sits in the room left of the reading column, only where there is room for it */
+.rail {
+  position: absolute;
+  top: 0;
+  bottom: 0;
+  right: calc(100% + var(--space-7));
+  width: 190px;
+  display: none;
+}
+
+.railList {
+  position: sticky;
+  top: calc(var(--header-h) + var(--space-5));
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  display: grid;
+  gap: 2px;
+}
+
+.railLink {
+  display: flex;
+  gap: var(--space-2);
+  padding: 6px var(--space-2);
+  border-radius: var(--radius-sm);
+  color: var(--text-3);
+  text-decoration: none;
+  font-size: var(--text-sm);
+  line-height: 1.35;
+  transition: color 0.2s, background 0.2s;
+}
+
+.railLink:hover {
+  color: var(--text);
+}
+
+.railLink[aria-current='step'] {
+  color: var(--text);
+  background: var(--surface-2);
+}
+
+.railNumber {
+  font-family: var(--font-mono);
+  color: var(--text-3);
+}
+
+@media (min-width: 1300px) {
+  .rail {
+    display: block;
+  }
+}
+
+/* A daily-life example, set apart from the explanation */
+.daily {
+  display: flex;
+  gap: var(--space-2);
+  align-items: baseline;
+  color: var(--text-2);
+}
+
+.dailyTag {
+  flex: none;
+  font-size: var(--text-sm);
+  font-weight: 700;
+  color: var(--visited);
+}
+
+.loading {
+  min-height: 320px;
+}
+
+.subheading {
+  margin-top: var(--space-6);
+  font-size: 1.2rem;
+  font-weight: 700;
 }
