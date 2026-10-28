@@ -204,9 +204,11 @@ sql: ## Abre una consola SQL (sqlcmd) sobre la base "cody"
 
 ##@ Calidad y entrega
 
+# verify also packages target/cody.jar, but without rebuilding the frontend (SKIP_FRONT): that jar
+# would carry an old frontend, so it is deleted and the next build/up makes a complete one
 test: env db ## Corre todos los tests y genera el reporte de cobertura (JaCoCo)
 	$(MVN) verify $(SKIP_FRONT)
-	@touch $(JAR)
+	@rm -f $(JAR)
 	@printf "\nReporte de cobertura: $(C)target/site/jacoco/index.html$(N)\n"
 
 # The jar depends on the sources: make rebuilds it only when something changed.

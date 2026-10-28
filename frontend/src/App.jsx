@@ -31,7 +31,8 @@ export default function App() {
       <div id="contenido">
         <Suspense fallback={<div className={styles.pageLoading} aria-busy="true" />}>{page}</Suspense>
       </div>
-      <Footer />
+      {/* Only the home page closes with the footer: on working pages it would compete with the content */}
+      {pathname === '/' && <Footer />}
     </>
   )
 }
