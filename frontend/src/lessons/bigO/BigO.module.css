@@ -212,6 +212,104 @@
   border-color: var(--border-strong);
 }
 
+/* ------------------------------------------------ the words */
+
+.words {
+  margin: 0;
+  gap: 0;
+}
+
+.word {
+  display: grid;
+  grid-template-columns: 7rem minmax(0, 1fr);
+  gap: var(--space-5);
+  padding: var(--space-5) 0;
+  border-bottom: 1px solid var(--border);
+}
+
+.wordTerm {
+  font-family: var(--font-mono);
+  font-size: 1.15rem;
+  font-weight: 700;
+  color: var(--text);
+}
+
+.wordBody {
+  margin: 0;
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) auto;
+  gap: var(--space-5);
+  align-items: start;
+}
+
+.wordText {
+  /* ch is the width of "0": about 75 characters */
+  max-width: 52ch;
+  color: var(--text-2);
+}
+
+.wordText strong {
+  color: var(--text);
+}
+
+.wordVisual {
+  display: grid;
+  gap: var(--space-2);
+  justify-items: start;
+  margin: 0;
+}
+
+.boxes {
+  display: flex;
+  gap: 4px;
+}
+
+.boxes span {
+  width: 16px;
+  height: 16px;
+  border-radius: 3px;
+  border: 1px solid var(--node-stroke);
+  background: var(--surface-2);
+}
+
+.halvings {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 4px var(--space-2);
+  max-width: 22rem;
+  margin: 0;
+  font-family: var(--font-mono);
+  font-weight: 700;
+  color: var(--text);
+}
+
+.halving {
+  display: inline-flex;
+  gap: var(--space-2);
+}
+
+.halvingArrow {
+  font-weight: 400;
+  color: var(--frontier);
+}
+
+.wordResult {
+  color: var(--text-2);
+}
+
+.grid {
+  display: grid;
+  grid-template-columns: repeat(var(--n), 14px);
+  gap: 3px;
+}
+
+.grid span {
+  height: 14px;
+  border-radius: 2px;
+  background: var(--frontier-soft);
+  border: 1px solid var(--frontier);
+}
+
 /* ------------------------------------------------ growth chart */
 
 .chart {
