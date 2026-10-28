@@ -5,7 +5,8 @@ import { ErrorBoundary } from '../components/ErrorBoundary.jsx'
 import { Icon } from '../components/Icon.jsx'
 import { Link } from '../components/Link.jsx'
 import { FamilyGlyph } from '../components/CategoryIndex.jsx'
-import { countLabel, FAMILY, familyBySlug } from '../lib/families.js'
+import { countLabel, FAMILY, familyBySlug, readyLabel } from '../lib/families.js'
+import { isPlayable } from '../lib/lessons.js'
 import styles from './CategoryPage.module.css'
 
 /** Every algorithm of one family, so the catalog can grow and stay ordered. */
@@ -47,12 +48,12 @@ function FamilyAlgorithms({ family }) {
   if (algorithms.length === 0) {
     return <p className={styles.empty}>Todavía no hay algoritmos en esta categoría.</p>
   }
-  const ready = algorithms.filter((a) => a.available).length
+  const ready = algorithms.filter(isPlayable).length
   return (
     <>
       <h2 className={styles.count}>
         {countLabel(family, algorithms.length)}
-        {ready > 0 && <span className={styles.ready}> · {ready} para predecir</span>}
+        {ready > 0 && <span className={styles.ready}> · {readyLabel(family, ready)}</span>}
       </h2>
       <div className={styles.grid}>
         {algorithms.map((algorithm) => (

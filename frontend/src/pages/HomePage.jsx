@@ -1,5 +1,5 @@
 import { lazy, Suspense, use, useEffect, useRef } from 'react'
-import { getAlgorithms, prefetchVisualizer } from '../api/cody.js'
+import { getAlgorithms } from '../api/cody.js'
 import { CategoryIndex } from '../components/CategoryIndex.jsx'
 import { ErrorBoundary } from '../components/ErrorBoundary.jsx'
 import { Icon } from '../components/Icon.jsx'
@@ -56,14 +56,15 @@ export function HomePage() {
             </p>
             <div className={styles.actions}>
               <Link
-                to="/algorithms/BFS"
+                to="/algorithms/BIG_O"
                 className={styles.primary}
+                // Download the page and the lesson ahead, so the click opens it at once
                 onMouseEnter={() => {
-                  prefetchVisualizer({ code: 'BFS', scenarioType: 'GRAPH' })
                   import('./VisualizerPage.jsx')
+                  import('../lessons/BigOLesson.jsx')
                 }}
               >
-                Empezar con BFS <Icon name="arrow" size={18} />
+                Empezar con Big O <Icon name="arrow" size={18} />
               </Link>
               <Link to="/#como-funciona" className={styles.secondary}>
                 Cómo funciona

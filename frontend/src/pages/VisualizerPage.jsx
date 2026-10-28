@@ -20,6 +20,7 @@ import { useSession } from '../hooks/useSession.js'
 import { EXPLAINERS } from '../lib/explainers.js'
 import { FAMILY } from '../lib/families.js'
 import { GLOSSARY } from '../lib/glossary.js'
+import { LESSONS } from '../lib/lessons.js'
 import styles from './VisualizerPage.module.css'
 
 const STEP_TYPES = {
@@ -57,6 +58,20 @@ export default function VisualizerPage({ code }) {
 
 function Visualizer({ code }) {
   const algorithm = use(getAlgorithm(code))
+  const Lesson = LESSONS[algorithm.code]
+  if (Lesson) {
+    // Concepts: an explorable reading instead of the step player
+    return (
+      <div className={styles.lesson}>
+        <Breadcrumb algorithm={algorithm} />
+        <h1 className={styles.title} style={{ viewTransitionName: `algorithm-${algorithm.code}` }}>{algorithm.name}</h1>
+        <p className={styles.description}><RichText>{algorithm.description}</RichText></p>
+        <Suspense fallback={<div className={styles.lessonLoading} aria-busy="true" />}>
+          <Lesson />
+        </Suspense>
+      </div>
+    )
+  }
   if (!algorithm.available) {
     return (
       <div className={styles.unavailable}>

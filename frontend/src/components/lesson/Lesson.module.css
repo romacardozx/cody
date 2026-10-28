@@ -1,0 +1,115 @@
+/* Shared look of every concept lesson: short prose blocks, each with something to play with */
+
+.lesson {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr);
+  gap: clamp(var(--space-7), 6vw, 88px);
+  margin-top: var(--space-6);
+}
+
+.block {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr);
+  gap: var(--space-4);
+}
+
+.heading {
+  font-size: clamp(1.6rem, 2.6vw, 2.1rem);
+  font-weight: 720;
+  letter-spacing: -0.02em;
+}
+
+.prose {
+  /* ch is the width of "0": at this size 54ch is about 78 characters */
+  max-width: 54ch;
+  color: var(--text-2);
+  font-size: var(--text-lg);
+}
+
+.prose strong {
+  color: var(--text);
+}
+
+/* The piece to play with: on the page, not in a card */
+.figure {
+  margin: var(--space-2) 0 0;
+  display: grid;
+  grid-template-columns: minmax(0, 1fr);
+  gap: var(--space-4);
+}
+
+.caption {
+  color: var(--text-3);
+  font-size: var(--text-sm);
+}
+
+.mono {
+  font-family: var(--font-mono);
+}
+
+.checks {
+  display: grid;
+  gap: var(--space-6);
+}
+
+.check {
+  display: grid;
+  gap: var(--space-3);
+}
+
+.next {
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--space-3) var(--space-6);
+  align-items: center;
+}
+
+.nextLink {
+  display: inline-flex;
+  align-items: center;
+  gap: var(--space-2);
+  color: var(--accent-strong);
+  font-weight: 700;
+  text-decoration: none;
+}
+
+.nextLink:hover {
+  text-decoration: underline;
+  text-underline-offset: 4px;
+}
+
+/* A range input in the theme */
+.slider {
+  width: 100%;
+  accent-color: var(--accent);
+}
+
+.sliderRow {
+  display: grid;
+  grid-template-columns: auto 1fr auto;
+  align-items: center;
+  gap: var(--space-4);
+}
+
+.sliderValue {
+  font-family: var(--font-mono);
+  font-size: var(--text-lg);
+  font-weight: 700;
+  color: var(--text);
+  font-variant-numeric: tabular-nums;
+  min-width: 11ch;
+  text-align: right;
+}
+
+/* Phones: the label above, so the slider gets the whole width */
+@media (max-width: 640px) {
+  .sliderRow {
+    grid-template-columns: 1fr auto;
+    gap: var(--space-2) var(--space-3);
+  }
+
+  .slider {
+    grid-column: 1 / -1;
+    grid-row: 2;
+  }
+}

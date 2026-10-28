@@ -1,5 +1,6 @@
 import { prefetchVisualizer } from '../api/cody.js'
 import { FAMILY } from '../lib/families.js'
+import { hasLesson, isPlayable } from '../lib/lessons.js'
 import { USE_CASES } from '../lib/useCases.js'
 import { Link } from './Link.jsx'
 import { Icon } from './Icon.jsx'
@@ -35,9 +36,9 @@ export function AlgorithmCard({ algorithm, index }) {
             <span className={styles.metric}>espacio</span> {algorithm.spaceComplexity}
           </span>
         )}
-        {algorithm.available ? (
+        {isPlayable(algorithm) ? (
           <span className={styles.cta}>
-            Predecir <Icon name="arrow" size={16} />
+            {hasLesson(algorithm.code) ? 'Explorar' : 'Predecir'} <Icon name="arrow" size={16} />
           </span>
         ) : (
           <span className={styles.soon}>
@@ -49,7 +50,7 @@ export function AlgorithmCard({ algorithm, index }) {
   )
 
   // Not implemented yet: still links to its page, which shows the real-world use case
-  if (!algorithm.available) {
+  if (!isPlayable(algorithm)) {
     return (
       <Link to={`/algorithms/${algorithm.code}`} className={`${styles.card} ${styles.disabled}`}>
         {body}
@@ -57,7 +58,7 @@ export function AlgorithmCard({ algorithm, index }) {
     )
   }
 
-  const warm = () => prefetchVisualizer(algorithm)
+  const warm = () => algorithm.available && prefetchVisualizer(algorithm)
   // Also download the visualizer code, so the click opens it at once
   const warmAll = () => {
     warm()

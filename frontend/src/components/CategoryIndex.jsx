@@ -1,5 +1,6 @@
 import { prefetchVisualizer } from '../api/cody.js'
-import { countLabel, FAMILY, FAMILY_ORDER } from '../lib/families.js'
+import { countLabel, FAMILY, FAMILY_ORDER, readyLabel } from '../lib/families.js'
+import { isPlayable } from '../lib/lessons.js'
 import { Icon } from './Icon.jsx'
 import { Link } from './Link.jsx'
 import styles from './CategoryIndex.module.css'
@@ -86,8 +87,9 @@ export function CategoryIndex({ algorithms }) {
         const inFamily = algorithms.filter((algorithm) => algorithm.family === family)
         if (inFamily.length === 0) return null
         const data = FAMILY[family]
-        const available = inFamily.filter((a) => a.available)
-        const warm = () => available.forEach(prefetchVisualizer)
+        const available = inFamily.filter(isPlayable)
+        // Only engine algorithms have scenarios worth fetching ahead of time
+        const warm = () => available.filter((a) => a.available).forEach(prefetchVisualizer)
         return (
           <li key={family} data-reveal="">
             <Link to={`/categories/${data.slug}`} className={styles.row} onMouseEnter={warm} onFocus={warm}>
@@ -98,14 +100,14 @@ export function CategoryIndex({ algorithms }) {
               </span>
               <span className={styles.members}>
                 {inFamily.map((a) => (
-                  <span key={a.code} className={styles.member} data-available={a.available || undefined}>
+                  <span key={a.code} className={styles.member} data-available={isPlayable(a) || undefined}>
                     {a.name.replace(/ \(.*\)$/, '')}
                   </span>
                 ))}
               </span>
               <span className={styles.meta}>
                 <span className={styles.count}>{countLabel(family, inFamily.length)}</span>
-                {available.length > 0 && <span className={styles.status}>{available.length} para predecir</span>}
+                {available.length > 0 && <span className={styles.status}>{readyLabel(family, available.length)}</span>}
                 <Icon name="arrow" size={20} className={styles.arrow} />
               </span>
             </Link>

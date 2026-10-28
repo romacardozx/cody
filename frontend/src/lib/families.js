@@ -8,6 +8,7 @@ export const FAMILY = {
     label: 'Conceptos',
     icon: 'spark',
     noun: ['concepto', 'conceptos'],
+    verb: 'explorar', // concepts are explored (lessons), algorithms predicted
     short: 'Cómo medir lo que cuesta un algoritmo, y las técnicas que se repiten.',
     description: 'Las ideas que usan todos los algoritmos: cómo medir lo que cuestan, la recursión y técnicas como dos punteros o ventana deslizante.',
   },
@@ -46,6 +47,11 @@ export const FAMILY = {
 // data structures are what algorithms work on; searching is the first real algorithm; sorting
 // adds recursion; graphs combine all of it (a queue in BFS, a heap in Dijkstra)
 export const FAMILY_ORDER = ['CONCEPT', 'DATA_STRUCTURE', 'SEARCHING', 'SORTING', 'GRAPH']
+
+/** "1 para predecir", "1 para explorar". */
+export function readyLabel(family, count) {
+  return `${count} para ${FAMILY[family]?.verb ?? 'predecir'}`
+}
 
 /** "1 algoritmo", "5 estructuras", "8 conceptos". */
 export function countLabel(family, count) {

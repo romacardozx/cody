@@ -1,0 +1,309 @@
+.sliderName {
+  color: var(--text-2);
+  font-weight: 600;
+  white-space: nowrap;
+}
+
+/* ------------------------------------------------ growth table */
+
+.growth {
+  width: 100%;
+  border-collapse: collapse;
+}
+
+.growth th,
+.growth td {
+  padding: var(--space-3) var(--space-3);
+  text-align: left;
+  border-bottom: 1px solid var(--border);
+  vertical-align: middle;
+}
+
+.growth thead th {
+  font-size: var(--text-sm);
+  font-weight: 600;
+  color: var(--text-3);
+}
+
+.growth tbody th {
+  width: 34%;
+  font-weight: 400;
+}
+
+.order {
+  display: block;
+  white-space: nowrap;
+  font-family: var(--font-mono);
+  font-weight: 700;
+  color: var(--text);
+}
+
+.example {
+  display: block;
+  font-size: var(--text-sm);
+  color: var(--text-3);
+}
+
+.growth td:nth-child(2) {
+  width: 46%;
+}
+
+.bar {
+  display: block;
+  height: 8px;
+  margin-bottom: 6px;
+  border-radius: 99px;
+  background: var(--text-3);
+  transition: width 0.6s var(--ease-out-expo);
+}
+
+tr[data-steep] .bar {
+  background: var(--frontier);
+}
+
+.ops {
+  font-family: var(--font-mono);
+  font-size: var(--text-sm);
+  color: var(--text-2);
+  font-variant-numeric: tabular-nums;
+}
+
+.time {
+  font-family: var(--font-mono);
+  font-weight: 700;
+  color: var(--text);
+  white-space: nowrap;
+  font-variant-numeric: tabular-nums;
+}
+
+tr[data-steep] .time {
+  color: var(--frontier);
+}
+
+/* ------------------------------------------------ count the laps */
+
+.snippets {
+  list-style: none;
+  padding: 0;
+  gap: var(--space-5);
+}
+
+.snippet {
+  display: grid;
+  grid-template-columns: auto minmax(0, 1fr);
+  gap: var(--space-3) var(--space-4);
+  align-items: start;
+}
+
+.snippetNumber {
+  font-family: var(--font-display);
+  font-size: 1.4rem;
+  font-weight: 760;
+  color: var(--text-3);
+  line-height: 1.6;
+}
+
+.code {
+  margin: 0;
+  padding: var(--space-3) var(--space-4);
+  border-radius: var(--radius);
+  background: var(--surface);
+  border: 1px solid var(--border);
+  font-family: var(--font-mono);
+  font-size: var(--text-sm);
+  line-height: 1.7;
+  overflow-x: auto;
+  color: var(--text);
+}
+
+.codeLine {
+  display: block;
+  white-space: pre;
+}
+
+.tok_kw {
+  color: var(--frontier);
+  font-weight: 650;
+}
+
+.tok_type {
+  color: var(--visited);
+}
+
+.tok_lit {
+  color: var(--bad);
+}
+
+.tok_punct {
+  color: var(--text-3);
+}
+
+.tok_fn {
+  color: var(--accent);
+}
+
+.snippetSide {
+  grid-column: 2;
+  display: grid;
+  gap: var(--space-3);
+}
+
+.orderOptions {
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--space-2);
+}
+
+/* Same look as a prediction: dashed vermillion while it waits for you */
+.orderOption {
+  padding: 7px var(--space-4);
+  border: 1px dashed var(--accent);
+  border-radius: var(--radius);
+  background: var(--accent-soft);
+  color: var(--text);
+  font-family: var(--font-mono);
+  font-weight: 700;
+  cursor: pointer;
+  transition: background 0.15s, opacity 0.25s, transform 0.15s;
+}
+
+.orderOption:hover:not(:disabled) {
+  background: color-mix(in srgb, var(--accent) 24%, transparent);
+}
+
+.orderOption:active:not(:disabled) {
+  transform: scale(0.96);
+}
+
+.orderOption:disabled {
+  cursor: default;
+}
+
+.orderOption[data-state='right'] {
+  border: 1px solid var(--ok);
+  background: var(--ok-soft);
+}
+
+.orderOption[data-state='wrong'] {
+  border: 1px solid var(--bad);
+  background: var(--bad-soft);
+}
+
+.orderOption[data-state='faded'] {
+  opacity: 0.4;
+  border-style: solid;
+  border-color: var(--border);
+  background: none;
+}
+
+.why {
+  display: flex;
+  gap: var(--space-2);
+  align-items: flex-start;
+  max-width: 60ch;
+  color: var(--text-2);
+}
+
+.why svg {
+  flex: none;
+  margin-top: 4px;
+}
+
+.why[data-right='true'] svg {
+  color: var(--ok);
+}
+
+.why[data-right='false'] svg {
+  color: var(--bad);
+}
+
+/* ------------------------------------------------ crossover */
+
+.race {
+  display: grid;
+  gap: var(--space-3);
+}
+
+.raceRow {
+  display: grid;
+  grid-template-columns: 13rem minmax(0, 1fr) 7rem;
+  align-items: center;
+  gap: var(--space-4);
+}
+
+.raceLabel {
+  font-family: var(--font-mono);
+  font-weight: 700;
+  color: var(--text);
+}
+
+.raceSub {
+  font-weight: 400;
+  color: var(--text-3);
+}
+
+.raceTrack {
+  height: 14px;
+  border-radius: 99px;
+  background: var(--surface-2);
+  overflow: hidden;
+}
+
+.raceBar {
+  display: block;
+  height: 100%;
+  border-radius: 99px;
+  background: var(--text-3);
+  transition: width 0.35s var(--ease-out-expo);
+}
+
+.raceBar[data-steep] {
+  background: var(--frontier);
+}
+
+.raceRow[data-winner] .raceLabel::after {
+  content: ' · menos';
+  font-family: var(--font-body);
+  font-weight: 600;
+  color: var(--visited);
+}
+
+.raceRow .ops {
+  text-align: right;
+}
+
+.verdict {
+  max-width: 56ch;
+  color: var(--text);
+}
+
+@media (max-width: 640px) {
+  .growth tbody th {
+    width: auto;
+  }
+
+  .example {
+    display: none;
+  }
+
+  .raceRow {
+    grid-template-columns: 5.5rem minmax(0, 1fr) 5rem;
+    gap: var(--space-2);
+  }
+
+  .raceSub {
+    display: none;
+  }
+
+  .snippet {
+    grid-template-columns: minmax(0, 1fr);
+  }
+
+  .snippetNumber {
+    display: none;
+  }
+
+  .snippetSide {
+    grid-column: 1;
+  }
+}

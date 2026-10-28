@@ -12,16 +12,28 @@ const optionMotion = {
 /**
  * The prediction moment. The click is reflected instantly (optimistic): the chosen option is
  * locked and the others fade while the server checks it. Keys 1-9 pick an option.
+ *
+ * Lessons reuse it with `keys` off (no hotkeys there), their own `hint`, and `autoScroll` off,
+ * since all their questions are on the page from the start.
  */
-export function PredictionPanel({ question, answer, labelOf, onAnswer, error }) {
+export function PredictionPanel({
+  question,
+  answer,
+  labelOf,
+  onAnswer,
+  error,
+  hint = 'Elegí una opción o tocá el nodo en el grafo',
+  autoScroll = true,
+  keys = true,
+}) {
   const pending = answer?.status === 'pending'
   const done = answer?.status === 'done'
   const ref = useRef(null)
 
   // The question is the key moment: make sure it is on screen when it appears
   useEffect(() => {
-    if (!answer) ref.current?.scrollIntoView({ behavior: 'smooth', block: 'nearest' })
-  }, [question.id, answer])
+    if (autoScroll && !answer) ref.current?.scrollIntoView({ behavior: 'smooth', block: 'nearest' })
+  }, [question.id, answer, autoScroll])
 
   return (
     <motion.section
@@ -36,7 +48,7 @@ export function PredictionPanel({ question, answer, labelOf, onAnswer, error }) 
         <span className={styles.badge}>
           <Icon name="question" size={18} /> Tu predicción
         </span>
-        {!answer && <span className={styles.hint}>Elegí una opción o tocá el nodo en el grafo</span>}
+        {!answer && hint && <span className={styles.hint}>{hint}</span>}
       </div>
       <h2 id="prediction-title" className={styles.prompt}>{question.prompt}</h2>
 
@@ -66,7 +78,7 @@ export function PredictionPanel({ question, answer, labelOf, onAnswer, error }) 
               animate="shown"
               whileTap={answer ? undefined : { scale: 0.95 }}
             >
-              <kbd className={styles.key}>{i + 1}</kbd>
+              {keys && <kbd className={styles.key}>{i + 1}</kbd>}
               <span className={styles.optionLabel}>{labelOf(option)}</span>
               {chosen && pending && <span className={styles.spinner} aria-label="Comprobando" />}
               {isCorrect && <Icon name="check" size={20} />}
