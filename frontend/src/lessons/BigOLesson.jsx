@@ -12,6 +12,7 @@ import { GrowthChart } from './bigO/GrowthChart.jsx'
 import { GuessGame } from './bigO/GuessGame.jsx'
 import { Ladder } from './bigO/Ladder.jsx'
 import { Rules } from './bigO/Rules.jsx'
+import { Words } from './bigO/Words.jsx'
 import { SortOrSearch } from './bigO/SortOrSearch.jsx'
 
 /*
@@ -23,6 +24,7 @@ import { SortOrSearch } from './bigO/SortOrSearch.jsx'
 
 const CHAPTERS = [
   { id: 'aula', title: 'El aula' },
+  { id: 'palabras', title: 'Las palabras' },
   { id: 'grafico', title: 'Del conteo al gráfico' },
   { id: 'notacion', title: 'La notación' },
   { id: 'vueltas', title: 'Contá las vueltas' },
@@ -76,27 +78,31 @@ export default function BigOLesson() {
         <GuessGame />
       </Chapter>
 
-      <Chapter id="grafico" number={2} title="Del conteo al gráfico" lead="Lo que contaste en el aula, dibujado: cada tarea es una curva.">
+      <Chapter id="palabras" number={2} title="Las palabras" lead="Lo que acabás de ver tiene nombre. Seis palabras alcanzan para leer cualquier costo.">
+        <Words />
+      </Chapter>
+
+      <Chapter id="grafico" number={3} title="Del conteo al gráfico" lead="Lo que contaste en el aula, dibujado: cada tarea es una curva.">
         <GrowthChart />
       </Chapter>
 
-      <Chapter id="notacion" number={3} title="La notación" lead="Big O no cuenta exacto: dice cómo crece. Por eso se simplifica.">
+      <Chapter id="notacion" number={4} title="La notación" lead="Big O no cuenta exacto: dice cómo crece. Por eso se simplifica.">
         <Rules />
         <Crossover />
       </Chapter>
 
-      <Chapter id="vueltas" number={4} title="Contá las vueltas" lead="Para saber el orden de un código alcanza con ver qué se repite según n.">
+      <Chapter id="vueltas" number={5} title="Contá las vueltas" lead="Para saber el orden de un código alcanza con ver qué se repite según n.">
         <CountLoops />
       </Chapter>
 
-      <Chapter id="elegir" number={5} title="Elegir el algoritmo" lead="Cuántos datos tenés y cuánto podés esperar deciden qué algoritmo sirve.">
+      <Chapter id="elegir" number={6} title="Elegir el algoritmo" lead="Cuántos datos tenés y cuánto podés esperar deciden qué algoritmo sirve.">
         <Suspense fallback={<div className={lesson.loading} aria-busy="true" />}>
           <Chooser />
         </Suspense>
         <SortOrSearch />
       </Chapter>
 
-      <Chapter id="predeci" number={6} title="Predecí">
+      <Chapter id="predeci" number={7} title="Predecí">
         <div className={lesson.checks}>
           {CHECKS.map((question) => (
             <LessonCheck key={question.id} question={question} />
