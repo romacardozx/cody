@@ -33,6 +33,8 @@ Base 17px (`html { font-size: 106.25% }`). Escala `--text-xs` (13.6px) a `--text
 
 ## Tipografía
 
+Solo está empaquetado el corte normal de Atkinson: **nada en itálica** (el navegador la falsearía inclinando las letras). Para destacar, peso o la fuente display.
+
 | Rol | Fuente | Por qué |
 |---|---|---|
 | Títulos | Bricolage Grotesque (variable, `font-stretch: 90%`) | Carácter propio sin perder legibilidad |
@@ -55,7 +57,7 @@ Las fuentes van empaquetadas con `@fontsource` (la demo funciona sin internet).
 - Las opciones de una pregunta se muestran en **orden aleatorio por sesión** (lo hace el backend).
 - "Cómo funciona" (`CodyTour.jsx`) es una **escena animada narrada por el ojo de Cody**, sin interacción obligatoria: recorre los niveles de la taxonomía de Naps et al. (ITiCSE 2002) en tres capítulos tipo historias (Mirar → Responder → Cambiar). El ojo tiene expresiones (sigue la acción, se aburre con el párpado a medio cerrar, se abre en la pregunta, festeja) y habla en un globo que se escribe letra a letra; un cursor falso responde. Se puede pausar y saltar de capítulo; con movimiento reducido no se reproduce. El bermellón solo aparece en la pregunta.
 - El feedback de una predicción **no desaparece solo**: queda hasta "Seguir" y además va al historial.
-- **Header**: sin barra ni píldora: logo, links (Algoritmos · Cómo funciona · Historial) y herramientas (GitHub, tema) directo sobre la página; en la home flota adentro del panel del hero. **Al bajar desaparece y al subir vuelve** con un fondo esmerilado sutil. Link actual con un subrayado corto. En el celular, botón de menú con una hoja desplegable. Nada "pronto" en el menú.
+- **Header**: sin barra ni píldora: logo, links (Algoritmos · Cómo funciona · Historial) y herramientas (GitHub, tema) directo sobre la página; en la home flota adentro del panel del hero. **Al bajar desaparece y al subir vuelve** sobre un degradé del color de fondo, sin borde (nunca una barra). Link actual con un subrayado corto. En el celular, botón de menú con una hoja desplegable. Nada "pronto" en el menú.
 - **Footer**: último sector, calmo: Explorar, El proyecto (GitHub, Swagger) y el bloque institucional con el **logo oficial de la UNSAM** (Wikimedia Commons, dominio público) como máscara en `--text-2`, monocromo en los dos temas. Cierra con una línea: el logo de Cody a tamaño normal y la frase. Nada de wordmark gigante: recarga el cierre.
 - **Sectores, como y.uno**: el hero es un panel propio (inset con esquinas de 28px, fondo `--surface` con grilla de puntos) que ocupa la pantalla y **se expande a ancho completo al bajar** (`--hero-p`, `useHeroExpansion`). "Cómo funciona" es una **franja de borde a borde con el tema invertido** (`data-theme` opuesto en la franja: claro sobre oscuro y al revés). El cambio de fondo divide, no las líneas. En el índice, una frase corta por familia (`short` en `families.js`).
 - **Ritmo de la home: movimiento y calma alternados**: hero (escena 3D) → Algoritmos (quieto, solo reacciona al pasar el mouse) → Cómo funciona (recorrido de Cody) → footer. **Una sola escena viva a la vez** (`lib/motionFocus.js`): corre la más visible y la otra se frena. Toda animación que dure más de 5 s junto a otro contenido tiene botón de pausa (WCAG 2.2.2).

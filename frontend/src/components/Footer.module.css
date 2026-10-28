@@ -20,9 +20,9 @@
 
 .heading {
   margin-bottom: var(--space-2);
-  font-family: var(--font-body);
+  font-family: var(--font-display);
   font-size: var(--text-md);
-  font-weight: 700;
+  font-weight: 650;
   color: var(--text-3);
 }
 
@@ -32,7 +32,9 @@
   gap: var(--space-2);
   color: var(--text);
   text-decoration: none;
-  font-size: var(--text-lg);
+  font-family: var(--font-display);
+  font-size: 1.25rem;
+  font-weight: 560;
 }
 
 .link:hover {
@@ -69,9 +71,13 @@
   gap: var(--space-3) var(--space-6);
 }
 
+/* Upright, in the display face: only the regular cut of the body font is bundled, so an italic
+   here would be a slanted fake drawn by the browser */
 .tagline {
-  font-style: italic;
-  color: var(--text-3);
+  font-family: var(--font-display);
+  font-size: var(--text-lg);
+  font-weight: 500;
+  color: var(--text-2);
 }
 
 @media (max-width: 900px) {

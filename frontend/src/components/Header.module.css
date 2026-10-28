@@ -8,9 +8,7 @@
   display: grid;
   align-items: center;
   padding: 0 var(--space-6);
-  transition:
-    transform 0.45s var(--ease-out-expo),
-    background 0.3s var(--ease-out-expo);
+  transition: transform 0.45s var(--ease-out-expo);
 }
 
 /* Home: it takes no room and floats over the hero panel */
@@ -27,14 +25,25 @@
   transition: transform 0.45s var(--ease-out-expo);
 }
 
-/* Scrolling down it gets out of the way; scrolling up it comes back on a frosted backing */
+/* Scrolling down it gets out of the way. Scrolling up it comes back over a soft fade of the page
+   color (no edge, so it never reads as a bar), enough to keep the links legible over content */
 .header[data-state='hidden'] {
   transform: translateY(-100%);
 }
 
-.header[data-state='shown'] {
-  background: color-mix(in srgb, var(--bg) 80%, transparent);
-  backdrop-filter: blur(14px) saturate(1.3);
+.header::before {
+  content: '';
+  position: absolute;
+  inset: 0 0 -28px;
+  z-index: -1;
+  background: linear-gradient(var(--bg) 45%, color-mix(in srgb, var(--bg) 70%, transparent) 70%, transparent);
+  opacity: 0;
+  transition: opacity 0.3s var(--ease-out-expo);
+  pointer-events: none;
+}
+
+.header[data-state='shown']::before {
+  opacity: 1;
 }
 
 .bar {
