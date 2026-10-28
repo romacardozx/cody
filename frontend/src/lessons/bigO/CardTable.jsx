@@ -7,7 +7,7 @@ import styles from './Cards.module.css'
 
 /*
  * A Spanish deck on the table: n cards and four tasks, one per order. Every move takes the same
- * time on screen, so how long the animation runs IS the cost, and a line tells each move ("Das
+ * time on screen (the speed the reader picks), so how long the animation runs IS the cost, and a line tells each move ("Das
  * vuelta el 3 de bastos… no es oro"). First with a few cards; then, before doing it again with
  * twice as many, the reader predicts how much longer it takes. The deck changes on every try.
  */
@@ -90,7 +90,6 @@ const TASKS = {
   top: {
     label: 'Agarrar la de arriba',
     order: 'O(1)',
-    msPerMove: 700,
     answer: 'Lo mismo',
     moves(deck) {
       return [{ up: [0], focus: [0], say: `Agarrás la de arriba: el ${nameOf(deck[0])}. Un solo movimiento.` }]
@@ -104,7 +103,6 @@ const TASKS = {
   count: {
     label: 'Contar los oros',
     order: 'O(n)',
-    msPerMove: 260,
     answer: 'El doble',
     moves(deck) {
       const found = []
@@ -128,7 +126,6 @@ const TASKS = {
   sorted: {
     label: 'Buscar en el mazo ordenado',
     order: 'O(log n)',
-    msPerMove: 1700,
     answer: 'Un paso más',
     moves(deck) {
       const target = sortedTarget(deck).number
@@ -162,7 +159,6 @@ const TASKS = {
   pairs: {
     label: 'Buscar repetidas',
     order: 'O(n²)',
-    msPerMove: 50,
     answer: 'Cuatro veces más',
     moves(deck) {
       const all = deck.map((_, k) => k)
@@ -190,6 +186,13 @@ const TASKS = {
   },
 }
 const OPTIONS = ['Lo mismo', 'Un paso más', 'El doble', 'Cuatro veces más']
+
+// Time per move, the same for every task: slow to read each move, fast to watch the cost grow
+const SPEEDS = [
+  { label: 'Lento', ms: 1800 },
+  { label: 'Normal', ms: 700 },
+  { label: 'Rápido', ms: 90 },
+]
 const randomSize = () => 6 + Math.floor(Math.random() * 3) // 6 to 8 cards; then twice as many
 
 function SuitIcon({ suit }) {
@@ -233,12 +236,13 @@ export function CardTable() {
   const [guess, setGuess] = useState(null)
   const [firstCount, setFirstCount] = useState(null)
   const [example, setExample] = useState(0)
+  const [speed, setSpeed] = useState(1)
   const task = TASKS[taskKey]
   const moves = useMemo(() => task.moves(deck), [task, deck])
   const total = moves.length
   const n = deck.length
 
-  // One move every msPerMove; the next phase is decided when the last one lands
+  // One move every SPEEDS[speed].ms (it can change mid-run); the next phase is decided when the last one lands
   useEffect(() => {
     if (phase !== 'running') return
     const timer = window.setTimeout(
@@ -253,10 +257,10 @@ export function CardTable() {
           setPhase('finished')
         }
       },
-      reduce ? 0 : task.msPerMove,
+      reduce ? 0 : SPEEDS[speed].ms,
     )
     return () => window.clearTimeout(timer)
-  }, [phase, done, total, n, small, task.msPerMove, reduce])
+  }, [phase, done, total, n, small, speed, reduce])
 
   const reset = (key) => {
     const size = randomSize()
@@ -327,11 +331,23 @@ export function CardTable() {
         <p className={bigO.caption} aria-live="polite">{caption}</p>
       </div>
 
-      {phase === 'ready' && (
-        <button type="button" className={bigO.run} onClick={() => setPhase('running')}>
-          {task.label} con {small} cartas
-        </button>
-      )}
+      <div className={styles.controls}>
+        {phase === 'ready' && (
+          <button type="button" className={bigO.run} onClick={() => setPhase('running')}>
+            {task.label} con {small} cartas
+          </button>
+        )}
+        {!reduce && (
+          <div className={styles.speed} role="group" aria-label="Velocidad">
+            <span className={styles.speedLabel}>Velocidad</span>
+            {SPEEDS.map((option, i) => (
+              <button key={option.label} type="button" className={bigO.tab} aria-pressed={i === speed} onClick={() => setSpeed(i)}>
+                {option.label}
+              </button>
+            ))}
+          </div>
+        )}
+      </div>
 
       {phase === 'asking' && (
         <div className={bigO.ask}>
