@@ -4,12 +4,11 @@ import { Chapter, ChapterRail } from '../components/lesson/Chapters.jsx'
 import { LessonCheck } from '../components/lesson/LessonCheck.jsx'
 import { Link } from '../components/Link.jsx'
 import lesson from '../components/lesson/Lesson.module.css'
+import { CardTable } from './bigO/CardTable.jsx'
 import { Chooser } from './bigO/Chooser.jsx'
-import { Classroom } from './bigO/Classroom.jsx'
 import { CountLoops } from './bigO/CountLoops.jsx'
 import { Crossover } from './bigO/Crossover.jsx'
 import { GrowthChart } from './bigO/GrowthChart.jsx'
-import { GuessGame } from './bigO/GuessGame.jsx'
 import { Ladder } from './bigO/Ladder.jsx'
 import { Rules } from './bigO/Rules.jsx'
 import { Words } from './bigO/Words.jsx'
@@ -23,7 +22,7 @@ import { SortOrSearch } from './bigO/SortOrSearch.jsx'
  */
 
 const CHAPTERS = [
-  { id: 'aula', title: 'El aula' },
+  { id: 'mazo', title: 'El mazo de cartas' },
   { id: 'palabras', title: 'Las palabras' },
   { id: 'grafico', title: 'Del conteo al gráfico' },
   { id: 'notacion', title: 'La notación' },
@@ -38,10 +37,10 @@ const CHECKS = [
     prompt: 'Un algoritmo es O(n²). Si los datos se duplican, ¿cuánto más tarda?',
     options: ['El doble', 'Cuatro veces más', 'Lo mismo'],
     correctAnswer: 'Cuatro veces más',
-    explanation: 'Con 2n datos hace (2n)² = 4n² operaciones: cuatro veces las de antes. Como los saludos del aula.',
+    explanation: 'Con 2n datos hace (2n)² = 4n² operaciones: cuatro veces las de antes. Como buscar cartas repetidas.',
     optionFeedback: {
-      'El doble': 'Eso pasa con O(n), como pasar lista. Acá cada uno se cruza con todos.',
-      'Lo mismo': 'Eso sería O(1), como mirar quién está en la puerta.',
+      'El doble': 'Eso pasa con O(n), como contar los oros. Acá cada dato se compara con todos.',
+      'Lo mismo': 'Eso sería O(1), como agarrar la carta de arriba.',
     },
   },
   {
@@ -73,16 +72,15 @@ export default function BigOLesson() {
     <div className={lesson.lesson}>
       <ChapterRail chapters={CHAPTERS} />
 
-      <Chapter id="aula" number={1} title="El aula" lead="Una tarea, n alumnos. Lo que importa es cuánto más trabajo da cuando el curso crece.">
-        <Classroom />
-        <GuessGame />
+      <Chapter id="mazo" number={1} title="El mazo de cartas" lead="n cartas y una tarea. Lo que importa es cuánto más trabajo da cuando el mazo crece.">
+        <CardTable />
       </Chapter>
 
       <Chapter id="palabras" number={2} title="Las palabras" lead="Lo que acabás de ver tiene nombre. Seis palabras alcanzan para leer cualquier costo.">
         <Words />
       </Chapter>
 
-      <Chapter id="grafico" number={3} title="Del conteo al gráfico" lead="Lo que contaste en el aula, dibujado: cada tarea es una curva.">
+      <Chapter id="grafico" number={3} title="Del conteo al gráfico" lead="Lo que contaste con el mazo, dibujado: cada tarea es una curva.">
         <GrowthChart />
       </Chapter>
 

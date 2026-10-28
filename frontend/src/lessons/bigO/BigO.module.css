@@ -151,70 +151,23 @@
   background: var(--surface-2);
 }
 
-/* ------------------------------------------------ the classroom */
+/* ------------------------------------------------ the deck's narration */
 
-.classroom {
+.counter {
   display: grid;
-  grid-template-columns: minmax(280px, 440px) minmax(0, 1fr);
-  gap: var(--space-6);
-  align-items: center;
 }
 
-.room {
-  width: 100%;
-  height: auto;
-}
-
-.board {
-  fill: var(--surface-3);
-  stroke: var(--border-strong);
-}
-
-.boardText,
-.personLabel {
-  font-family: var(--font-body);
-  font-size: 11px;
-  fill: var(--text-3);
-}
-
-.teacher circle,
-.teacher path {
-  fill: none;
-  stroke: var(--text-2);
-  stroke-width: 2;
-  stroke-linecap: round;
-}
-
-.deskTop {
-  fill: var(--surface-3);
-}
-
-.student {
-  fill: var(--surface-2);
-  stroke: var(--node-stroke);
-  stroke-width: 1.5;
-  transition: fill 0.15s, stroke 0.15s;
-}
-
-.studentInitial {
+.counterValue {
   font-family: var(--font-display);
-  font-size: 11px;
-  font-weight: 700;
-  fill: var(--text-2);
+  font-size: clamp(2.6rem, 6vw, 3.6rem);
+  font-weight: 760;
+  line-height: 1;
+  font-variant-numeric: tabular-nums;
+  color: var(--text);
 }
 
-.desk[data-state='current'] .student {
-  fill: var(--frontier-soft);
-  stroke: var(--frontier);
-}
-
-.desk[data-state='done'] .student {
-  fill: var(--visited-soft);
-  stroke: var(--visited);
-}
-
-.desk[data-state] .studentInitial {
-  fill: var(--text);
+.counterLabel {
+  color: var(--text-3);
 }
 
 /* What is happening right now, in words */
@@ -224,6 +177,18 @@
   font-family: var(--font-display);
   font-size: 1.1rem;
   font-weight: 600;
+}
+
+.ask {
+  display: grid;
+  gap: var(--space-3);
+}
+
+.askPrompt {
+  font-family: var(--font-display);
+  font-size: 1.2rem;
+  font-weight: 700;
+  color: var(--text);
 }
 
 .another {
@@ -245,221 +210,6 @@
 .another:hover {
   color: var(--text);
   border-color: var(--border-strong);
-}
-
-.guessIntro {
-  display: grid;
-  gap: var(--space-3);
-}
-
-/* ------------------------------------------------ the words */
-
-.words {
-  margin: 0;
-  gap: 0;
-}
-
-.word {
-  display: grid;
-  grid-template-columns: 7rem minmax(0, 1fr);
-  gap: var(--space-5);
-  padding: var(--space-5) 0;
-  border-bottom: 1px solid var(--border);
-}
-
-.wordTerm {
-  font-family: var(--font-mono);
-  font-size: 1.15rem;
-  font-weight: 700;
-  color: var(--text);
-}
-
-.wordBody {
-  margin: 0;
-  display: grid;
-  grid-template-columns: minmax(0, 1fr) auto;
-  gap: var(--space-5);
-  align-items: start;
-}
-
-.wordText {
-  max-width: 54ch;
-  color: var(--text-2);
-}
-
-.wordText strong {
-  color: var(--text);
-}
-
-.wordVisual {
-  display: grid;
-  gap: var(--space-2);
-  justify-items: start;
-  margin: 0;
-}
-
-.boxes {
-  display: flex;
-  gap: 4px;
-}
-
-.boxes span {
-  width: 16px;
-  height: 16px;
-  border-radius: 3px;
-  border: 1px solid var(--node-stroke);
-  background: var(--surface-2);
-}
-
-.halvings {
-  display: flex;
-  flex-wrap: wrap;
-  gap: 4px var(--space-2);
-  max-width: 22rem;
-  margin: 0;
-  font-family: var(--font-mono);
-  font-weight: 700;
-  color: var(--text);
-}
-
-.halving {
-  display: inline-flex;
-  gap: var(--space-2);
-}
-
-.halvingArrow {
-  font-weight: 400;
-  color: var(--frontier);
-}
-
-.wordResult {
-  color: var(--text-2);
-}
-
-.grid {
-  display: grid;
-  grid-template-columns: repeat(var(--n), 14px);
-  gap: 3px;
-}
-
-.grid span {
-  height: 14px;
-  border-radius: 2px;
-  background: var(--frontier-soft);
-  border: 1px solid var(--frontier);
-}
-
-.greeting {
-  stroke: var(--frontier);
-  stroke-width: 0.8;
-  opacity: 0.55;
-}
-
-.roomSide {
-  display: grid;
-  gap: var(--space-4);
-  justify-items: start;
-}
-
-.counter {
-  display: grid;
-}
-
-.counterValue {
-  font-family: var(--font-display);
-  font-size: clamp(2.6rem, 6vw, 3.6rem);
-  font-weight: 760;
-  line-height: 1;
-  font-variant-numeric: tabular-nums;
-  color: var(--text);
-}
-
-.counterLabel {
-  color: var(--text-3);
-}
-
-.ask {
-  display: grid;
-  gap: var(--space-3);
-}
-
-.askPrompt {
-  font-family: var(--font-display);
-  font-size: 1.2rem;
-  font-weight: 700;
-  color: var(--text);
-}
-
-/* ------------------------------------------------ guess the number */
-
-.guess {
-  display: grid;
-  gap: var(--space-4);
-}
-
-.guessHead {
-  display: grid;
-  gap: var(--space-2);
-}
-
-.guessNumber {
-  display: flex;
-  align-items: baseline;
-  gap: var(--space-3);
-  font-family: var(--font-display);
-  font-size: clamp(2.6rem, 6vw, 3.6rem);
-  font-weight: 760;
-  line-height: 1;
-  color: var(--text);
-}
-
-.guessCount {
-  font-family: var(--font-body);
-  font-size: var(--text-md);
-  font-weight: 400;
-  color: var(--text-3);
-}
-
-.line {
-  position: relative;
-  height: 14px;
-  border-radius: 99px;
-  background: var(--surface-2);
-}
-
-.lineRange {
-  position: absolute;
-  top: 0;
-  bottom: 0;
-  border-radius: 99px;
-  background: var(--frontier-soft);
-  border: 1px solid var(--frontier);
-  transition: left 0.5s var(--ease-out-expo), width 0.5s var(--ease-out-expo);
-}
-
-.lineGuess {
-  position: absolute;
-  top: -5px;
-  width: 3px;
-  height: 24px;
-  margin-left: -1.5px;
-  border-radius: 2px;
-  background: var(--text);
-  transition: left 0.5s var(--ease-out-expo);
-}
-
-.lineScale {
-  display: flex;
-  justify-content: space-between;
-  font-family: var(--font-mono);
-  font-size: var(--text-sm);
-  color: var(--text-3);
-}
-
-.guessButtons {
-  display: flex;
-  flex-wrap: wrap;
-  gap: var(--space-2);
 }
 
 /* ------------------------------------------------ growth chart */
@@ -895,20 +645,6 @@
 }
 
 @media (max-width: 640px) {
-  .classroom {
-    grid-template-columns: 1fr;
-    justify-items: center;
-  }
-
-  .room {
-    max-width: 260px;
-  }
-
-  .roomSide {
-    justify-items: stretch;
-    width: 100%;
-  }
-
   .ruleRow {
     grid-template-columns: auto auto 1fr;
   }

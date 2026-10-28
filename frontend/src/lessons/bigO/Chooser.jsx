@@ -11,7 +11,7 @@ import { formatDuration, formatNumber, OPS_PER_SECOND } from './format.js'
  */
 
 const SIZES = [
-  { n: 30, label: 'un aula' },
+  { n: 40, label: 'un mazo' },
   { n: 5_000, label: 'una facultad' },
   { n: 1_000_000, label: 'una ciudad' },
   { n: 45_000_000, label: 'el padrón del país' },

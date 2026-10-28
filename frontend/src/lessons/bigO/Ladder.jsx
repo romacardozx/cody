@@ -9,7 +9,7 @@ import { formatNumber, OPS_PER_SECOND } from './format.js'
 const STEPS = [
   { order: 'O(1)', example: 'abrir un contacto de la agenda', inOneSecond: 'cualquier cantidad' },
   { order: 'O(log n)', example: 'buscar en el diccionario', inOneSecond: 'cualquier cantidad' },
-  { order: 'O(n)', example: 'pasar lista', ops: (n) => n },
+  { order: 'O(n)', example: 'contar los oros de un mazo', ops: (n) => n },
   { order: 'O(n log n)', example: 'ordenar con merge sort', ops: (n) => n * Math.log2(n) },
   { order: 'O(n²)', example: 'un torneo todos contra todos', ops: (n) => n * n },
   { order: 'O(2ⁿ)', example: 'probar todas las combinaciones', ops: (n) => 2 ** n },

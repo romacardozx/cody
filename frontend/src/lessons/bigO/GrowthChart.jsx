@@ -3,8 +3,8 @@ import lesson from '../../components/lesson/Lesson.module.css'
 import styles from './BigO.module.css'
 
 /*
- * From counting to a graph: the tasks of the classroom drawn as curves, n from 1 to 16 (the same
- * classes). Slide n and read each task's count; O(n²) leaves the chart on its way up.
+ * From counting to a graph: the tasks of the deck drawn as curves, n from 1 to 16 cards. Slide n
+ * and read each task's count; O(n²) leaves the chart on its way up.
  */
 
 const W = 560
@@ -14,10 +14,10 @@ const N_MAX = 16
 const Y_MAX = 40 // the chart shows counts up to here; n² goes past it
 
 const CURVES = [
-  { order: 'O(1)', task: 'la puerta', f: () => 1 },
-  { order: 'O(log n)', task: 'adivinar', f: (n) => Math.log2(n) },
-  { order: 'O(n)', task: 'pasar lista', f: (n) => n },
-  { order: 'O(n²)', task: 'saludarse', f: (n) => n * n, steep: true },
+  { order: 'O(1)', task: 'la de arriba', f: () => 1 },
+  { order: 'O(log n)', task: 'buscar en ordenado', f: (n) => Math.log2(n) },
+  { order: 'O(n)', task: 'contar los oros', f: (n) => n },
+  { order: 'O(n²)', task: 'repetidas', f: (n) => n * n, steep: true },
 ]
 
 const x = (n) => PAD.left + ((n - 1) / (N_MAX - 1)) * (W - PAD.left - PAD.right)
@@ -63,7 +63,7 @@ export function GrowthChart() {
       </svg>
 
       <label className={lesson.sliderRow}>
-        <span className={styles.sliderName}>Alumnos</span>
+        <span className={styles.sliderName}>Cartas</span>
         <input type="range" className={lesson.slider} min={1} max={N_MAX} value={n} onChange={(e) => setN(Number(e.target.value))} />
         <span className={lesson.sliderValue}>n = {n}</span>
       </label>

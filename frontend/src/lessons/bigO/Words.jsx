@@ -97,7 +97,7 @@ export function Words() {
         }
       >
         <p>
-          La <strong>cantidad de datos</strong> que recibe el algoritmo: los alumnos del curso, los números de la lista, las
+          La <strong>cantidad de datos</strong> que recibe el algoritmo: las cartas del mazo, los números de la lista, las
           ciudades del mapa. Se le dice así para no atarlo a un número: vale para 6 y para 6 millones.
         </p>
       </Row>
@@ -105,7 +105,7 @@ export function Words() {
       <Row term="Operación">
         <p>
           Un <strong>paso básico</strong>, de los que tardan siempre lo mismo: mirar un elemento, comparar dos, sumar,
-          llamar a un alumno. Big O cuenta estos pasos, no segundos.
+          dar vuelta una carta. Big O cuenta estos pasos, no segundos.
         </p>
       </Row>
 
@@ -127,7 +127,7 @@ export function Words() {
 
       <Row term="n²" visual={<Square />}>
         <p>
-          <strong>n por n</strong>: aparece cuando cada dato se combina con todos los demás, como los saludos del aula o
+          <strong>n por n</strong>: aparece cuando cada dato se combina con todos los demás, como buscar cartas repetidas o
           un bucle dentro de otro.
         </p>
       </Row>
