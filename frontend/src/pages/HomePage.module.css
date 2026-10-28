@@ -4,7 +4,8 @@
   --inset: calc((1 - var(--hero-p, 0)) * var(--space-4));
   margin: var(--inset) var(--inset) 0;
   border-radius: calc((1 - var(--hero-p, 0)) * 28px);
-  min-height: calc(100svh - var(--header-h) - var(--space-4));
+  /* The header floats over it, so the panel takes the whole screen */
+  min-height: calc(100svh - var(--space-4) * 2);
   display: grid;
   align-items: center;
   background-color: var(--surface);
@@ -173,7 +174,8 @@
 @media (max-width: 900px) {
   .hero {
     grid-template-columns: 1fr;
-    padding-top: var(--space-7);
+    /* Room for the header that floats over the panel */
+    padding-top: calc(var(--header-h) + var(--space-6));
     gap: var(--space-6);
   }
 }

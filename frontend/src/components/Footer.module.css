@@ -59,22 +59,17 @@
   color: var(--text-2);
 }
 
-/* "cody" from edge to edge; the eye is the logo's, so it keeps following the pointer */
-.signature {
-  margin-top: clamp(var(--space-7), 7vw, 104px);
+/* Closing line: the logo at its normal size and the tagline, nothing louder */
+.closing {
+  margin-top: clamp(var(--space-7), 6vw, 88px);
   display: flex;
-  justify-content: center;
-  line-height: 0.8;
-}
-
-.wordmark {
-  font-size: clamp(6rem, 25vw, 22rem);
-  letter-spacing: -0.035em; /* tighter and the d touches the y */
+  flex-wrap: wrap;
+  align-items: baseline;
+  justify-content: space-between;
+  gap: var(--space-3) var(--space-6);
 }
 
 .tagline {
-  margin-top: var(--space-4);
-  text-align: center;
   font-style: italic;
   color: var(--text-3);
 }

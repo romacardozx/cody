@@ -14,18 +14,27 @@ const LINKS = [
 ]
 
 /**
- * A floating pill, detached from the top edge like the hero panel: see-through at the top of the
- * page, frosted once the page scrolls under it. On phones the links fold into a menu sheet.
+ * A bare header, no bar or pill: logo, links and tools straight on the page, over the hero on the
+ * home page. Scrolling down it gets out of the way; scrolling up it comes back, on a light frosted
+ * backing so it reads over whatever is below. On phones the links fold into a menu sheet.
  */
 export function Header() {
   const { pathname } = useLocation()
   const { theme, toggle } = useTheme()
-  const [scrolled, setScrolled] = useState(false)
+  const [state, setState] = useState('top') // 'top' | 'hidden' | 'shown'
   const [open, setOpen] = useState(false)
   const sheet = useRef(null)
+  const overlay = pathname === '/' // on the home page it floats over the hero instead of taking room
 
   useEffect(() => {
-    const onScroll = () => setScrolled(window.scrollY > 8)
+    let last = window.scrollY
+    const onScroll = () => {
+      const y = window.scrollY
+      if (y < 24) setState('top')
+      else if (y > last + 4 && y > 120) setState('hidden')
+      else if (y < last - 4) setState('shown')
+      last = y
+    }
     onScroll()
     window.addEventListener('scroll', onScroll, { passive: true })
     return () => window.removeEventListener('scroll', onScroll)
@@ -57,8 +66,8 @@ export function Header() {
   ))
 
   return (
-    <header className={styles.header}>
-      <div ref={sheet} className={styles.pill} data-scrolled={scrolled || open || undefined}>
+    <header className={styles.header} data-state={open ? 'shown' : state} data-overlay={overlay || undefined}>
+      <div ref={sheet} className={styles.bar}>
         <Link to="/" className={styles.brand} aria-label="Cody, ir al inicio" onClick={() => setOpen(false)}>
           <Logo />
         </Link>

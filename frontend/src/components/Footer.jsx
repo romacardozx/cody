@@ -5,8 +5,8 @@ import { Logo } from './Logo.jsx'
 import styles from './Footer.module.css'
 
 /**
- * The last sector: where to go next, the project behind the app and the university it was made
- * for, and then "cody" from edge to edge, its eye still following the pointer.
+ * The last sector, kept calm: where to go next, the project behind the app and the university it
+ * was made for, and a closing line with Cody's logo.
  */
 export function Footer() {
   return (
@@ -39,10 +39,10 @@ export function Footer() {
         </div>
       </div>
 
-      <div className={styles.signature} aria-hidden="true">
-        <Logo className={styles.wordmark} />
+      <div className={styles.closing}>
+        <Logo />
+        <p className={styles.tagline}>Hecho para pensar, no para mirar.</p>
       </div>
-      <p className={styles.tagline}>Hecho para pensar, no para mirar.</p>
     </footer>
   )
 }
