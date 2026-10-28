@@ -12,12 +12,11 @@ import styles from './Cards.module.css'
  * twice as many, the reader predicts how much longer it takes. The deck changes on every try.
  */
 
-const SUITS = ['oros', 'copas', 'espadas', 'bastos'] // also the order of a sorted deck
+const SUITS = ['oros', 'copas', 'espadas', 'bastos']
 const NUMBERS = [1, 2, 3, 4, 5, 6, 7, 10, 11, 12]
 const FIGURES = { 10: 'sota', 11: 'caballo', 12: 'rey' }
 
 const nameOf = (card) => `${FIGURES[card.number] ?? card.number} de ${card.suit}`
-const rank = (card) => SUITS.indexOf(card.suit) * 100 + card.number
 const same = (a, b) => a.suit === b.suit && a.number === b.number
 
 function shuffled(list) {
@@ -38,8 +37,50 @@ function dealFor(taskKey, n) {
     return shuffled([...distinct, distinct[0], distinct[1]])
   }
   const cards = shuffled(FULL_DECK).slice(0, n)
-  return taskKey === 'sorted' ? cards.sort((a, b) => rank(a) - rank(b)) : cards
+  // Sorted by number only, smallest to largest: an order anyone can see (the suit does not matter)
+  return taskKey === 'sorted' ? cards.sort((a, b) => a.number - b.number) : cards
 }
+
+/** The moves of a binary search for `value` in a deck sorted by number. */
+function binarySearch(deck, value) {
+  const moves = []
+  const seen = []
+  let low = 0
+  let high = deck.length - 1
+  while (low <= high) {
+    const middle = Math.floor((low + high) / 2)
+    seen.push(middle)
+    moves.push({ low, high, middle })
+    if (deck[middle].number === value) break
+    if (deck[middle].number < value) low = middle + 1
+    else high = middle - 1
+  }
+  return moves
+}
+
+/**
+ * The card to look for: the one that needs the most looks (the worst case, which is what Big O
+ * measures), among those whose number appears once, so finding the number means finding it.
+ */
+function sortedTarget(deck) {
+  const counts = {}
+  deck.forEach((card) => (counts[card.number] = (counts[card.number] ?? 0) + 1))
+  let best = null
+  for (const onlyUnique of [true, false]) {
+    deck.forEach((card, i) => {
+      if (onlyUnique && counts[card.number] !== 1) return
+      const steps = binarySearch(deck, card.number).length
+      if (!best || steps > best.steps) best = { index: i, steps }
+    })
+    if (best) break // every number repeated (rare with 16 cards): take the longest search anyway
+  }
+  return deck[best.index]
+}
+
+// Numbers first, figure in brackets ("un 12 (rey)"): the order is by number, and not everyone knows
+// that the rey is the 12
+const word = (n) => (FIGURES[n] ? `${n} (${FIGURES[n]})` : String(n))
+const anOrA = () => 'un'
 
 /*
  * Each task becomes the list of its moves. A move is a full snapshot of the table: which cards
@@ -87,37 +128,35 @@ const TASKS = {
   sorted: {
     label: 'Buscar en el mazo ordenado',
     order: 'O(log n)',
-    msPerMove: 900,
+    msPerMove: 1700,
     answer: 'Un paso más',
     moves(deck) {
-      const target = deck.length - 1 // the farthest card: the longest search
-      const moves = []
+      const target = sortedTarget(deck).number
+      const all = deck.map((_, k) => k)
       const seen = []
-      let low = 0
-      let high = deck.length - 1
-      while (low <= high) {
-        const middle = Math.floor((low + high) / 2)
+      return binarySearch(deck, target).map(({ low, high, middle }) => {
         seen.push(middle)
-        const out = deck.map((_, k) => k).filter((k) => k < low || k > high)
-        if (middle === target) {
-          moves.push({ up: [...seen], focus: [middle], out, found: [middle], say: `La del medio es el ${nameOf(deck[middle])}: ¡es esa!` })
-          break
-        }
-        moves.push({
-          up: [...seen],
-          focus: [middle],
-          out,
-          say: `Mirás la del medio: ${nameOf(deck[middle])}. La que buscás va después: descartás esa mitad.`,
-        })
-        low = middle + 1
-      }
-      return moves
+        const card = deck[middle]
+        const out = all.filter((k) => k < low || k > high)
+        const looking = `Mirás la del medio: ${anOrA(card.number)} ${word(card.number)}.`
+        if (card.number === target) return { up: [...seen], focus: [middle], out, found: [middle], say: `${looking} ¡Es la que buscabas!` }
+        // The reason, every time: sorted means one look tells which side it cannot be on
+        const say =
+          card.number < target
+            ? `${looking} Como van de menor a mayor, todo lo de su izquierda es ${word(card.number)} o menos: ${anOrA(target)} ${word(target)} no puede estar ahí. Descartás esa mitad.`
+            : `${looking} Como van de menor a mayor, todo lo de su derecha es ${word(card.number)} o más: ${anOrA(target)} ${word(target)} no puede estar ahí. Descartás esa mitad.`
+        return { up: [...seen], focus: [middle], out, say }
+      })
     },
-    lead: (deck) => `El mazo está ordenado por palo y número. Buscás el ${nameOf(deck.at(-1))}.`,
+    lead: (deck) => {
+      const target = sortedTarget(deck).number
+      return `Las cartas están ordenadas por número, de menor a mayor; el palo no importa. Buscás ${anOrA(target)} ${word(target)}, la que más vueltas necesita: el peor caso.`
+    },
+    target: (deck) => sortedTarget(deck),
     daily: [
-      'Buscar una palabra en el diccionario: abrís al medio y descartás la mitad que no es.',
-      'Buscar un DNI en un padrón ordenado: no lo leés entero.',
-      'Adivinar un número del 1 al 100 con «más alto» o «más bajo»: en 7 intentos alcanza.',
+      'Buscar «perro» en el diccionario: abrís en la M, y como está en orden alfabético, nada de lo anterior a la M puede ser. Lo descartás sin leerlo.',
+      'Buscar tu DNI en el padrón ordenado: mirás el del medio y sabés si el tuyo está antes o después.',
+      'Adivinar un número del 1 al 100 con «más alto» o «más bajo»: cada respuesta descarta la mitad. En 7 intentos alcanza.',
     ],
   },
   pairs: {
@@ -256,10 +295,28 @@ export function CardTable() {
         ))}
       </div>
 
-      <div className={styles.table} role="img" aria-label={`${n} cartas. ${caption}`}>
-        {deck.map((card, i) => (
-          <Card key={`${i}-${card.suit}-${card.number}`} card={card} up={move?.up.includes(i)} state={stateOf(i)} />
-        ))}
+      <div className={styles.tableRow}>
+        <div className={styles.tableColumn}>
+          <div className={styles.table} role="img" aria-label={`${n} cartas. ${caption}`}>
+            {deck.map((card, i) => (
+              <Card key={`${i}-${card.suit}-${card.number}`} card={card} up={move?.up.includes(i)} state={stateOf(i)} />
+            ))}
+          </div>
+          {taskKey === 'sorted' && (
+            <p className={styles.axis} aria-hidden="true">
+              <span>menor</span>
+              <span className={styles.axisLine} />
+              <span>mayor</span>
+            </p>
+          )}
+        </div>
+        {task.target && (
+          <div className={styles.target}>
+            <span className={styles.targetLabel}>Buscás</span>
+            <span className={styles.targetCard}>{task.target(deck).number}</span>
+            <span className={styles.targetNote}>de cualquier palo</span>
+          </div>
+        )}
       </div>
 
       <div className={styles.status}>
