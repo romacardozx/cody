@@ -2,10 +2,12 @@
    scrolls, grows to the full width (--hero-p goes 0 -> 1, set by useHeroExpansion) */
 .heroPanel {
   --inset: calc((1 - var(--hero-p, 0)) * var(--space-4));
-  margin: var(--inset) var(--inset) 0;
-  border-radius: calc((1 - var(--hero-p, 0)) * 28px);
-  /* The header floats over it, so the panel takes the whole screen */
-  min-height: calc(100svh - var(--space-4) * 2);
+  --round: calc((1 - var(--hero-p, 0)) * 28px);
+  position: relative;
+  /* Always full width and full screen: the inset is a clip, not a margin, so scrolling never
+     changes the layout (resizing the 3D canvas would blank it for a frame: a flicker) */
+  min-height: 100svh;
+  clip-path: inset(var(--inset) round var(--round));
   display: grid;
   align-items: center;
   background-color: var(--surface);
@@ -13,7 +15,16 @@
     radial-gradient(ellipse 60% 70% at 78% 40%, var(--surface-2), transparent 70%),
     radial-gradient(var(--bg-grid) 1px, transparent 1px);
   background-size: auto, 22px 22px;
+}
+
+/* Its 1px edge follows the same clip */
+.heroPanel::after {
+  content: '';
+  position: absolute;
+  inset: var(--inset);
   border: 1px solid var(--border);
+  border-radius: var(--round);
+  pointer-events: none;
 }
 
 .hero {

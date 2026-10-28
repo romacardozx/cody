@@ -28,9 +28,11 @@ export function useReveal(root) {
     const scan = () => {
       // "pending" too: an earlier run (StrictMode mounts effects twice) may have hidden it already
       root.current?.querySelectorAll('[data-reveal=""], [data-reveal="pending"]').forEach((element) => {
-        if (element.dataset.reveal === '' && element.getBoundingClientRect().top < window.innerHeight * 0.88) return // on screen
-        element.dataset.reveal = 'pending'
-        observer.observe(element)
+        if (element.dataset.reveal === '') {
+          if (element.getBoundingClientRect().top < window.innerHeight * 0.88) return // on screen
+          element.dataset.reveal = 'pending'
+        }
+        observer.observe(element) // observing twice is a no-op
       })
     }
     scan()

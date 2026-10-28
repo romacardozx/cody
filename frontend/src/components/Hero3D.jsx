@@ -268,7 +268,9 @@ export default function Hero3D() {
       camera.aspect = w / h
       camera.updateProjectionMatrix()
       fit()
+      // Resizing clears the canvas: draw again right away, even while the scene is paused
       if (reduceMotion) frame(1)
+      else if (current) renderer.render(scene, camera)
     }
 
     selectScene.current = (i) => {

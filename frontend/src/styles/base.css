@@ -126,6 +126,11 @@ kbd {
   }
 }
 
+/* No hover effects while the page is scrolling (see lib/smoothScroll.js) */
+html[data-scrolling] #contenido {
+  pointer-events: none;
+}
+
 /* Reveal on scroll (lib/useReveal.js): elements below the fold rise, sharpen and fade in once */
 [data-reveal='pending'] {
   opacity: 0;
