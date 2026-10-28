@@ -34,6 +34,7 @@ class SessionServiceTest {
 
     private ActiveSessionStore activeSessions;
     private SessionService service;
+    private LearningHistoryService historyService;
     private final Map<UUID, LearningSession> stored = new HashMap<>();
 
     @BeforeEach
@@ -58,7 +59,8 @@ class SessionServiceTest {
 
         activeSessions = new ActiveSessionStore();
         ScenarioService scenarios = new ScenarioService(repository, activeSessions);
-        service = new SessionService(new AlgorithmRegistry(List.of(new Bfs())), scenarios, activeSessions, history);
+        historyService = new LearningHistoryService(history);
+        service = new SessionService(new AlgorithmRegistry(List.of(new Bfs())), scenarios, activeSessions, historyService);
     }
 
     private SessionResponse startBfs() {
@@ -144,7 +146,7 @@ class SessionServiceTest {
 
         service.answer(session.sessionId(), new PredictionRequest(questionId, "C"));
 
-        SessionDetailDto detail = service.detail(session.sessionId());
+        SessionDetailDto detail = historyService.detail(session.sessionId());
         assertThat(detail.summary().scenarioName()).isEqualTo("Triángulo");
         assertThat(detail.summary().wrongCount()).isEqualTo(1);
         assertThat(detail.summary().finishedAt()).isNotNull();
@@ -156,17 +158,17 @@ class SessionServiceTest {
         assertThat(prediction.correct()).isFalse();
         assertThat(prediction.explanation()).contains("FIFO");
         assertThat(prediction.choiceFeedback()).isNotBlank();
-        assertThat(service.historyOf("ana")).extracting(s -> s.id()).containsExactly(session.sessionId());
+        assertThat(historyService.historyOf("ana")).extracting(s -> s.id()).containsExactly(session.sessionId());
     }
 
     @Test
     void historyNeedsALearner() {
-        assertThatThrownBy(() -> service.historyOf(" ")).isInstanceOf(BusinessRuleException.class);
+        assertThatThrownBy(() -> historyService.historyOf(" ")).isInstanceOf(BusinessRuleException.class);
     }
 
     @Test
     void unknownStoredSessionIsNotFound() {
-        assertThatThrownBy(() -> service.detail(UUID.randomUUID())).isInstanceOf(ResourceNotFoundException.class);
+        assertThatThrownBy(() -> historyService.detail(UUID.randomUUID())).isInstanceOf(ResourceNotFoundException.class);
     }
 
     @Test

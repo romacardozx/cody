@@ -55,7 +55,9 @@ public class AlgorithmCatalogService {
                 algorithm.getCode(),
                 algorithm.getName(),
                 algorithm.getFamily(),
-                algorithm.getFamily().scenarioType(),
+                // Implemented: the engine says what it runs on. Upcoming: the family's default
+                engine.map(e -> ScenarioInputs.scenarioTypeFor(e.inputType()))
+                        .orElse(algorithm.getFamily().scenarioType()),
                 algorithm.getDescription(),
                 algorithm.getTimeComplexity(),
                 algorithm.getSpaceComplexity(),

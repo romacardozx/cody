@@ -3,6 +3,8 @@ package ar.edu.unsam.cody.service;
 import ar.edu.unsam.cody.engine.Question;
 import ar.edu.unsam.cody.engine.Step;
 import ar.edu.unsam.cody.engine.Trace;
+import java.time.Duration;
+import java.time.Instant;
 import java.util.List;
 import java.util.Map;
 import java.util.UUID;
@@ -10,9 +12,7 @@ import java.util.UUID;
 /**
  * In-memory progress of a user through a trace: which steps were already sent, which question is
  * pending and the score so far. Methods are synchronized because the same session could receive
- * two requests at once (double click).
- *
- * <p>Temporary: it will be replaced by the {@code Session} JPA entity.
+ * two requests at once (double click). The store drops it after a while without activity.
  */
 final class ActiveSession {
 
@@ -24,12 +24,22 @@ final class ActiveSession {
     private Question pendingQuestion;
     private int correctCount;
     private int wrongCount;
+    private volatile Instant lastActivity = Instant.EPOCH;
 
     ActiveSession(UUID id, Long scenarioId, Trace trace, Map<String, String> labels) {
         this.id = id;
         this.scenarioId = scenarioId;
         this.trace = trace;
         this.labels = Map.copyOf(labels);
+    }
+
+    void touch(Instant now) {
+        lastActivity = now;
+    }
+
+    /** How long it has been since the last request for this session. */
+    Duration idleSince(Instant now) {
+        return Duration.between(lastActivity, now);
     }
 
     /** Text the user sees for an element id (node label); the id itself when there is none. */

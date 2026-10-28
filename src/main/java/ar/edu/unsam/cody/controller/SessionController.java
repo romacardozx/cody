@@ -6,6 +6,7 @@ import ar.edu.unsam.cody.dto.SessionDetailDto;
 import ar.edu.unsam.cody.dto.SessionResponse;
 import ar.edu.unsam.cody.dto.SessionSummaryDto;
 import ar.edu.unsam.cody.dto.StartSessionRequest;
+import ar.edu.unsam.cody.service.LearningHistoryService;
 import ar.edu.unsam.cody.service.SessionService;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.media.Content;
@@ -35,9 +36,11 @@ public class SessionController {
             """;
 
     private final SessionService sessionService;
+    private final LearningHistoryService historyService;
 
-    public SessionController(SessionService sessionService) {
+    public SessionController(SessionService sessionService, LearningHistoryService historyService) {
         this.sessionService = sessionService;
+        this.historyService = historyService;
     }
 
     @PostMapping
@@ -62,12 +65,12 @@ public class SessionController {
     @GetMapping
     @Operation(summary = "Historial de un alumno", description = "Sus últimas 50 sesiones, de la más nueva a la más vieja.")
     public ResponseEntity<List<SessionSummaryDto>> history(@RequestParam String learnerId) {
-        return ResponseEntity.ok(sessionService.historyOf(learnerId));
+        return ResponseEntity.ok(historyService.historyOf(learnerId));
     }
 
     @GetMapping("/{sessionId}")
     @Operation(summary = "Ver una sesión pasada", description = "Con cada predicción, la respuesta correcta y su explicación.")
     public ResponseEntity<SessionDetailDto> detail(@PathVariable UUID sessionId) {
-        return ResponseEntity.ok(sessionService.detail(sessionId));
+        return ResponseEntity.ok(historyService.detail(sessionId));
     }
 }

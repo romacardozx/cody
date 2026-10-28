@@ -1,5 +1,6 @@
 package ar.edu.unsam.cody.engine.graph;
 
+import ar.edu.unsam.cody.engine.AbstractTraceableAlgorithm;
 import ar.edu.unsam.cody.engine.ElementState;
 import ar.edu.unsam.cody.engine.GraphInput;
 import ar.edu.unsam.cody.engine.GraphInput.Edge;
@@ -8,7 +9,6 @@ import ar.edu.unsam.cody.engine.JavaListing;
 import ar.edu.unsam.cody.engine.StepType;
 import ar.edu.unsam.cody.engine.Trace;
 import ar.edu.unsam.cody.engine.TraceRecorder;
-import ar.edu.unsam.cody.engine.TraceableAlgorithm;
 import java.util.ArrayDeque;
 import java.util.ArrayList;
 import java.util.Deque;
@@ -31,7 +31,7 @@ import java.util.Map;
  *
  * <p>Complexity: O(V + E) time and O(V) extra space, with V nodes and E edges.
  */
-public final class Bfs implements TraceableAlgorithm<GraphInput> {
+public final class Bfs extends AbstractTraceableAlgorithm<GraphInput> {
 
     /** Code of the algorithm in the catalog. */
     public static final String CODE = "BFS";
@@ -84,24 +84,8 @@ public final class Bfs implements TraceableAlgorithm<GraphInput> {
 
     private static final String QUESTION_PROMPT = "¿Qué nodo sale de la cola ahora?";
 
-    @Override
-    public String code() {
-        return CODE;
-    }
-
-    @Override
-    public Class<GraphInput> inputType() {
-        return GraphInput.class;
-    }
-
-    @Override
-    public List<String> pseudocode() {
-        return PSEUDOCODE;
-    }
-
-    @Override
-    public JavaListing javaListing() {
-        return JAVA;
+    public Bfs() {
+        super(CODE, GraphInput.class, PSEUDOCODE, JAVA);
     }
 
     @Override

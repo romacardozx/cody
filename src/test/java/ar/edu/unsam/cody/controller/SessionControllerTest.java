@@ -15,6 +15,7 @@ import ar.edu.unsam.cody.repository.ScenarioRepository;
 import ar.edu.unsam.cody.service.ActiveSessionStore;
 import ar.edu.unsam.cody.service.AlgorithmRegistry;
 import ar.edu.unsam.cody.service.ScenarioService;
+import ar.edu.unsam.cody.service.LearningHistoryService;
 import ar.edu.unsam.cody.service.SessionService;
 import ar.edu.unsam.cody.service.TestScenarios;
 import com.jayway.jsonpath.JsonPath;
@@ -29,7 +30,7 @@ import org.springframework.test.context.bean.override.mockito.MockitoBean;
 import org.springframework.test.web.servlet.MockMvc;
 
 @WebMvcTest(SessionController.class)
-@Import({SessionService.class, ScenarioService.class, ActiveSessionStore.class, AlgorithmRegistry.class, EngineConfig.class})
+@Import({SessionService.class, LearningHistoryService.class, ScenarioService.class, ActiveSessionStore.class, AlgorithmRegistry.class, EngineConfig.class})
 class SessionControllerTest {
 
     private static final String BFS_SESSION = "{\"algorithmCode\": \"BFS\", \"scenarioId\": 1}";
