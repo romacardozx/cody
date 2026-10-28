@@ -41,7 +41,6 @@ export function Footer() {
           </a>
         </nav>
 
-        <p className={styles.tagline}>Hecho para pensar, no para mirar.</p>
       </div>
     </footer>
   )
