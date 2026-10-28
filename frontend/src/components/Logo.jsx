@@ -12,7 +12,7 @@ const IDLE_AFTER_MS = 2500
  * Following the pointer stays on even with "reduce motion" (the user causes it and it is small);
  * the automatic looking around and blinking are turned off there.
  */
-export function Logo() {
+export function Logo({ className }) {
   const eye = useRef(null)
   const reduceMotion = useReducedMotion()
   const [look, setLook] = useState(null) // null = idle animation
@@ -46,7 +46,7 @@ export function Logo() {
   const pupilClass = tracking ? styles.pupilTracking : reduceMotion ? undefined : styles.pupilIdle
 
   return (
-    <span className={styles.logo} aria-label="Cody">
+    <span className={className ? `${styles.logo} ${className}` : styles.logo} aria-label="Cody">
       <span aria-hidden="true">c</span>
       <svg ref={eye} className={styles.eye} viewBox="0 0 24 24" aria-hidden="true">
         <g className={reduceMotion ? undefined : styles.lid}>

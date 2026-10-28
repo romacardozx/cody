@@ -1,4 +1,5 @@
 import { lazy, Suspense } from 'react'
+import { Footer } from './components/Footer.jsx'
 import { Header } from './components/Header.jsx'
 import { Link } from './components/Link.jsx'
 import { matchPath, useLocation } from './lib/router.js'
@@ -30,10 +31,7 @@ export default function App() {
       <div id="contenido">
         <Suspense fallback={<div className={styles.pageLoading} aria-busy="true" />}>{page}</Suspense>
       </div>
-      <footer className={styles.footer}>
-        <span>Cody · TP Integrador de Programación III · ECyT-UNSAM · 2026</span>
-        <span className={styles.footerNote}>Hecho para pensar, no para mirar.</span>
-      </footer>
+      <Footer />
     </>
   )
 }
