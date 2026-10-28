@@ -1,17 +1,16 @@
 import { API_DOCS_URL, REPOSITORY_URL } from '../lib/links.js'
 import { Icon } from './Icon.jsx'
 import { Link } from './Link.jsx'
-import { NeuralField } from './NeuralField.jsx'
+import { ComplexityCurves } from './footer/ComplexityCurves.jsx'
 import styles from './Footer.module.css'
 
 /**
- * The last sector, small and calm: the university, the site, the project. A field of drifting
- * dots behind it is the only detail.
+ * The last sector, small and calm: the university, the site, the project. Its only detail is the
+ * curves of complexity, which draw themselves once.
  */
 export function Footer() {
   return (
     <footer className={styles.footer}>
-      <NeuralField />
       <div className={styles.inner}>
         <div className={styles.institution}>
           <span role="img" aria-label="Universidad Nacional de San Martín" className={styles.unsam} />
@@ -21,6 +20,8 @@ export function Footer() {
             Escuela de Ciencia y Tecnología · 2026
           </p>
         </div>
+
+        <ComplexityCurves />
 
         <nav className={styles.links} aria-label="Explorar">
           <Link to="/#algoritmos" className={styles.link}>Algoritmos</Link>

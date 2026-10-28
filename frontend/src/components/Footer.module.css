@@ -1,17 +1,16 @@
 .footer {
-  position: relative;
   margin-top: clamp(var(--space-7), 6vw, 88px);
   overflow: hidden;
 }
 
 .inner {
-  position: relative; /* above the dot field */
   max-width: var(--page-max);
   margin: 0 auto;
   padding: var(--space-7) var(--space-6) var(--space-6);
   display: grid;
-  grid-template-columns: minmax(0, 1.4fr) auto auto;
-  gap: var(--space-5) var(--space-8);
+  /* The curves get a column of their own, so they never run behind any text */
+  grid-template-columns: minmax(260px, 1fr) 460px auto auto;
+  gap: var(--space-5) var(--space-7);
   align-items: start;
 }
 
@@ -61,11 +60,19 @@
 }
 
 .tagline {
-  grid-column: 1 / -1;
+  grid-column: 1;
   margin-top: var(--space-4);
   font-family: var(--font-display);
   font-weight: 500;
   color: var(--text-3);
+}
+
+/* Below this width the curves would have to shrink their labels under the minimum text size:
+   they step out, they are only a detail */
+@media (max-width: 1240px) {
+  .inner {
+    grid-template-columns: minmax(0, 1fr) auto auto;
+  }
 }
 
 @media (max-width: 760px) {

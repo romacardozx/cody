@@ -1,0 +1,72 @@
+/* The footer's only detail: the curves of complexity, in a column of their own */
+.curves {
+  display: block;
+  width: 100%;
+  height: auto;
+  overflow: visible;
+  /* Spans both footer rows, so the tagline sits beside it instead of below */
+  grid-column: 2;
+  grid-row: 1 / span 2;
+  align-self: center;
+}
+
+.axis {
+  fill: none;
+  stroke: var(--border-strong);
+  stroke-width: 1;
+}
+
+.axisLabel,
+.curveLabel {
+  font-family: var(--font-mono);
+  font-size: 14px;
+  fill: var(--text-3);
+}
+
+.curve {
+  fill: none;
+  stroke: var(--text-3);
+  stroke-width: 1.4;
+  stroke-linecap: round;
+  stroke-dasharray: 1;
+  stroke-dashoffset: 1;
+}
+
+.curve[data-steep] {
+  stroke: var(--frontier);
+}
+
+.curveLabel {
+  opacity: 0;
+}
+
+.curves[data-drawn] .curve {
+  stroke-dashoffset: 0;
+  transition: stroke-dashoffset 1.6s var(--ease-out-expo) calc(var(--i) * 0.18s);
+}
+
+.curves[data-drawn] .curveLabel {
+  opacity: 1;
+  transition: opacity 0.6s var(--ease-out-expo) calc(var(--i) * 0.18s + 0.9s);
+}
+
+@media (max-width: 1240px) {
+  .curves {
+    display: none;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .curve {
+    stroke-dashoffset: 0;
+  }
+
+  .curveLabel {
+    opacity: 1;
+  }
+
+  .curves[data-drawn] .curve,
+  .curves[data-drawn] .curveLabel {
+    transition: none;
+  }
+}
