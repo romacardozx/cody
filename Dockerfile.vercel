@@ -1,0 +1,35 @@
+# Image for Vercel's Container Runtime: Vercel detects this file, builds it and routes all traffic here.
+# A single jar serves the React app and the API (same as `make build`).
+#
+# SQL Server does not run on Vercel: point the app to an external database with these environment
+# variables in the Vercel project (Settings > Environment Variables):
+#   SPRING_DATASOURCE_URL       jdbc:sqlserver://<host>:1433;databaseName=cody;encrypt=true;trustServerCertificate=true
+#   SPRING_DATASOURCE_USERNAME  cody_app
+#   DB_PASSWORD                 password of that login
+
+# --- Build: Maven compiles the backend and, through frontend-maven-plugin, the React app ---
+FROM eclipse-temurin:21-jdk AS build
+WORKDIR /app
+# Hides a harmless Node deprecation notice that Maven prints as "[ERROR]" (same as the Makefile)
+ENV NODE_OPTIONS=--no-deprecation
+
+# Dependencies first, so this layer is cached while only the code changes
+COPY mvnw pom.xml ./
+COPY .mvn .mvn
+RUN chmod +x mvnw && ./mvnw -B -q dependency:go-offline
+
+COPY frontend frontend
+COPY src src
+# Tests need a running SQL Server; they run with `make test`, not in the deploy
+RUN ./mvnw -B package -DskipTests
+
+# --- Runtime: JRE only ---
+FROM eclipse-temurin:21-jre
+WORKDIR /app
+COPY --from=build /app/target/cody.jar cody.jar
+
+# Vercel passes the port in PORT (80 when absent) and needs the server bound to 0.0.0.0
+ENV PORT=80 \
+    JAVA_TOOL_OPTIONS="-XX:MaxRAMPercentage=75 -XX:+UseSerialGC"
+EXPOSE 80
+CMD ["sh", "-c", "exec java -jar cody.jar --server.port=${PORT} --server.address=0.0.0.0 --spring.jpa.show-sql=false"]
