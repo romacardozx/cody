@@ -98,9 +98,9 @@ restart: down up ## Apaga y vuelve a levantar todo
 
 status: ## Muestra qué está corriendo: base, app y servidor de desarrollo
 	@printf "\n$(B)Estado$(N)\n"
-	@health=$$(docker inspect -f '{{.State.Health.Status}}' cody-sqlserver 2>/dev/null); \
+	@health=$$(docker inspect -f '{{.State.Health.Status}}' cody-postgres 2>/dev/null); \
 	case "$$health" in \
-	  healthy)   printf "  Base de datos   $(G)lista$(N) en localhost:1433\n" ;; \
+	  healthy)   printf "  Base de datos   $(G)lista$(N) en localhost:5432\n" ;; \
 	  starting)  printf "  Base de datos   $(Y)arrancando$(N)\n" ;; \
 	  unhealthy) printf "  Base de datos   $(R)con problemas$(N): probá make db-logs\n" ;; \
 	  *)         printf "  Base de datos   $(D)apagada$(N)\n" ;; \
@@ -120,13 +120,12 @@ info: ## Muestra URLs, credenciales de la base y comandos útiles
 	printf "  $(B)App$(N)            $(C)$(APP_URL)$(N)\n"; \
 	printf "  $(B)Swagger (API)$(N)  $(C)$(APP_URL)/swagger-ui.html$(N)\n"; \
 	printf "  $(B)OpenAPI JSON$(N)   $(C)$(APP_URL)/v3/api-docs$(N)\n\n"; \
-	printf "  $(B)Base de datos$(N)  SQL Server en Docker (contenedor cody-sqlserver)\n"; \
-	printf "    Servidor     localhost,1433\n"; \
+	printf "  $(B)Base de datos$(N)  PostgreSQL en Docker (contenedor cody-postgres)\n"; \
+	printf "    Servidor     localhost:5432\n"; \
 	printf "    Base         cody\n"; \
-	printf "    Usuario app  cody_app  /  $$DB_PASSWORD\n"; \
-	printf "    Admin        sa        /  $$SA_PASSWORD\n"; \
-	printf "    JDBC         jdbc:sqlserver://localhost:1433;databaseName=cody;encrypt=true;trustServerCertificate=true\n"; \
-	printf "    $(D)En SSMS o VS Code (mssql) marcá \"Trust server certificate\". Las claves salen de .env.$(N)\n\n"; \
+	printf "    Usuario      cody_app  /  $$DB_PASSWORD\n"; \
+	printf "    JDBC         jdbc:postgresql://localhost:5432/cody\n"; \
+	printf "    $(D)Se abre con DBeaver, pgAdmin o la extensión PostgreSQL de VS Code. La clave sale de .env.$(N)\n\n"; \
 	printf "  $(D)make logs$(N) ver logs · $(D)make sql$(N) consola SQL · $(D)make status$(N) estado · $(D)make down$(N) apagar\n\n"
 
 logs: ## Sigue los logs de la app levantada con make up (Ctrl+C para salir)
@@ -182,10 +181,9 @@ install: ## Instala las dependencias del frontend (yarn)
 env: ## Crea el archivo .env (contraseñas) a partir de .env.example, si no existe
 	@test -f .env || { cp .env.example .env && printf "$(Y).env creado$(N) con contraseñas de ejemplo (cambialas si querés).\n"; }
 
-db: env ## Levanta SQL Server en Docker y crea la base "cody" y el usuario "cody_app"
-	@docker compose up -d --wait sqlserver
-	@docker compose run --rm sqlserver-init > /dev/null
-	@printf "$(G)✓$(N) Base de datos lista en localhost:1433\n"
+db: env ## Levanta PostgreSQL en Docker (la base "cody" y el usuario "cody_app" se crean solos)
+	@docker compose up -d --wait postgres
+	@printf "$(G)✓$(N) Base de datos lista en localhost:5432\n"
 
 db-down: ## Apaga solo la base (los datos se conservan)
 	docker compose down
@@ -195,12 +193,11 @@ db-reset: ## BORRA todos los datos de la base y la crea de nuevo (pide confirmac
 	docker compose down -v
 	@$(MAKE) --no-print-directory db
 
-db-logs: ## Sigue los logs de SQL Server
-	docker compose logs -f sqlserver
+db-logs: ## Sigue los logs de PostgreSQL
+	docker compose logs -f postgres
 
-sql: ## Abre una consola SQL (sqlcmd) sobre la base "cody"
-	@set -a; source .env; set +a; \
-	docker exec -it cody-sqlserver /opt/mssql-tools18/bin/sqlcmd -S localhost -U cody_app -P "$$DB_PASSWORD" -C -d cody
+sql: ## Abre una consola SQL (psql) sobre la base "cody"
+	docker exec -it cody-postgres psql -U cody_app -d cody
 
 ##@ Calidad y entrega
 

@@ -22,7 +22,7 @@ import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.transaction.annotation.Transactional;
 
 /**
- * Full stack against the real SQL Server (make test starts it): controllers, services, JPA and the
+ * Full stack against the real PostgreSQL (make test starts it): controllers, services, JPA and the
  * sample data loaded by data.sql. Each test runs in a transaction that is rolled back.
  */
 @SpringBootTest

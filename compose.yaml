@@ -1,37 +1,23 @@
-# SQL Server for development. Start it with: docker compose up -d
-# Passwords come from the .env file (copy .env.example to .env).
+# PostgreSQL for development. Start it with: docker compose up -d
+# The password comes from the .env file (copy .env.example to .env).
+# On first start the image creates the "cody" database owned by the "cody_app" user.
 services:
-  sqlserver:
-    image: mcr.microsoft.com/mssql/server:2025-latest
-    container_name: cody-sqlserver
+  postgres:
+    image: postgres:17
+    container_name: cody-postgres
     environment:
-      ACCEPT_EULA: "Y"
-      MSSQL_PID: Developer
-      MSSQL_SA_PASSWORD: ${SA_PASSWORD}
+      POSTGRES_DB: cody
+      POSTGRES_USER: cody_app
+      POSTGRES_PASSWORD: ${DB_PASSWORD}
     ports:
-      - "1433:1433"
+      - "5432:5432"
     volumes:
-      - cody-sqlserver-data:/var/opt/mssql
+      - cody-postgres-data:/var/lib/postgresql/data
     healthcheck:
-      test: ["CMD-SHELL", "/opt/mssql-tools18/bin/sqlcmd -S localhost -U sa -P \"$$MSSQL_SA_PASSWORD\" -C -Q 'SELECT 1' -b -o /dev/null"]
-      interval: 5s
-      timeout: 5s
+      test: ["CMD-SHELL", "pg_isready -U cody_app -d cody"]
+      interval: 3s
+      timeout: 3s
       retries: 30
-      start_period: 20s
-
-  # Runs once and exits: creates the "cody" database and the "cody_app" login if missing.
-  sqlserver-init:
-    image: mcr.microsoft.com/mssql/server:2025-latest
-    depends_on:
-      sqlserver:
-        condition: service_healthy
-    environment:
-      SA_PASSWORD: ${SA_PASSWORD}
-      DB_PASSWORD: ${DB_PASSWORD}
-    volumes:
-      - ./db/init.sql:/init.sql:ro
-    entrypoint: ["/bin/bash", "-c", "/opt/mssql-tools18/bin/sqlcmd -S sqlserver -U sa -P \"$$SA_PASSWORD\" -C -b -v DB_PASSWORD=\"$$DB_PASSWORD\" -i /init.sql"]
-    restart: "no"
 
 volumes:
-  cody-sqlserver-data:
+  cody-postgres-data:

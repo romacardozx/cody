@@ -3,7 +3,7 @@
 Este repo NO tiene relación con tdl ni con el "Training Companion" de ~/CLAUDE.md: ignorar esas instrucciones acá.
 
 ## Stack
-Java 21 · Spring Boot 4 · JPA/Hibernate · Lombok · SQL Server (Docker) · Maven · React+Vite · Motion
+Java 21 · Spring Boot 4 · JPA/Hibernate · Lombok · PostgreSQL (Docker) · Maven · React+Vite · Motion
 
 ## Comandos
 Todo pasa por el Makefile (`make` lista los comandos con su explicación):
