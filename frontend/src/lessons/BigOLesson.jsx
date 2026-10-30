@@ -7,11 +7,10 @@ import lesson from '../components/lesson/Lesson.module.css'
 import { CardTable } from './bigO/CardTable.jsx'
 import { Chooser } from './bigO/Chooser.jsx'
 import { CountLoops } from './bigO/CountLoops.jsx'
-import { Crossover } from './bigO/Crossover.jsx'
 import { GrowthChart } from './bigO/GrowthChart.jsx'
 import { Ladder } from './bigO/Ladder.jsx'
-import { Rules } from './bigO/Rules.jsx'
 import { Words } from './bigO/Words.jsx'
+import { Simplify } from './bigO/Simplify.jsx'
 import { SortOrSearch } from './bigO/SortOrSearch.jsx'
 
 /*
@@ -84,9 +83,8 @@ export default function BigOLesson() {
         <GrowthChart />
       </Chapter>
 
-      <Chapter id="notacion" number={4} title="La notación" lead="Big O no cuenta exacto: dice cómo crece. Por eso se simplifica.">
-        <Rules />
-        <Crossover />
+      <Chapter id="notacion" number={4} title="La notación" lead="Para escribir un costo se cuenta y después se simplifica: queda solo lo que decide cuando n es grande.">
+        <Simplify />
       </Chapter>
 
       <Chapter id="vueltas" number={5} title="Contá las vueltas" lead="Para saber el orden de un código alcanza con ver qué se repite según n.">
