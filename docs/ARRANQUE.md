@@ -46,7 +46,7 @@
 ### 2.1 Resumen rápido
 
 - **Nombre del ZIP:** `P3-Q2-2026-<turno>-<equipo>-Cody`
-- **Java 21** obligatorio. **Maven** para dependencias y build. **SQL Server** + SSMS.
+- **Java 21** obligatorio. **Maven** para dependencias y build. **PostgreSQL** (la consigna sugiere SQL Server; se cambió para poder deployar gratis, ver sección 6).
 - La demo se hace **desde VS Code**, en vivo, los tres presentes (máx. 15 min, tiempo parejo).
 - **Revisión:** 28/10/2026 · **Entrega:** 11/11/2026 (fuera de fecha no se acepta).
 - **Pesos de la nota:** Creatividad 30% · Funcionalidad 20% · Calidad de código 20% · Exposición 20% · UI 10%.
@@ -95,11 +95,11 @@
 | Laboratorio en **VS Code** | Demo desde VS Code |
 | Arquitectura **en capas**: presentación/controladores, negocio, datos | controller / service / repository (+ engine) |
 | **Maven** para dependencias, configuración y build | Maven + `frontend-maven-plugin` |
-| Persistencia: **JPA/Hibernate + SQL Server + SSMS** | ✔ |
+| Persistencia: **JPA/Hibernate + SQL Server + SSMS** ("se podrá utilizar") | JPA/Hibernate ✔ · motor PostgreSQL para poder deployar gratis (ver sección 6) |
 | Pruebas de endpoints: **Postman**; automatizadas: **Spring Boot Test + JUnit 5** | ✔ |
 | Pruebas de controladores: **MockMvc + JUnit 5** | ✔ |
 | Documentación de la API: **Swagger/OpenAPI** | springdoc |
-| **Exposición**: ejecución, funcionamiento e interacción con la base y los servicios | Guion: crear escenario → recorrerlo prediciendo → mostrar datos en SSMS → endpoint en Swagger/Postman |
+| **Exposición**: ejecución, funcionamiento e interacción con la base y los servicios | Guion: crear escenario → recorrerlo prediciendo → mostrar datos en DBeaver (o `make sql`) → endpoint en Swagger/Postman |
 
 ### 2.6 Entrega (punto 5)
 
@@ -158,7 +158,7 @@ Se desaprueba si:
 |---|---|
 | Lenguaje | Java 21 |
 | Backend | Spring Boot (Web, Data JPA, Validation) |
-| Base de datos | SQL Server + SSMS |
+| Base de datos | PostgreSQL (Docker en local; Neon o Supabase en producción) |
 | Build | Maven (con `frontend-maven-plugin` para empaquetar el React) |
 | API docs | springdoc-openapi (Swagger UI) |
 | Tests | JUnit 5, Spring Boot Test, MockMvc, JaCoCo |
@@ -175,7 +175,7 @@ Se desaprueba si:
 - [ ] **JDK 21** (Temurin recomendado) → `java -version`
 - [ ] **Maven 3.9+** (o usar el wrapper `./mvnw`) → `mvn -v`
 - [ ] **Node LTS** (solo para desarrollo del frontend) → `node -v`
-- [ ] **Docker** (SQL Server corre en un contenedor, ver sección 6) + **SSMS** o la extensión **SQL Server (mssql)** de VS Code para administrarlo
+- [ ] **Docker** (PostgreSQL corre en un contenedor, ver sección 6) + **DBeaver**, **pgAdmin** o la extensión **PostgreSQL** de VS Code para administrarlo
 - [ ] **VS Code** con: Extension Pack for Java, Spring Boot Extension Pack, ESLint
 - [ ] **Git** + acceso al repo del equipo
 - [ ] **Claude Code** instalado
@@ -191,7 +191,7 @@ En **start.spring.io**:
 
 - Project: Maven · Language: Java · Java: **21**
 - Group: `ar.edu.unsam` · Artifact: `cody`
-- Dependencias: **Spring Web**, **Spring Data JPA**, **MS SQL Server Driver**, **Validation**, **Spring Boot DevTools**
+- Dependencias: **Spring Web**, **Spring Data JPA**, **PostgreSQL Driver**, **Validation**, **Spring Boot DevTools**
 
 Agregar a mano en el `pom.xml`: `springdoc-openapi-starter-webmvc-ui` y el plugin de **JaCoCo**.
 
@@ -266,22 +266,35 @@ En el `pom.xml`, `frontend-maven-plugin` instala Node y Yarn, corre `yarn instal
 
 ## 6. Base de datos
 
-### SQL Server en Docker
+### PostgreSQL en Docker
 
 ```bash
-cp .env.example .env        # y cambiar las contraseñas
-docker compose up -d        # levanta SQL Server 2025 y crea la base cody + login cody_app
+cp .env.example .env        # y cambiar la contraseña
+docker compose up -d        # levanta PostgreSQL 17; la primera vez crea la base cody y el usuario cody_app
 ```
 
-- `compose.yaml` tiene dos servicios: `sqlserver` (el motor, con volumen persistente) y `sqlserver-init`, que corre `db/init.sql` una vez y termina. El script es idempotente.
+- `compose.yaml` tiene un solo servicio, `postgres`, con volumen persistente. La imagen crea la base y el usuario sola (variables `POSTGRES_DB`, `POSTGRES_USER`, `POSTGRES_PASSWORD`): no hace falta script de inicio.
 - Spring Boot lee el mismo `.env` (`spring.config.import=optional:file:.env[.properties]`), así que no hace falta exportar nada.
-- Conectarse desde SSMS o VS Code: `localhost,1433`, usuario `cody_app` (o `sa`), con "Trust server certificate".
-- Borrar todo y empezar de cero: `docker compose down -v`.
+- Conectarse desde DBeaver, pgAdmin o VS Code: `localhost:5432`, base `cody`, usuario `cody_app`. O `make sql` para una consola `psql`.
+- Borrar todo y empezar de cero: `make db-reset` (o `docker compose down -v`).
+- **Por qué PostgreSQL y no SQL Server:** ningún servicio gratuito sin tarjeta ofrece SQL Server, y PostgreSQL sí (Neon, Supabase). Así el mismo motor corre en local y en producción.
+
+### Producción (Vercel)
+
+`Dockerfile.vercel` arma la imagen (backend + React en un jar) y Vercel la detecta sola. La base va afuera, en un PostgreSQL gratuito (Neon o Supabase). En el proyecto de Vercel se cargan:
+
+| Variable | Valor |
+|---|---|
+| `SPRING_DATASOURCE_URL` | `jdbc:postgresql://<host>:5432/<base>?sslmode=require` |
+| `SPRING_DATASOURCE_USERNAME` | usuario de la base |
+| `DB_PASSWORD` | su contraseña |
+
+Las tablas y los datos de ejemplo los crea la app al arrancar, igual que en local.
 
 ### `application.properties`
 
 ```properties
-spring.datasource.url=jdbc:sqlserver://localhost:1433;databaseName=cody;encrypt=true;trustServerCertificate=true
+spring.datasource.url=jdbc:postgresql://localhost:5432/cody
 spring.datasource.username=cody_app
 spring.datasource.password=${DB_PASSWORD}
 spring.jpa.hibernate.ddl-auto=update
@@ -296,10 +309,10 @@ La contraseña sale del `.env` (`DB_PASSWORD`), que **nunca** se commitea.
 
 **`data.sql` tiene que ser idempotente.** Con `ddl-auto=update` + `spring.sql.init.mode=always`, el script corre en **cada** arranque: un `INSERT` común duplica filas o rompe por clave única. Reglas:
 
-1. Cada `INSERT` va protegido: `IF NOT EXISTS (SELECT 1 FROM tabla WHERE codigo = 'X') INSERT INTO tabla (...) VALUES (...);`. Solo para tablas que ya existan como entidad: SQL Server valida la sentencia entera antes de ejecutarla, aunque esté dentro de un `IF`.
+1. Cada `INSERT` va protegido: `INSERT INTO tabla (...) SELECT ... WHERE NOT EXISTS (SELECT 1 FROM tabla WHERE codigo = 'X');`. Solo para tablas que ya existan como entidad: PostgreSQL rechaza la sentencia si falta una tabla, aunque no fuera a insertar nada.
 2. Buscar por **clave natural** (`codigo`, `nombre`), nunca por el id autogenerado.
-3. No insertar ids a mano (SQL Server usa `IDENTITY`; forzarlos exige `SET IDENTITY_INSERT`).
-4. Una sentencia por bloque terminada en `;`: Spring separa el script por `;`, así que nada de `BEGIN ... END` con varias sentencias.
+3. No insertar ids a mano (PostgreSQL usa `IDENTITY`; un id forzado deja atrás la secuencia y el próximo `INSERT` de la app choca).
+4. Una sentencia por bloque terminada en `;`: Spring separa el script por `;`, así que nada de bloques `DO` o funciones con varias sentencias.
 
 ---
 
@@ -311,9 +324,8 @@ cody/
 ├── PRODUCT.md                              ← contexto del producto (lo genera Impeccable; va en la raíz porque ahí lo busca)
 ├── DESIGN.md                               ← sistema visual (lo genera Impeccable; ídem)
 ├── Makefile                                ← atajos: make help
-├── compose.yaml                            ← SQL Server en Docker
+├── compose.yaml                            ← PostgreSQL en Docker
 ├── .env.example                            ← copiar a .env
-├── db/init.sql                             ← crea base y login (idempotente)
 ├── docs/
 │   ├── README.md
 │   ├── ARRANQUE.md
@@ -425,7 +437,7 @@ public record Question(String id, String prompt, List<String> options, String co
 |---|---|
 | **Algorithm** (`algorithm`) | Catálogo (solo lectura, lo carga `data.sql`): code, name, family, description, complejidades. El pseudocódigo NO va acá: lo define cada algoritmo del engine, porque los pasos apuntan a sus líneas |
 | **Scenario** (`scenario` + `scenario_node`, `scenario_edge`, `scenario_array_value`) | Grafos o arreglos que el alumno crea, edita y guarda (nodos con `x, y`). ABML completo |
-| **AppUser** (`app_user`) | `User` es palabra reservada en SQL Server |
+| **AppUser** (`app_user`) | `User` es palabra reservada en SQL (en PostgreSQL y en SQL Server) |
 | **LearningSession** (`learning_session`) | Cada recorrido de un algoritmo: alumno (id anónimo del navegador), escenario (copia del nombre, sin FK), aciertos, errores, inicio y fin. No se llama `Session` para no confundirla con la de Hibernate |
 | **Prediction** (`prediction`) | Qué se preguntó, en qué paso y tipo de paso, qué respondió, la correcta, si acertó y las dos explicaciones, tal como se mostraron |
 | **Mastery** (`mastery`) | Nivel del usuario por algoritmo y tipo de paso |

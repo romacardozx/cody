@@ -1,11 +1,11 @@
 # Image for Vercel's Container Runtime: Vercel detects this file, builds it and routes all traffic here.
 # A single jar serves the React app and the API (same as `make build`).
 #
-# SQL Server does not run on Vercel: point the app to an external database with these environment
-# variables in the Vercel project (Settings > Environment Variables):
-#   SPRING_DATASOURCE_URL       jdbc:sqlserver://<host>:1433;databaseName=cody;encrypt=true;trustServerCertificate=true
-#   SPRING_DATASOURCE_USERNAME  cody_app
-#   DB_PASSWORD                 password of that login
+# The database does not run on Vercel: point the app to an external PostgreSQL (Neon, Supabase...)
+# with these environment variables in the Vercel project (Settings > Environment Variables):
+#   SPRING_DATASOURCE_URL       jdbc:postgresql://<host>:5432/<database>?sslmode=require
+#   SPRING_DATASOURCE_USERNAME  database user
+#   DB_PASSWORD                 password of that user
 
 # --- Build: Maven compiles the backend and, through frontend-maven-plugin, the React app ---
 FROM eclipse-temurin:21-jdk AS build
@@ -20,7 +20,7 @@ RUN chmod +x mvnw && ./mvnw -B -q dependency:go-offline
 
 COPY frontend frontend
 COPY src src
-# Tests need a running SQL Server; they run with `make test`, not in the deploy
+# Tests need a running PostgreSQL; they run with `make test`, not in the deploy
 RUN ./mvnw -B package -DskipTests
 
 # --- Runtime: JRE only ---
